@@ -1,3 +1,3 @@
-# skylab-bootcamp-201809
+![alt skylab](./stuff/misc/skylab-logo.png)
 
-![alt calendar](./stuff/misc/calendar.jpg)
+# Full-Stack Web-Development Bootcamp 201809
