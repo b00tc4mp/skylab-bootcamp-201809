@@ -1,17 +1,10 @@
 const { User, Postit } = require('../data')
-const { AlreadyExistsError, AuthError, NotFoundError, ValueError } = require('../errors')
+const { AlreadyExistsError, AuthError, NotFoundError } = require('../errors')
+const validate = require('../utils/validate')
 
 const logic = {
     registerUser(name, surname, username, password) {
-        if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
-        if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
-        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-
-        if (!name.trim()) throw new ValueError('name is empty or blank')
-        if (!surname.trim()) throw new ValueError('surname is empty or blank')
-        if (!username.trim()) throw new ValueError('username is empty or blank')
-        if (!password.trim()) throw new ValueError('password is empty or blank')
+        validate([{ key: 'name', value: name, type: String }, { key: 'surname', value: surname, type: String }, { key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }])
 
         return (async () => {
             let user = await User.findOne({ username })
@@ -25,11 +18,7 @@ const logic = {
     },
 
     authenticateUser(username, password) {
-        if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-
-        if (!username.trim()) throw new ValueError('username is empty or blank')
-        if (!password.trim()) throw new ValueError('password is empty or blank')
+        validate([{ key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }])
 
         return (async () => {
             const user = await User.findOne({ username })
@@ -41,9 +30,7 @@ const logic = {
     },
 
     retrieveUser(id) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
+        validate([{ key: 'id', value: id, type: String }])
 
         return (async () => {
             const user = await User.findById(id, { '_id': 0, password: 0, postits: 0, __v: 0 }).lean()
@@ -57,19 +44,13 @@ const logic = {
     },
 
     updateUser(id, name, surname, username, newPassword, password) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-        if (name != null && typeof name !== 'string') throw TypeError(`${name} is not a string`)
-        if (surname != null && typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
-        if (username != null && typeof username !== 'string') throw TypeError(`${username} is not a string`)
-        if (newPassword != null && typeof newPassword !== 'string') throw TypeError(`${newPassword} is not a string`)
-        if (typeof password !== 'string') throw TypeError(`${password} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
-        if (name != null && !name.trim().length) throw new ValueError('name is empty or blank')
-        if (surname != null && !surname.trim().length) throw new ValueError('surname is empty or blank')
-        if (username != null && !username.trim().length) throw new ValueError('username is empty or blank')
-        if (newPassword != null && !newPassword.trim().length) throw new ValueError('newPassword is empty or blank')
-        if (!password.trim().length) throw new ValueError('password is empty or blank')
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'name', value: name, type: String, optional: true },
+            { key: 'surname', value: surname, type: String, optional: true },
+            { key: 'username', value: username, type: String, optional: true },
+            { key: 'password', value: password, type: String }
+        ])
 
         return (async () => {
             const user = await User.findById(id)
@@ -111,13 +92,10 @@ const logic = {
      * @returns {Promise} Resolves on correct data, rejects on wrong user id
      */
     addPostit(id, text) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
-
-        if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
-
-        if (!text.trim().length) throw new ValueError('text is empty or blank')
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'text', value: text, type: String }
+        ])
 
         return (async () => {
             const user = await User.findById(id)
@@ -131,9 +109,9 @@ const logic = {
     },
 
     listPostits(id) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
+        validate([
+            { key: 'id', value: id, type: String }
+        ])
 
         return (async () => {
             const user = await User.findById(id).lean()
@@ -169,13 +147,10 @@ const logic = {
      * @returns {Promise} Resolves on correct data, rejects on wrong user id, or postit id
      */
     removePostit(id, postitId) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
-
-        if (typeof postitId !== 'string') throw TypeError(`${postitId} is not a string`)
-
-        if (!postitId.trim().length) throw new ValueError('postit id is empty or blank')
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'postitId', value: postitId, type: String }
+        ])
 
         return (async () => {
             const user = await User.findById(id)
@@ -191,17 +166,11 @@ const logic = {
     },
 
     modifyPostit(id, postitId, text) {
-        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
-
-        if (!id.trim().length) throw new ValueError('id is empty or blank')
-
-        if (typeof postitId !== 'string') throw TypeError(`${postitId} is not a string`)
-
-        if (!postitId.trim().length) throw new ValueError('postit id is empty or blank')
-
-        if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
-
-        if (!text.trim().length) throw new ValueError('text is empty or blank')
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'postitId', value: postitId, type: String },
+            { key: 'text', value: text, type: String }
+        ])
 
         return (async () => {
             const user = await User.findById(id)
@@ -213,6 +182,28 @@ const logic = {
             if (!postit) throw new NotFoundError(`postit with id ${postitId} not found`)
 
             postit.text = text
+
+            await postit.save()
+        })()
+    },
+
+    movePostit(id, postitId, status) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'postitId', value: postitId, type: String },
+            { key: 'status', value: status, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const postit = await Postit.findOne({ user: user._id, _id: postitId })
+
+            if (!postit) throw new NotFoundError(`postit with id ${postitId} not found`)
+
+            postit.status = status
 
             await postit.save()
         })()

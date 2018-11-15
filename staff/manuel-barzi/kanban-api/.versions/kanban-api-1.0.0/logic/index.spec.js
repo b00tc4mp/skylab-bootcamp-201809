@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
 const { User, Postit } = require('../data')
 const logic = require('.')
-const { AlreadyExistsError } = require('../errors')
+const { AlreadyExistsError, ValueError } = require('../errors')
 
 const { expect } = require('chai')
 
-const MONGO_URL = 'mongodb://localhost:27017/postit-test'
+const MONGO_URL = 'mongodb://localhost:27017/kanban-test'
 
 // running test from CLI
 // normal -> $ mocha src/logic.spec.js --timeout 10000
@@ -47,6 +47,14 @@ describe('logic', () => {
 
             it('should fail on undefined name', () => {
                 expect(() => logic.registerUser(undefined, surname, username, password)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty name', () => {
+                expect(() => logic.registerUser('', surname, username, password)).to.throw(ValueError, 'name is empty or blank')
+            })
+
+            it('should fail on blank name', () => {
+                expect(() => logic.registerUser('   \t\n', surname, username, password)).to.throw(ValueError, 'name is empty or blank')
             })
 
             // TODO other test cases
@@ -347,6 +355,33 @@ describe('logic', () => {
                 const [_postit] = postits
 
                 expect(_postit.text).to.equal(newText)
+            })
+        })
+
+        describe('move', () => {
+            let user, postit, newStatus
+
+            beforeEach(async () => {
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                postit = new Postit({ text: 'hello text', user: user.id })
+
+                newStatus = 'DOING'
+
+                await Promise.all([user.save(), postit.save()])
+            })
+
+            it('should succeed on correct data', async () => {
+                const res = await logic.movePostit(user.id, postit.id, newStatus)
+
+                expect(res).to.be.undefined
+
+                const postits = await Postit.find()
+
+                expect(postits.length).to.equal(1)
+
+                const [_postit] = postits
+
+                expect(_postit.status).to.equal(newStatus)
             })
         })
     })
