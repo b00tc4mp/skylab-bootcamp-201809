@@ -1,0 +1,30 @@
+{
+  "name": "postit-api",
+  "version": "2.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node .",
+    "debug": "node debug .",
+    "test": "mocha logic"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cloudinary": "^1.13.2",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.4",
+    "express-fileupload": "^1.0.0",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^7.0.1",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.12",
+    "path": "^0.12.7",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}
