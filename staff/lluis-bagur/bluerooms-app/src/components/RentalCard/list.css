@@ -1,0 +1,39 @@
+.card__rental {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 20px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid teal;
+}
+.card__rental .img__card {
+  width: 30%;
+  min-width: 200px;
+  height: 100%;
+}
+.card__rental .info__card {
+  width: 60%;
+  height: 100%;
+  padding: 20px;
+  justify-content: start;
+}
+.card__rental .info__card2 {
+  justify-content: start;
+  width: 30%;
+  height: 100%;
+  padding: 20px;
+}
+.card__rental .card_line {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: row;
+}
+.card__rental .card_line .card__text {
+  margin-bottom: 0.5rem;
+}
+
+/*# sourceMappingURL=list.css.map */

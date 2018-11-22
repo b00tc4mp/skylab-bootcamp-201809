@@ -22,12 +22,12 @@ const Booking = new Schema({
         type: Date,
         default: Date.now
     },
-    User: {
+    user: {
         type: ObjectId,
         ref: 'User'
     },
 
-    Rental: {
+    rental: {
         type: ObjectId,
         ref: 'Rental'
     },
@@ -38,7 +38,8 @@ const Rental = new Schema({
     title: {
         type: String,
         required: true,
-        max: [128, 'Too long, max is 128 characters']
+        max: [128, 'Too long, max is 128 characters'],
+        unique: true
     },
     city: {
         type: String,
@@ -59,22 +60,22 @@ const Rental = new Schema({
         type: String,
         required: true
     },
-    bedrooms: Number,
+    bedrooms: String,
     shared: Boolean,
     description: {
         type: String,
         required: true
     },
-    dailyRate: Number,
+    dailyRate: String,
     createdAt: {
         type: Date,
         default: Date.now
     },
-    User: {
+    user: {
         type: ObjectId,
         ref: 'User'
     },
-    Bookings: [{
+    bookings: [{
         type: ObjectId,
         ref: 'Booking'
     }]
@@ -119,7 +120,7 @@ const User = new Schema({
         type: ObjectId,
         ref: 'Rental'
     }],
-    Bookings: [{
+    bookings: [{
         type: ObjectId,
         ref: 'Booking'
     }]

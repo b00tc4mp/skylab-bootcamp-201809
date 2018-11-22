@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
+import { withRouter } from "react-router";
+import logic from '../../logic'
+
+
+
 
 class Register extends Component {
-    state = { name: '', surname: '', username: '', password: '', email: '' }
+    state = { name: '', surname: '', username: '', password: '', email: '', loggedIn: false }
 
     handleNameChange = event => {
         const name = event.target.value
@@ -38,19 +43,37 @@ class Register extends Component {
 
         const { name, surname, username, password, email } = this.state
 
-        this.props.onRegister(name, surname, username, password, email)
+        this.handleRegister(name, surname, username, password, email)
+    }
+
+    handleRegister = (name, surname, username, password, email) => {
+        try {
+            logic.registerUser(name, surname, username, password, email)
+                .then(() => {
+                    this.setState({ error: null })
+                    this.props.toggle()
+                })
+                .catch(err => this.setState({ error: err.message }))
+        } catch (err) {
+            this.setState({ error: err.message })
+        }
     }
 
     render() {
-        return <form onSubmit={this.handleSubmit}>
-            <input type="text" placeholder="Name" onChange={this.handleNameChange} />
-            <input type="text" placeholder="Surname" onChange={this.handleSurnameChange} />
-            <input type="text" placeholder="email" onChange={this.handleEmailChange} />
-            <input type="text" placeholder="Username" onChange={this.handleUsernameChange} />
-            <input type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-            <button type="submit">Register</button> <a href="#" onClick={this.props.onGoBack}>back</a>
-        </form>
+        return <div className="login__form">
+            <form className="form__container" onSubmit={this.handleSubmit}>
+                <div className="header__logo">
+                    <div className="img__logo" />
+                </div>
+                <input className="input__form" type="text" placeholder="Name" onChange={this.handleNameChange} />
+                <input className="input__form" type="text" placeholder="Surname" onChange={this.handleSurnameChange} />
+                <input className="input__form" type="text" placeholder="email" onChange={this.handleEmailChange} />
+                <input className="input__form" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
+                <input className="input__form" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
+                <button className="header__btn" type="submit">Register</button> <button className="header__btn" href="#" onClick={this.props.toggle}>back</button>
+            </form>
+        </div>
     }
 }
 
-export default Register
+export default withRouter(Register)

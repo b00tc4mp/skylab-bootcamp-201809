@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import Login from '../Login/Login'
+import Register from '../Register/Register'
+
 import './Navbar.css'
 
 
@@ -7,7 +10,9 @@ class Navbar extends Component {
     state = {
         user: {},
         flagUser: false,
-        name: ''
+        name: '',
+        showLogin:false,
+        showRegister: false
     }
 
     componentDidUpdate(prevProps) {
@@ -20,6 +25,13 @@ class Navbar extends Component {
         }
     }
 
+    toggleModalLogin(){
+        this.setState({ showLogin: !this.state.showLogin })
+        
+    }
+    toggleModalRegister(){
+        this.setState({ showRegister: !this.state.showRegister })
+    }
 
     render() {
         return <nav className="navbar">
@@ -31,12 +43,20 @@ class Navbar extends Component {
                 <div className="header__btns">
                     {!!this.props.name && <p>{'Welcome ' + this.props.name}</p>}
                     {this.props.isLoggedIn && <button className="header__btn" onClick={this.props.onLogoutClick}>Logout</button>}
+                    {this.props.isLoggedIn && <button className="header__btn" onClick={this.props.onProfileClick}>Profile</button>}
+
                 </div>
                 {!this.props.isLoggedIn && <div className="header__btns">
-                    <button type="button" className="header__btn" onClick={this.props.onLoginClick}>Login</button>
-                    <button type="button"  className="header__btn" onClick={this.props.onRegisterClick}>Register</button>
+                    <button type="button" className="header__btn" onClick={() => this.toggleModalLogin()}>Login</button>
+                    <button type="button"  className="header__btn" onClick={() => this.toggleModalRegister()}>Register</button>
                 </div>}
             </div>
+            {this.state.showLogin && 
+            <Login handleLoggedIn={this.props.handleLoggedIn} toggle={() =>this.toggleModalLogin()}/>
+        }   
+        {this.state.showRegister && 
+            <Register toggle={() =>this.toggleModalRegister()}/>
+        }   
 
         </nav>
     }

@@ -38,7 +38,7 @@ const logic = {
         validate([{ key: 'id', value: id, type: String }])
 
         return (async () => {
-            const user = await User.findById(id, { '_id': 0, password: 0, __v: 0 }).lean()
+            const user = await User.findById(id, { '_id': 0, password: 0, __v: 0 }).lean().populate('rentals')
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -86,18 +86,99 @@ const logic = {
         })()
     },
 
-    createBooking(startAt, endAt, totalPrice, guests, days, rental) { // RETRIEVE USER BY ID
+    //........................... RENTAL LOGIC .......................//
+
+    // ADD RENTAL
+
+    addRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate) {
+        validate([{ key: 'id', value: id, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: String }, { key: 'shared', value: shared, type: String }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: String }])
 
         return (async () => {
-            let booking = await rental.findOne({ rental })
+            const user = await User.findById(id)
+            debugger
 
-            if (rental) throw new AlreadyExistsError(`username ${username} already registered`)
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            debugger
 
-            user = new User({ name, surname, username, password, email })
+            rental = new Rental({ title, city, street, category, image, bedrooms, shared, description, dailyRate, user: user.id })
+            await rental.save()
+
+            user.rentals.push(rental)
 
             await user.save()
+
         })()
     },
+
+    //EDIT RENTAL
+
+    updateRental(id, rentalId, title, city, street, category, image, bedrooms, shared, description, dailyRate) { // UPDATE USERS
+        validate([{ key: 'id', value: id, type: String }, { key: 'rentalId', value: rentalId, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
+
+        return (async () => {
+
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const rental = await Rental.findById(rentalId)
+
+            if (!rental) throw new NotFoundError(`Rental with id ${id} not found`)
+
+                title != null && (rental.title = title)
+                city != null && (rental.city = city)
+                street != null && (rental.street = street)
+                category != null && (rental.category = category)
+                image != null && (rental.image = image)
+                bedrooms != null && (rental.bedrooms = bedrooms)
+                shared != null && (rental.shared = shared)
+                description != null && (rental.description = description)
+                dailyRate != null && (rental.dailyRate = dailyRate) 
+
+                await rental.save()
+        })()
+    },
+
+    //LIST RENTAL BY ID
+
+    listRentalByUserId(id){
+        
+        validate([{ key: 'id', value: id, type: String }])
+
+        return (async () => {
+            const user = await User.findById(id).populate('rentals').exec()
+            
+            debugger
+            
+            // if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            //     const rentals = await Promise.all(user.rentals.map(async rentalId => await Rental.findById(rentalId)))
+                
+                return user.rentals
+    })()
+    },
+    
+    removeRental(id, rentalId) {
+            validate([
+                { key: 'id', value: id, type: String },
+                { key: 'rentalId', value: rentalId, type: String }
+            ])
+    
+            return (async () => {
+                const user = await User.findById(id)
+    
+                if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    
+                const rental = await Rental.findById(rentalId)
+    
+                if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
+    
+                await rental.remove()
+
+            })()
+        },
+
+   
        
     // addCollaborator(id, collaboratorUsername) {
     //     validate([
