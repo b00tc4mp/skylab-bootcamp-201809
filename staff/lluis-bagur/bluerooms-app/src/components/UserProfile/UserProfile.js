@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import logic from '../../logic'
 import { RentalCard } from '../RentalCard/RentalCard'
 import AddRentals from '../AddRentals/AddRentals'
+import EditRentals from '../EditRentals/EditRentals'
 import { withRouter } from "react-router"
 import './UserProfile.css'
 
 
 class Profile extends Component {
-    state = { user: "", showRentals: false, showBookings: false, showAddRentals: false }
+    state = { user: "", rentalId: "", showRentals: false, showBookings: false, showAddRentals: false, showEditRentals: false }
 
     componentDidMount() {
         logic.retriveUser()
@@ -25,42 +26,71 @@ class Profile extends Component {
 
     toggleModalAddRental() {
         this.setState({ showAddRentals: !this.state.showAddRentals })
+        logic.retriveUser()
+            .then(user => { this.setState({ user }) })
     }
 
+    handleRemoveRental = id => {
+debugger
+        return logic.removeRental(id)
+            .then(() => this.handleRentalList())
+            .then(() => logic.retriveUser())
+            .then(user => { this.setState({ user }) })
+
+    }
+
+    handleEditRental = (id) => {
+        this.setState({ showEditRentals: !this.state.showEditRentals, rentalId: id })
+        logic.retriveUser()
+            .then(user => { this.setState({ user }) })
+    }
+
+    handleGoBack = () => this.props.history.push('/')
 
 
     render() {
-        return <div className="profile__page">
 
-            <div className="user__profile">
-                <div className="profile__image">
-                    FOTO
-                </div>
-                <div className="profile__info">
-                    <form className="profile__form" onSubmit={this.handleSubmit}>
-                        <div className="profile__form--title"><h1>Your profile</h1></div>
-                        <div className="profile__form--info">
-                            <div className="profile__form--label"><label>Name</label><input type='text' value={this.state.user.name} onChange={this.handleNameChange} disabled={this.state.edit}></input></div>
-                            <div className="profile__form--label"><label>Surname</label><input type='text' value={this.state.user.surname} onChange={this.handleSurnameChange} disabled={this.state.edit}></input></div>
-                            <div className="profile__form--label"><label>Email</label><input type='text' value={this.state.user.email} onChange={this.handleAddressChange} disabled={this.state.edit}></input></div>
-                            {/* <button type='submit' disabled={this.state.edit}>Save Changes</button> */}
+        return <div className="profile__page">
+            <div className="user__background">
+                <div className="user__profile">
+                    <div className="profile__image">
+                    </div>
+                    <div className="profile__info">
+                        <div className="profile__title"><h2>{this.state.user.name}</h2></div>
+                    </div>
+                    <div className="profile__buttons">
+                        <div class="buttons">
+                            <div class="button button-rent" onClick={() => this.handleRentalList()}>
+                                <i class="fas fa-home"></i>
+                            </div>
                         </div>
-                    </form>
-                    <button onClick={this.handleEditProfile}>Edit profile</button>
+                        <div class="buttons">
+                            <div class="button button-booking" onClick={() => this.handleBookingList()}>
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <div class="button button-back" >
+                                {/* <a href="#" onClick={this.props.onGoBack}></a> */}
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div className="user__menu">
-                <div className="user__menu--buttons">
-                    <button type="button" className="header__btn" onClick={() => this.handleRentalList()}>Your Rentals</button>
-                    <button type="button" className="header__btn" onClick={() => this.handleBookingList()}>Your Bookings</button>
-                </div>
 
                 {this.state.showRentals && <div className="user__rentals">
-                    {this.state.user.rentals.map((rental) => { return <RentalCard title={rental.title} city={rental.city} street={rental.street} category={rental.category} bedrooms={rental.bedrooms} description={rental.description} dailyRate={rental.dailyRate} bookings={rental.bookings} key={rental.id} onRentalCardClick={this.handleRentalCardClick} /> })}
-                    <button type="button" className="header__btn" onClick={() => this.toggleModalAddRental()}>ADD NEW RENTAL</button>
-                    
-                        <AddRentals showModal={this.state.showAddRentals} onShowHideModal ={() => this.toggleModalAddRental()} />
-                    
+                    {this.state.user.rentals.map((rental) => { return <RentalCard rental={rental} onDeleteRental={this.handleRemoveRental} onEditRental={this.handleEditRental} onRentalCardClick={this.handleRentalCardClick} /> })}
+                    <div class="buttons">
+                        <div class="button button-add" onClick={() => this.toggleModalAddRental()}>
+                        <i class="fas fa-plus"></i>
+                        </div>
+                    </div>
+                    <AddRentals showModal={this.state.showAddRentals} onShowHideModal={() => this.toggleModalAddRental()} />
+                    {this.state.showEditRentals && <EditRentals id={this.state.rentalId} showModal={this.state.showEditRentals} onShowHideModal={() => this.handleEditRental()} />}
+
                 </div>}
 
                 {this.state.showBookings && <div className="user__rentals">

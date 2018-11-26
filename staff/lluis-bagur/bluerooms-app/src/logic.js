@@ -4,6 +4,8 @@ const logic = {
 
     url: 'NO-URL',
 
+    //.......................... USER LOGIC .............................//
+
     registerUser(name, surname, username, password, email) {
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
@@ -82,26 +84,15 @@ const logic = {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
-                
+
                 return res.data
             })
     },
 
-    listRentalsById() {
-        return fetch(`${this.url}/users/${this._userId}/rentals`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${this._token}`
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-                
-                return res.data
-            })
-    },
+    //.......................... RENTALS LOGIC .............................//
 
+
+    //ADD RENTALS
 
     addRentals(title, city, street, category, image, bedrooms, shared, description, dailyRate) {
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
@@ -109,10 +100,10 @@ const logic = {
         if (typeof street !== 'string') throw TypeError(`${street} is not a string`)
         if (typeof category !== 'string') throw TypeError(`${category} is not a string`)
         if (typeof description !== 'string') throw TypeError(`${description} is not a string`)
-        if (typeof bedrooms !== 'string') throw TypeError(`${bedrooms} is not a string`)
-        if (typeof shared !== 'string') throw TypeError(`${shared} is not a string`)
+        if (typeof bedrooms !== 'number') throw TypeError(`${bedrooms} is not a Number`)
+        if (typeof shared !== 'boolean') throw TypeError(`${shared} is not a Boolean`)
         if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
-        if (typeof dailyRate !== 'string') throw TypeError(`${dailyRate} is not a string`)
+        if (typeof dailyRate !== 'number') throw TypeError(`${dailyRate} is not a Number`)
 
 
         if (!title.trim()) throw Error('title is empty or blank')
@@ -121,9 +112,6 @@ const logic = {
         if (!category.trim()) throw Error('category is empty or blank')
         if (!description.trim()) throw Error('text is empty or blank')
         if (!image.trim()) throw Error('image is empty or blank')
-
-
-        debugger
 
 
         return fetch(`${this.url}/users/${this._userId}/rentals`, {
@@ -137,12 +125,31 @@ const logic = {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
-                debugger
             })
     },
 
-    listPostits() {
-        return fetch(`${this.url}/users/${this._userId}/postits`, {
+    // LIST RENTALS BY ID
+
+    retriveRentals() {
+
+        return fetch(`${this.url}/rentals`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
+    listRentalByRentalId(id) {
+        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+        if (!id.trim().length) throw Error('id is empty or blank')
+
+        return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${this._token}`
@@ -151,17 +158,18 @@ const logic = {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
-
                 return res.data
             })
     },
 
-    removePostit(id) {
+    // REMOVE RENTALS
+
+    removeRental(id) {
         if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
 
         if (!id.trim().length) throw Error('id is empty or blank')
 
-        return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
+        return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${this._token}`
@@ -173,51 +181,95 @@ const logic = {
             })
     },
 
-    modifyPostit(id, text) {
-        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
 
+    editRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate) {
+
+        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
         if (!id.trim().length) throw Error('id is empty or blank')
 
-        if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+        debugger
+        
+        if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
+        if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
+        if (typeof street !== 'string') throw TypeError(`${street} is not a string`)
+        if (typeof category !== 'string') throw TypeError(`${category} is not a string`)
+        if (typeof description !== 'string') throw TypeError(`${description} is not a string`)
+        if (typeof bedrooms !== 'number') throw TypeError(`${bedrooms} is not a Number`)
+        if (typeof shared !== 'boolean') throw TypeError(`${shared} is not a Boolean`)
+        if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
+        if (typeof dailyRate !== 'number') throw TypeError(`${dailyRate} is not a Number`)
 
-        if (!text.trim()) throw Error('text is empty or blank')
 
-        return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8',
-                'Authorization': `Bearer ${this._token}`
-            },
-            body: JSON.stringify({ text })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-    },
+        if (!title.trim()) throw Error('title is empty or blank')
+        if (!city.trim()) throw Error('city is empty or blank')
+        if (!street.trim()) throw Error('street is empty or blank')
+        if (!category.trim()) throw Error('category is empty or blank')
+        if (!description.trim()) throw Error('text is empty or blank')
+        if (!image.trim()) throw Error('image is empty or blank')
 
-    movePostit(id, status) {
-        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+        debugger
 
-        if (!id.trim().length) throw Error('id is empty or blank')
-
-        if (typeof status !== 'string') throw TypeError(`${status} is not a string`)
-
-        if (!status.trim()) throw Error('status is empty or blank')
-
-        return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
+        return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${this._token}`
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ title, city, street, category, image, bedrooms, shared, description, dailyRate })
         })
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
+            debugger
     },
+
+
+    // modifyPostit(id, text) {
+    //     if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+
+    //     if (!id.trim().length) throw Error('id is empty or blank')
+
+    //     if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+
+    //     if (!text.trim()) throw Error('text is empty or blank')
+
+    //     return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
+    //         method: 'PUT',
+    //         headers: {
+    //             'Content-Type': 'application/json; charset=utf-8',
+    //             'Authorization': `Bearer ${this._token}`
+    //         },
+    //         body: JSON.stringify({ text })
+    //     })
+    //         .then(res => res.json())
+    //         .then(res => {
+    //             if (res.error) throw Error(res.error)
+    //         })
+    // },
+
+    // movePostit(id, status) {
+    //     if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+
+    //     if (!id.trim().length) throw Error('id is empty or blank')
+
+    //     if (typeof status !== 'string') throw TypeError(`${status} is not a string`)
+
+    //     if (!status.trim()) throw Error('status is empty or blank')
+
+    //     return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
+    //         method: 'PATCH',
+    //         headers: {
+    //             'Content-Type': 'application/json; charset=utf-8',
+    //             'Authorization': `Bearer ${this._token}`
+    //         },
+    //         body: JSON.stringify({ status })
+    //     })
+    //         .then(res => res.json())
+    //         .then(res => {
+    //             if (res.error) throw Error(res.error)
+    //         })
+    // },
 }
 
 // export default logic

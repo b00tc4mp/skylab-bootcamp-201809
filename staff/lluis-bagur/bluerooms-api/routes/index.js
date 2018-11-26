@@ -63,6 +63,30 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
+router.post('/users/:id/profilePicture', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return new Promise((resolve, reject) => {
+            const busboy = new Busboy({ headers: req.headers })
+
+            busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+                logic.addProfilePicture(id, file)
+            })
+
+            busboy.on('finish', () => resolve())
+
+            busboy.on('error', err => reject(err))
+
+            req.pipe(busboy)
+        })
+            .then(() => res.json({
+                message: 'photo uploaded'
+            }))
+    }, res)
+})
+
 router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
         const { params: { id }, sub, body: { name, surname, username, newPassword, password } } = req
@@ -80,17 +104,14 @@ router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (re
 
 // ....................  RENTAL ROUTES .....................//
 
-//ADD
+//ADD RENTALS
 
 router.post('/users/:id/rentals', jsonBodyParser, (req, res) => {
-    debugger
     routeHandler(() => {
         const { params: { id }, sub, body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
-
         return logic.addRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate)
             .then(() => {
                 res.status(201)
-                debugger
 
                 res.json({
                     message: `${title} successfully created`
@@ -99,9 +120,21 @@ router.post('/users/:id/rentals', jsonBodyParser, (req, res) => {
     }, res)
 })
 
-// LIST BY ID
+// LIST RENTALS BY ID
 
-router.get('/users/:id/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+router.get('/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        return logic.retriveRentals()
+            .then(rentals => {
+                return res.json({
+                    data: rentals
+                })
+            }     
+            )
+    }, res)
+})
+
+router.get('/users/:id/rentals', [jsonBodyParser], (req, res) => {
         routeHandler(() => {
             const { params: { id }, sub } = req
     
@@ -109,26 +142,38 @@ router.get('/users/:id/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser
     
             return logic.listRentalByUserId(id)
                 .then(rentals => {
-                    debugger
                     return res.json({
                         data: rentals
                     })
-                }
-                    
-                    
+                }     
                 )
         }, res)
     })
 
-    //UPDATE
+    router.get('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+        routeHandler(() => {
+            const { sub, params: { id, rentalId } } = req
+    
+            if (id !== sub) throw Error('token sub does not match user id')
+    
+            return logic.listRentalByRentalId(id, rentalId)
+                .then(rentals => {
+                    return res.json({
+                        data: rentals
+                    })
+                })
+        }, res)
+    })
 
-router.patch('/users/:id/rentals/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+
+    //UPDATE RENTAL
+
+router.patch('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { params: { id }, sub, body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
-
+    
+        const { sub, params: { id, rentalId },  body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
         if (id !== sub) throw Error('token sub does not match user id')
-
-        return logic.updateRental(id, title ? title : null, city ? city : null, street ? street : null, category ? category : null, image ? image : null, bedrooms ? bedrooms : null, shared ? shared : null, description ? description : null, dailyRate ? dailyRate : null)
+        return logic.updateRental(id, rentalId, title ? title : null, city ? city : null, street ? street : null, category ? category : null, image ? image : null, bedrooms ? bedrooms : null, shared ? shared : null, description ? description : null, dailyRate ? dailyRate : null)
             .then(() =>
                 res.json({
                     message: 'Rental updated'
@@ -137,13 +182,16 @@ router.patch('/users/:id/rentals/:id', [bearerTokenParser, jwtVerifier, jsonBody
     }, res)
 })
 
+
+// DELETE RENTAL
+
 router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
         routeHandler(() => {
             const { sub, params: { id, rentalId } } = req
     
             if (id !== sub) throw Error('token sub does not match user id')
     
-            return logic.removePostit(id, rentalId)
+            return logic.removeRental(id, rentalId)
                 .then(() => res.json({
                     message: 'Rental removed'
                 }))

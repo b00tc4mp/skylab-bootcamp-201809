@@ -1,12 +1,19 @@
 import React from 'react'
 import './Landing.css'
 import Search from '../Search/Search'
-import RentalList from '../RentalList/RentalList'
+import { RentalCard } from '../RentalCard/RentalCard'
 
+// state = {
+//     Rentals: ""
+// }
 
 
 class Landing extends React.Component {
 
+    // componentDidMount() {
+    //     logic.retriveRentals()
+    //         .then(Rentals => { this.setState({ Rentals }) })
+    // }
 
     render() {
         return <div className="home">
@@ -19,7 +26,7 @@ class Landing extends React.Component {
             </div>
             <div className="results">
                 <div className='container'>
-                    <RentalList/>
+                {/* {Rentals.map((rental) => { return <RentalCard rental={rental} onDeleteRental={this.handleRemoveRental} onEditRental={this.handleEditRental} onRentalCardClick={this.handleRentalCardClick} /> })} */}
                 </div>
 
             </div>

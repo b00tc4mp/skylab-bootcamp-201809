@@ -27,10 +27,12 @@ class Navbar extends Component {
 
     toggleModalLogin(){
         this.setState({ showLogin: !this.state.showLogin })
+        debugger
         
     }
     toggleModalRegister(){
         this.setState({ showRegister: !this.state.showRegister })
+        debugger
     }
 
     render() {
@@ -51,12 +53,11 @@ class Navbar extends Component {
                     <button type="button"  className="header__btn" onClick={() => this.toggleModalRegister()}>Register</button>
                 </div>}
             </div>
-            {this.state.showLogin && 
-            <Login handleLoggedIn={this.props.handleLoggedIn} toggle={() =>this.toggleModalLogin()}/>
-        }   
-        {this.state.showRegister && 
-            <Register toggle={() =>this.toggleModalRegister()}/>
-        }   
+            
+            <Login showModal={this.state.showLogin} onShowHideModal={() => this.toggleModalLogin()} handleLoggedIn={this.props.handleLoggedIn} onGoBack={this.handleGoBack}/>
+          
+            <Register showModal={this.state.showRegister} onShowHideModal={() => this.toggleModalRegister()} toggle={() =>this.toggleModalRegister()}/>
+ 
 
         </nav>
     }

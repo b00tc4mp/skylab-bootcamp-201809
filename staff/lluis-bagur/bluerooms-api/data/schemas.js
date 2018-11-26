@@ -46,6 +46,14 @@ const Rental = new Schema({
         required: true,
         lowercase: true
     },
+    // latitude: {
+    //     type: Number,
+    //     required: true
+    // },
+    // longitud: {
+    //     type: Number,
+    //     required: true
+    // },
     street: {
         type: String,
         required: true,
@@ -60,13 +68,13 @@ const Rental = new Schema({
         type: String,
         required: true
     },
-    bedrooms: String,
+    bedrooms: Number,
     shared: Boolean,
     description: {
         type: String,
         required: true
     },
-    dailyRate: String,
+    dailyRate: Number,
     createdAt: {
         type: Date,
         default: Date.now
@@ -126,9 +134,50 @@ const User = new Schema({
     }]
 })
 
+const Picture = new Schema({
+    url: {
+        type: String,
+        required: true
+    },
+    public_id: {
+        type: String,
+        required: true
+    },
+    userId: {
+        type: ObjectId,
+        ref: 'User',
+        required: true
+    },
+    placeId: {
+        type: ObjectId,
+        red: 'Place',
+        required: true
+    } 
+})
+
+const ProfilePicture = new Schema({
+    url: {
+        type: String,
+        required: true
+    },
+    public_id: {
+        type: String,
+        required: true
+    },
+    userId: {
+        type: ObjectId,
+        ref: 'User',
+        required: true
+    },
+    
+})
+
 module.exports = {
     Booking,
     Rental,
-    User
+    User,
+    Picture,
+    ProfilePicture
+
 }
 

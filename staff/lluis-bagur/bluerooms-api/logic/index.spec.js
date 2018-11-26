@@ -18,17 +18,18 @@ describe('logic', () => {
 
     describe('user', () => {
         describe('register', () => {
-            let name, surname, username, password
+            let name, surname, username, password, email
 
             beforeEach(() => {
                 name = `name-${Math.random()}`
                 surname = `surname-${Math.random()}`
                 username = `username-${Math.random()}`
                 password = `password-${Math.random()}`
+                email = `email-${Math.random()}`
             })
 
             it('should succeed on correct data', async () => {
-                const res = await logic.registerUser(name, surname, username, password)
+                const res = await logic.registerUser(name, surname, username, password, email)
 
                 expect(res).to.be.undefined
 
@@ -43,18 +44,31 @@ describe('logic', () => {
                 expect(user.surname).to.equal(surname)
                 expect(user.username).to.equal(username)
                 expect(user.password).to.equal(password)
+                expect(user.email).to.equal(email)
             })
 
             it('should fail on undefined name', () => {
-                expect(() => logic.registerUser(undefined, surname, username, password)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(undefined, surname, username, password, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty name', () => {
-                expect(() => logic.registerUser('', surname, username, password)).to.throw(ValueError, 'name is empty or blank')
+                expect(() => logic.registerUser('', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
             })
 
             it('should fail on blank name', () => {
-                expect(() => logic.registerUser('   \t\n', surname, username, password)).to.throw(ValueError, 'name is empty or blank')
+                expect(() => logic.registerUser('   \t\n', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
+            })
+
+            it('should fail on undefined surname', () => {
+                expect(() => logic.registerUser(name, undefined, username, password, email)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty surname', () => {
+                expect(() => logic.registerUser(name, '', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
+            })
+
+            it('should fail on blank surname', () => {
+                expect(() => logic.registerUser(name, '   \t\n', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
             })
 
             // TODO other test cases
@@ -62,14 +76,6 @@ describe('logic', () => {
 
         describe('authenticate', () => {
             let user
-
-            // beforeEach(() => {
-            //     user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-
-            //     return user.save()
-            // })
-
-            // ALT
             beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })).save())
 
             it('should authenticate on correct credentials', async () => {

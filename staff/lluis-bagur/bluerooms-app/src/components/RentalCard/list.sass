@@ -1,35 +1,118 @@
 .card__rental
-    width: 100%
+    width: 30%
     height: 100%
     display: flex
-    justify-content: center
-    align-items: center
-    flex-direction: row
+    justify-content: space-between
+    align-items: start
+    flex-direction: column
     margin-top: 20px
-    padding-bottom: 30px
-    border-bottom: 1px solid teal
+    margin: 10px
+    box-shadow:0px 0px 11px 1px rgba(111, 89, 93, 0.19)
     .img__card
-        width: 30%
-        min-width: 200px
+        width: 100%
         height: 100%
         
     .info__card
-        width: 60%
+        display: flex
+        align-items: start
+        flex-direction: column
+        width: 100%
         height: 100%
         padding: 20px
         justify-content: start
 
     .info__card2
         justify-content: start
-        width: 30%
+        flex-direction: column
+        width: 100%
         height: 100%
-        padding: 20px
+        align-items: center
+        display: flex
+
+    .info__btns
+        display: flex
+        justify-content: center
+        align-items: center
+        flex-direction: row
+        width: 100%
+        height: 100%
+
+        
     .card_line
         display: flex
         justify-content: start
-        align-items: center
+        align-items: start
         flex-direction: row
         
         .card__text
             margin-bottom: .5rem
 
+    .card__title
+        display: flex
+        justify-content: center
+        align-items: center
+        width: 100%
+        margin-bottom: 10px
+        
+        .card__title--text
+            font-size: 1.5em
+
+
+
+
+// BUTTONS
+
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,900)
+
+$basic_button_width: 35px
+$basic_button_height: 35px
+$hover_button_width: 130px
+
+@mixin circle($color) 
+  background-color: $color
+  color: #ffffff
+  width: $basic_button_width
+  height: $basic_button_height
+  border-radius: $basic_button_height / 2
+  margin-bottom: $basic_button_height / 2
+  text-align: center
+  font-size: 120%
+  line-height: $basic_button_height
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px
+
+* 
+  margin: 0
+  padding: 0
+
+  .buttons 
+    margin-top: 10px
+    margin: 10px
+    .button 
+      transition: all 0.3s
+      overflow: hidden
+      cursor: pointer
+
+    .button-edit 
+      @include circle(#009ca2)
+    
+    .button-edit:hover 
+      width: $hover_button_width
+      i:after 
+        margin-left: 10px
+        content: " edit"
+        font-size: 16px
+        font-family: 'Poiret One', cursive
+        letter-spacing: 1px
+    .button-remove 
+      @include circle(#f44336)
+    
+    .button-remove:hover 
+      width: $hover_button_width
+      i:after 
+        margin-left: 10px
+        content: "remove"
+        font-size: 16px
+        font-family: 'Poiret One', cursive
+        letter-spacing: 1px

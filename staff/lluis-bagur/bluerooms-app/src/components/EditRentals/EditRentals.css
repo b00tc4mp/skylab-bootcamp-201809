@@ -1,0 +1,49 @@
+.map{
+  width: 100%;
+  height: 300px;
+  background: black;
+  margin-bottom: 30px;
+}
+
+.form__addRentals{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+   
+
+}
+.form__dates{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px;
+    width: 90%;
+    background: #fff;
+    box-shadow: 0 0 3px 1px rgb(255, 255, 255)
+}
+
+
+  .input__form{
+    font-size: 16px;
+    line-height: 1.5;
+    border: none;
+    background: #FFFFFF;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    width: 70%;
+    padding: .5em 1em .5em 2.5em;
+    margin-top: 10px;
+    } 
+    
+    .input__form::placeholder{
+      color: #838D99;
+    }
+    
+    .input__form:focus {
+      outline: none;
+      box-shadow: 0 4px 10px 0 rgba(31, 152, 182, 0.26);
+    }

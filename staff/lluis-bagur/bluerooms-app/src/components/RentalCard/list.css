@@ -1,39 +1,124 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,900);
 .card__rental {
-  width: 100%;
+  width: 30%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+  flex-direction: column;
   margin-top: 20px;
-  padding-bottom: 30px;
-  border-bottom: 1px solid teal;
+  margin: 10px;
+  box-shadow: 0px 0px 11px 1px rgba(111, 89, 93, 0.19);
 }
 .card__rental .img__card {
-  width: 30%;
-  min-width: 200px;
+  width: 100%;
   height: 100%;
 }
 .card__rental .info__card {
-  width: 60%;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  width: 100%;
   height: 100%;
   padding: 20px;
   justify-content: start;
 }
 .card__rental .info__card2 {
   justify-content: start;
-  width: 30%;
+  flex-direction: column;
+  width: 100%;
   height: 100%;
-  padding: 20px;
+  align-items: center;
+  display: flex;
+}
+.card__rental .info__btns {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
 }
 .card__rental .card_line {
   display: flex;
   justify-content: start;
-  align-items: center;
+  align-items: start;
   flex-direction: row;
 }
 .card__rental .card_line .card__text {
   margin-bottom: 0.5rem;
+}
+.card__rental .card__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.card__rental .card__title .card__title--text {
+  font-size: 1.5em;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+* .buttons {
+  margin-top: 10px;
+  margin: 10px;
+}
+* .buttons .button {
+  transition: all 0.3s;
+  overflow: hidden;
+  cursor: pointer;
+}
+* .buttons .button-edit {
+  background-color: #009ca2;
+  color: #ffffff;
+  width: 35px;
+  height: 35px;
+  border-radius: 17.5px;
+  margin-bottom: 17.5px;
+  text-align: center;
+  font-size: 120%;
+  line-height: 35px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-edit:hover {
+  width: 130px;
+}
+* .buttons .button-edit:hover i:after {
+  margin-left: 10px;
+  content: " edit";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+* .buttons .button-remove {
+  background-color: #f44336;
+  color: #ffffff;
+  width: 35px;
+  height: 35px;
+  border-radius: 17.5px;
+  margin-bottom: 17.5px;
+  text-align: center;
+  font-size: 120%;
+  line-height: 35px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-remove:hover {
+  width: 130px;
+}
+* .buttons .button-remove:hover i:after {
+  margin-left: 10px;
+  content: "remove";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
 }
 
 /*# sourceMappingURL=list.css.map */

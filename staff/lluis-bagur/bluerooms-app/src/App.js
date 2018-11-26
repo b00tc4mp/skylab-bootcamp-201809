@@ -6,7 +6,7 @@ import Navbar from './components/Navbar/Navbar'
 import Profile from './components/UserProfile/UserProfile'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
-logic.url = 'http://localhost:5000/api'
+logic.url = 'http://localhost:5000/api' //poner en un .ENV, con la API KEY
 
 class App extends Component {
     state = {
@@ -16,7 +16,9 @@ class App extends Component {
         user: ''
     }
     componentDidMount = () => {
-        //this.props.history.push('/')
+        // logic.retriveRentals()
+        //     .then(user => { this.setState({ user }) })
+        
         const res = logic.loggedIn
         this.setState({ loggedIn: res })
     }
@@ -32,6 +34,7 @@ class App extends Component {
         logic.logout()
         this.props.history.push('/')
     }
+   
 
     handleProfileClick = () => {
         this.props.history.push('/user')

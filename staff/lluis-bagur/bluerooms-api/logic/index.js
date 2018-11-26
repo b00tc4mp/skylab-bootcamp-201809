@@ -1,4 +1,4 @@
-const { User, Rental, Booking } = require('../data')
+const { User, Rental, Booking, Picture, ProfilePicture } = require('../data')
 const { AlreadyExistsError, AuthError, NotAllowedError, NotFoundError } = require('../errors')
 const validate = require('../utils/validate')
 
@@ -7,7 +7,7 @@ const validate = require('../utils/validate')
 
 // ....................  USER LOGIC .....................//
 
-const logic = { 
+const logic = {
     registerUser(name, surname, username, password, email) { //REGISTER
         validate([{ key: 'name', value: name, type: String }, { key: 'surname', value: surname, type: String }, { key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }, { key: 'email', value: email, type: String }])
 
@@ -44,61 +44,96 @@ const logic = {
 
             user.id = id
 
+            const rentals = user.rentals
+            rentals.forEach(rental => {
+                rental.id=rental._id
+                delete rental._id
+                delete rental.__v
+
+            });
             return user
         })()
     },
 
-    updateUser(id, name, surname, username, newPassword, password, email) { // UPDATE USERS
-        validate([ 
-            { key: 'id', value: id, type: String },
-            { key: 'name', value: name, type: String, optional: true },
-            { key: 'surname', value: surname, type: String, optional: true },
-            { key: 'username', value: username, type: String, optional: true },
-            { key: 'password', value: password, type: String, optional: true },
-            { key: 'email', value: email, type: String }
+    addProfilePicture(userId, file) {
+        validate([
+            { key: 'userId', value: userId, type: String },
+
         ])
 
         return (async () => {
-            const user = await User.findById(id)
+            let user = await User.findById(userId)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            if (!user) throw new NotFoundError(`user does not exist`)
 
-            if (user.password !== password) throw new AuthError('invalid password')
+            const result = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream((result, error) => {
+                    if (error) return reject(error)
 
-            if (username) {
-                const _user = await User.findOne({ username })
+                    resolve(result)
+                })
 
-                if (_user) throw new AlreadyExistsError(`username ${username} already exists`)
+                file.pipe(stream)
+            })
+            profilePicture = new ProfilePicture({ url: result.url, public_id: result.public_id, userId })
 
-                name != null && (user.name = name)
-                surname != null && (user.surname = surname)
-                user.username = username
-                newPassword != null && (user.password = newPassword)
+            await profilePicture.save()
 
-                await user.save()
-            } else {
-                name != null && (user.name = name)
-                surname != null && (user.surname = surname)
-                newPassword != null && (user.password = newPassword)
+            user.profilePicture = profilePicture.id
 
-                await user.save()
-            }
+            await user.save()
         })()
     },
+
+    // updateUser(id, name, surname, username, newPassword, password, email) { // UPDATE USERS
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'name', value: name, type: String, optional: true },
+    //         { key: 'surname', value: surname, type: String, optional: true },
+    //         { key: 'username', value: username, type: String, optional: true },
+    //         { key: 'password', value: password, type: String, optional: true },
+    //         { key: 'email', value: email, type: String }
+    //     ])
+
+    //     return (async () => {
+    //         const user = await User.findById(id)
+
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+    //         if (user.password !== password) throw new AuthError('invalid password')
+
+    //         if (username) {
+    //             const _user = await User.findOne({ username })
+
+    //             if (_user) throw new AlreadyExistsError(`username ${username} already exists`)
+
+    //             name != null && (user.name = name)
+    //             surname != null && (user.surname = surname)
+    //             user.username = username
+    //             newPassword != null && (user.password = newPassword)
+
+    //             await user.save()
+    //         } else {
+    //             name != null && (user.name = name)
+    //             surname != null && (user.surname = surname)
+    //             newPassword != null && (user.password = newPassword)
+
+    //             await user.save()
+    //         }
+    //     })()
+    // },
 
     //........................... RENTAL LOGIC .......................//
 
     // ADD RENTAL
 
     addRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate) {
-        validate([{ key: 'id', value: id, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: String }, { key: 'shared', value: shared, type: String }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: String }])
+        validate([{ key: 'id', value: id, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
 
         return (async () => {
             const user = await User.findById(id)
-            debugger
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
-            debugger
 
             rental = new Rental({ title, city, street, category, image, bedrooms, shared, description, dailyRate, user: user.id })
             await rental.save()
@@ -110,7 +145,7 @@ const logic = {
         })()
     },
 
-    //EDIT RENTAL
+    //UPDATE RENTAL
 
     updateRental(id, rentalId, title, city, street, category, image, bedrooms, shared, description, dailyRate) { // UPDATE USERS
         validate([{ key: 'id', value: id, type: String }, { key: 'rentalId', value: rentalId, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
@@ -125,61 +160,103 @@ const logic = {
 
             if (!rental) throw new NotFoundError(`Rental with id ${id} not found`)
 
-                title != null && (rental.title = title)
-                city != null && (rental.city = city)
-                street != null && (rental.street = street)
-                category != null && (rental.category = category)
-                image != null && (rental.image = image)
-                bedrooms != null && (rental.bedrooms = bedrooms)
-                shared != null && (rental.shared = shared)
-                description != null && (rental.description = description)
-                dailyRate != null && (rental.dailyRate = dailyRate) 
+            debugger
 
-                await rental.save()
+            title != null && (rental.title = title)
+            city != null && (rental.city = city)
+            street != null && (rental.street = street)
+            category != null && (rental.category = category)
+            image != null && (rental.image = image)
+            bedrooms != null && (rental.bedrooms = bedrooms)
+            shared != null && (rental.shared = shared)
+            description != null && (rental.description = description)
+            dailyRate != null && (rental.dailyRate = dailyRate)
+
+            debugger
+
+            await rental.save()
         })()
     },
 
-    //LIST RENTAL BY ID
+    //LIST RENTAL BY ID'S
 
-    listRentalByUserId(id){
-        
+    retriveRentals() {
+
+        return (async () => {
+            const rentals = await Rentals.map()
+
+            return rentals
+        })()
+    },
+
+    listRentalByUserId(id) {
+
         validate([{ key: 'id', value: id, type: String }])
 
         return (async () => {
-            const user = await User.findById(id).populate('rentals').exec()
-            
-            debugger
-            
-            // if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            const user = await User.findById(id,{ '_id': 0, __v: 0 }).populate('rentals').lean().exec()
 
-            //     const rentals = await Promise.all(user.rentals.map(async rentalId => await Rental.findById(rentalId)))
-                
-                return user.rentals
-    })()
+            const rentals = user.rentals
+            rentals.forEach(rental => {
+                delete rental._id
+                delete rental.__v
+
+            });
+
+            return user.rentals
+        })()
     },
-    
+
+    listRentalByRentalId(id, rentalId) {
+
+        validate([{ key: 'id', value: id, type: String },
+        { key: 'rentalId', value: rentalId, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id).populate('rentals').lean().exec()
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const rental = await Rental.findById(rentalId, { '_id': 0, __v: 0 }).lean().exec()
+            if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
+            rental.id = rentalId
+
+            return rental
+        })()
+    },
+
+    //REMOVE
+
     removeRental(id, rentalId) {
-            validate([
-                { key: 'id', value: id, type: String },
-                { key: 'rentalId', value: rentalId, type: String }
-            ])
-    
-            return (async () => {
-                const user = await User.findById(id)
-    
-                if (!user) throw new NotFoundError(`user with id ${id} not found`)
-    
-                const rental = await Rental.findById(rentalId)
-    
-                if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
-    
-                await rental.remove()
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'rentalId', value: rentalId, type: String }
+        ])
 
-            })()
-        },
+        return (async () => {
+            const user = await User.findById(id)
 
-   
-       
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const rentals = user.rentals
+
+            const _rent = rentals.filter(_rental => _rental.toString() !== rentalId)
+
+            user.rentals = _rent 
+
+            await user.save() // delete Rewntal ID form User.rentals
+            
+            const rental = await Rental.findById(rentalId)
+
+            if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
+
+            await rental.remove()
+
+        })()
+    },
+
+
+
     // addCollaborator(id, collaboratorUsername) {
     //     validate([
     //         { key: 'id', value: id, type: String },

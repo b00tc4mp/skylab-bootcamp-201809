@@ -3,20 +3,29 @@ import './AddRentals.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import logic from '../../logic'
 import { withRouter } from "react-router";
-
+import GoogleMapReact from 'google-map-react';
 
 class AddRentals extends Component {
-  state = { title: "", city: "", street: "", category: "", description:"", bedrooms: "", shared:"false", image: "none", dailyRate:"", loggedIn: false }
+  state = { title: "", city: "", street: "", category: "", description:"", bedrooms: "", shared: false, latitude:"", longitude: "", image: "none", dailyRate:"", loggedIn: false }
 
-  componentWillReceiveProps(props) {
+// componentWillReceiveProps(props) {
+//     if (props.isUpdate){
+//       //this.setState({title:props.data.title, city:props.data.city}, ()=>{
+//        //this.geocodeAddress()
+//       //})
+//     }else{
+//       this.setState({ modal: props.showModal })  
+//     }
+    
+componentWillReceiveProps(props) {
     this.setState({ modal: props.showModal })
-  }
+}
 
-  toggle = () => {
+toggle = () => {
     this.props.onShowHideModal()
   }
 
-  handleTitleChange = event => {
+handleTitleChange = event => {
     const title = event.target.value
 
     this.setState({ title })
@@ -30,7 +39,10 @@ handleCityChange = event => {
 handleStreetChange = event => {
   const street = event.target.value
 
-  this.setState({ street })
+  this.setState({ street }, ()=>{
+    
+    
+  })
 }
 
 handleCategoryChange = event => {
@@ -45,21 +57,27 @@ handleDescribeChange = event => {
   this.setState({ description })
 }
 
+
 handleBedroomsChange = event => {
-  const bedrooms = event.target.value
+  const bedrooms = parseInt(event.target.value)
 
   this.setState({ bedrooms })
 }
 
 handleSharedChange = event => {
-  const shared = event.target.value
+  let shared = event.target.value
+  if(shared == "true"){
+    shared=true
+  }
+  else{
+    shared= false
+  }
 
   this.setState({ shared })
 }
 
-handlePraceChange = event => {
-  const dailyRate = event.target.value
-
+handleDailyRateChange = event => {
+  const dailyRate = parseInt(event.target.value,10)
   this.setState({ dailyRate })
 }
 
@@ -67,10 +85,9 @@ handleSubmit = event => {
         event.preventDefault()
 
         const { title, city, street, category, image, bedrooms, shared, description, dailyRate } = this.state
-        debugger
 
         this.handleAddRental(title, city, street, category, image, bedrooms, shared, description, dailyRate)
-        debugger
+
     }
 
     handleAddRental = (title, city, street, category, image, bedrooms, shared, description, dailyRate) => {
@@ -78,26 +95,80 @@ handleSubmit = event => {
         logic.addRentals(title, city, street, category, image, bedrooms, shared, description, dailyRate)
             .then(() => {
                 this.setState({ error: null })
-                debugger
-                this.props.toggle()
+                this.props.onShowHideModal()
             })
             .catch(err => this.setState({ error: err.message }))
     } catch (err) {
         this.setState({ error: err.message })
     }
 }
+
+    setMapInstance = ({ map, maps }) => {
+
+      this.map = map
+      this.mapsApi = maps
+      this.map.markers = []
+      // if (this.state.form_data)
+      //     this.handleMapClick({ x: 0, y: 0, lat: this.state.form_data.latitude, lng: this.state.form_data.longitude, event: null })
+    }
+
+    handleMapClick = ({ x, y, lat, lng, event }) => {
+
+      this.map.markers.forEach(marker => {
+          marker.setMap(null)
+      })
+    
+      this.setState({ latitude: lat, longitude: lng  })
+      let marker = new this.mapsApi.Marker({
+          position: { lat: lat, lng: lng },
+          map: this.map,
+          // icon: require('../../assets/img/hive.ico')
+      });
+      this.map.markers.push(marker)
+  }
+
+  geocodeAddress = ()=> {
+    let geocoder = new this.mapsApi.Geocoder()
+    this.map.markers.forEach(marker => {
+      marker.setMap(null)
+  })
+    var address = this.state.street
+    geocoder.geocode({'address': address}, (results, status) =>{
+      if (status === 'OK') {
+        this.map.setCenter(results[0].geometry.location);
+        var marker = new this.mapsApi.Marker({
+          map: this.map,
+          position: results[0].geometry.location
+        });
+        this.map.markers.push(marker)
+      } else {
+        // alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
   
 
   render() {
     return <div>
-      <Modal isOpen={this.state.modal} toggle={this.toggle} className="register-hive">
+      <Modal isOpen={this.state.modal} toggle={this.toggle} className="register-Rental">
         <ModalHeader toggle={this.toggle}>Add a new rental</ModalHeader>
         <ModalBody>
+          <section className="map">
+          <GoogleMapReact
+              defaultCenter={{ lat: 28.4, lng: -16.3 }}
+              defaultZoom={12}
+              bootstrapURLKeys={{ key: "AIzaSyD2T4oMLr7caT6MwUYZI0N_6u65KBZ97jk", language: 'es', region: 'es' }}
+              //onClick={this.handleMapClick}
+              onGoogleApiLoaded={this.setMapInstance}>
+          </GoogleMapReact>
+          </section>
           <form className="form__addRentals" onSubmit={this.handleSubmit}>
             <div className="form__dates">
               <input className="input__form" type="text" placeholder="Title..." onChange={this.handleTitleChange} />
               <input className="input__form" type="text" placeholder="City..." onChange={this.handleCityChange} />
               <input className="input__form" type="text" placeholder="Adress..." onChange={this.handleStreetChange} />
+              <button onClick={this.geocodeAddress}>Search</button>
+             
               <textarea className="input__form" type="text" placeholder="Description..." onChange={this.handleDescribeChange} />
               <select className="input__form" onChange={this.handleCategoryChange}>
                 <option type='text' >Select category</option>
@@ -131,7 +202,7 @@ handleSubmit = event => {
                 <option type='button' value = {true} onClick={this.handleSharedChange}>yes</option>
                 <option type='button' value={false} onClick={this.handleSharedChange}>no</option>
               </select>
-              <input className="input__form" type="text" placeholder="Daily Price..." onChange={this.handlePriceChange} />
+              <input className="input__form" type="text" placeholder="Daily Price..." onChange={this.handleDailyRateChange} />
 
 
               UPLOAD AN IMAGE

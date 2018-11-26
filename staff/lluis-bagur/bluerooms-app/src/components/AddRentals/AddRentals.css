@@ -1,3 +1,10 @@
+.map{
+  width: 100%;
+  height: 300px;
+  background: black;
+  margin-bottom: 30px;
+}
+
 .form__addRentals{
     display: flex;
     justify-content: center;
