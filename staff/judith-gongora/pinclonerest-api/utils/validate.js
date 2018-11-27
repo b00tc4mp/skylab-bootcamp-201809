@@ -12,13 +12,13 @@ function validate(params) {
 
                 break
             case Boolean:
-                if (optional && value === null) break
+                if (optional && (value === null || value === undefined)) break
 
                 if (typeof value !== 'boolean') throw TypeError(`${key} is not a boolean`)
 
                 break
             case Number:
-                if (optional && value === null) break
+                if (optional && (value === null || value === undefined)) break
 
                 if (typeof value !== 'number') throw TypeError(`${key} is not a number`)
         }

@@ -10,13 +10,58 @@ const jsonBodyParser = bodyParser.json()
 
 const routerPin = express.Router()
 
+
+// routerPin.post('/users/:id/url', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+//     routeHandler(() => {
+//         const { sub, params: { id }, body: { url }} = req
+       
+//         if (id !== sub) throw Error('token sub does not match user id')
+
+//         return logic.screenshotUrl(url)
+//             .then(img => {
+//                 debugger
+                
+//                 return res.json({
+//                 data: img
+//             })})
+
+//     }, res)
+// })
+routerPin.get('/users/:id/allPins', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.listAllPins(id)
+            .then(pins => res.json({
+                data: pins
+            }))
+    }, res)
+})
+
+routerPin.get('/users/:id/pinUser/:userPinId', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+
+        const { sub, params: { id, userPinId } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrievePinUser(id, userPinId)
+            .then(user => res.json({
+                data: user
+            }))
+    }, res)
+})
+
 routerPin.post('/users/:id/pins', [bearerTokenParser, jwtVerifier, jsonBodyParser, fileUpload()], (req, res) => {
     routeHandler(() => {
-        const { sub, params: { id }, body: { board, url, title }, files: { photo } } = req
+        debugger
+        const { sub, params: { id }, body: { board, url, title, description }, files: { photo } } = req
        
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.addPin(id, photo.name, photo.data, board, url, title)
+        return logic.addPin(id, photo.name, photo.data, board, url, title, description)
             .then(() => res.json({
                 message: 'pin added'
             }))
@@ -37,13 +82,13 @@ routerPin.get('/users/:id/pins', [bearerTokenParser, jwtVerifier], (req, res) =>
     }, res)
 })
 
-routerPin.patch('/users/:id/pins/:pinId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+routerPin.patch('/users/:id/pin/:pinId/board/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { sub, params: { id, pinId }, body: { board, description } } = req
+        const { sub, params: { id, pinId, boardId }, body: { description } } = req
 
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.modifyPin(id, pinId, board, description )
+        return logic.modifyPin(id, pinId, boardId, description )
             .then(() => res.json({
                 message: 'pin modified'
             }))
@@ -65,69 +110,31 @@ routerPin.delete('/users/:id/pins/:pinId', [bearerTokenParser, jwtVerifier, json
 
 })
 
-routerPin.post('/users/:id/pins/:pinId/comment', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+routerPin.get('/users/:id/pins/:pinId/board', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
-        const { sub, params: { id, pinId }, body: { content } } = req
+        const { sub, params: { id, pinId } } = req
 
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.addComment(id, pinId, content )
-            .then(() => res.json({
-                message: 'comment added'
+        return logic.pinBoard(id, pinId)
+            .then(board => res.json({
+                data: board
             }))
     }, res)
 })
 
-routerPin.put('/users/:id/pins/:pinId/:commentId/reply', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+routerPin.get('/users/:id/pins/:pinId/pinned', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
-        const { sub, params: { id, pinId, commentId }, body: { content } } = req
-
+        const { sub, params: { id, pinId } } = req
+        
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.addCommentReply(id, pinId, commentId, content )
-            .then(() => res.json({
-                message: 'reply added'
+        return logic.isPinned(id, pinId)
+            .then(board => res.json({
+                data: board
             }))
     }, res)
 })
 
-routerPin.post('/users/:id/pins/:pinId/photo', [bearerTokenParser, jwtVerifier, jsonBodyParser, fileUpload()], (req, res) => {
-    routeHandler(() => {
-        const { sub, params: { id, pinId }, body: { content }, files: { photo } } = req
-
-        if (id !== sub) throw Error('token sub does not match user id')
-
-        return logic.addPhoto(id, pinId, photo.name, photo.data, content )
-            .then(() => res.json({
-                message: 'comment photo added'
-            }))
-    }, res)
-})
-
-routerPin.put('/users/:id/pins/:pinId/photo/:photoId/comment', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-    routeHandler(() => {
-        const { sub, params: { id, pinId, photoId }, body: { content } } = req
-
-        if (id !== sub) throw Error('token sub does not match user id')
-
-        return logic.addCommentPhoto(id, pinId, photoId, content )
-            .then(() => res.json({
-                message: 'comment added to photo'
-            }))
-    }, res)
-})
-
-routerPin.put('/users/:id/pins/:pinId/photo/:photoId/comment/:commentId/reply', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-    routeHandler(() => {
-        const { sub, params: { id, pinId, photoId, commentId }, body: { content } } = req
-
-        if (id !== sub) throw Error('token sub does not match user id')
-
-        return logic.addCommentPhotoReply(id, pinId, photoId, commentId, content )
-            .then(() => res.json({
-                message: 'comment added to comment photo'
-            }))
-    }, res)
-})
 
 module.exports = routerPin

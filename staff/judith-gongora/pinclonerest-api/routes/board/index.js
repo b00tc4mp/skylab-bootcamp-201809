@@ -19,8 +19,8 @@ routerBoard.post('/users/:id/boards', [bearerTokenParser, jwtVerifier, jsonBodyP
         if (id !== sub) throw Error('token sub does not match user id')
 
         return logic.addBoard(id, title, secret)
-            .then(() => res.json({
-                message: 'board added'
+            .then(board => res.json({
+                data: board
             }))
 
     }, res)

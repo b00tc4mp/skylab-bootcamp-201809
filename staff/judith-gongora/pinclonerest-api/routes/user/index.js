@@ -90,4 +90,108 @@ routerUser.post('/users/:id/photo', [bearerTokenParser, jwtVerifier, fileUpload(
     }, res)
 })
 
+routerUser.patch('/users/:id/follow/:userId/user', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        
+        const { sub, params: { id, userId }} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.followUser(id, userId)
+            .then(() => res.json({
+                message: 'following user'
+            }))
+
+    }, res)
+})
+
+routerUser.delete('/users/:id/unfollow/:userId/user', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        
+        const { sub, params: { id, userId }} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.unfollowUser(id, userId)
+            .then(() => res.json({
+                message: 'following user remove'
+            }))
+
+    }, res)
+})
+
+routerUser.patch('/users/:id/follow/:boardId/board', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        
+        const { sub, params: { id, boardId }} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.followBoard(id, boardId)
+            .then(() => res.json({
+                message: 'following board'
+            }))
+
+    }, res)
+})
+
+routerUser.patch('/users/:id/pin/:pinId/:boardId', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        
+        const { sub, params: { id, pinId, boardId }} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.savePin(id, pinId, boardId)
+            .then(() => res.json({
+                message: 'pinned save'
+            }))
+
+    }, res)
+})
+
+routerUser.patch('/users/:id/pinned/:pinId/board/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        
+        const { sub, params: { id, pinId, boardId }, body : {description}} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.modifyPinned(id, pinId, boardId, description)
+            .then(() => res.json({
+                message: 'pinned modify'
+            }))
+
+    }, res)
+})
+
+routerUser.delete('/users/:id/pin/:pinId/remove', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, pinId }} = req
+        
+        if (id !== sub) throw Error('token sub does not match user id')
+        
+        return logic.removePinned(id, pinId)
+            .then(() => res.json({
+                message: 'pinned removed'
+            }))
+
+    }, res)
+})
+
+routerUser.get('/users/:id/following/:userId', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { params: { id, userId }, sub } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.isFollowing(id, userId)
+            .then(user =>
+                res.json({
+                    data: user
+                })
+            )
+    }, res)
+})
+
 module.exports = routerUser

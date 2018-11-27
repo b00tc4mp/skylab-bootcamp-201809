@@ -1,4 +1,4 @@
-const { Schema, SchemaTypes: { ObjectId } } = require('mongoose')
+const { Schema, model, SchemaTypes: { ObjectId } } = require('mongoose')
 
 const Comment = new Schema({
     user: {
@@ -39,6 +39,10 @@ const Photo = new Schema({
         type: ObjectId,
         ref: 'User'
     }],
+    multimedia: {
+        type: String,
+        required: true
+    },
     comments: [Comment],
     date: {
         type: Date,
@@ -101,7 +105,9 @@ const Board = new Schema({
         type: String
     },
     cover: {
-        type: String
+        type: String,
+        default: 'https://res.cloudinary.com/skylabcoders/image/upload/v1542973821/Solid_gray.png',
+        required: true
     },
     secret: {
         type: Boolean,
@@ -124,6 +130,18 @@ const Board = new Schema({
     }]
 })
 
+const Pinned = new Schema({
+    pin: {
+        type: ObjectId,
+        ref: 'Pin'
+    },
+    board: {
+        type: ObjectId,
+        ref: 'Board'
+    },
+    description: String
+})
+
 const User = new Schema({
     name: {
         type: String
@@ -133,7 +151,8 @@ const User = new Schema({
     },
     username: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
     email: {
         type: String,
@@ -153,30 +172,35 @@ const User = new Schema({
         ref: 'User'
     }],
     img: {
-        type: String
+        type: String,
+        default: 'https://res.cloudinary.com/skylabcoders/image/upload/v1542887906/avatar.png'
     },
-    boards :[{
+    boards: [{
         type: ObjectId,
         ref: 'Boards'
     }],
-    age:{
+    age: {
         type: Number,
         required: true
     },
-    pins:[{
-        type: ObjectId,
-        ref: 'Pin'
-    }],
-    tries:[{
+    pins: [Pinned],
+    tries: [{
         type: ObjectId,
         ref: 'Pin'
     }]
 })
+
 
 module.exports = {
     Pin,
     User,
     Comment,
     Photo,
-    Board
+    Board,
+    Pinned
 }
+
+
+
+
+
