@@ -65,8 +65,8 @@ class Login extends Component {
                         <div className="form">
                             <input className="input__form" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
                             <input className="input__form" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-                            <button className="header__btn" type="submit">Login</button>
-                            <button className="header__btn" onClick={this.props.toggle}>back</button>
+                            <button className="form__btn" type="submit">Login</button>
+                            <button className="form__btn" onClick={this.props.toggle}>back</button>
                         </div>
                     </form>
                 </ModalBody>

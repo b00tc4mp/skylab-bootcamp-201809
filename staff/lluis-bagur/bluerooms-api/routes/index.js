@@ -122,10 +122,11 @@ router.post('/users/:id/rentals', jsonBodyParser, (req, res) => {
 
 // LIST RENTALS BY ID
 
-router.get('/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+router.get('/rentals', (req, res) => {
     routeHandler(() => {
         return logic.retriveRentals()
             .then(rentals => {
+                debugger
                 return res.json({
                     data: rentals
                 })
@@ -133,6 +134,24 @@ router.get('/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, r
             )
     }, res)
 })
+
+router.get('/rentals/:idRental', [jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { params: { idRental } } = req
+
+        debugger
+
+        return logic.retriveRental(idRental)
+            .then(rental => {
+                return res.json({
+                    data: rental
+                })
+                debugger
+            }     
+            )
+    }, res)
+})
+
 
 router.get('/users/:id/rentals', [jsonBodyParser], (req, res) => {
         routeHandler(() => {
@@ -165,6 +184,20 @@ router.get('/users/:id/rentals', [jsonBodyParser], (req, res) => {
         }, res)
     })
 
+
+    router.post('/rentals/:query', [jsonBodyParser], (req, res) => {
+        routeHandler(() => {
+            const { params: { query } } = req
+            debugger
+        
+            return logic.listRentalByQuery(query)
+                .then(rentals => {
+                    return res.json({
+                        data: rentals
+                    })
+                })
+        }, res)
+    })
 
     //UPDATE RENTAL
 
@@ -201,6 +234,29 @@ router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, j
 //
 
 // ....................  BOOKING ROUTES .....................//
+
+
+//ADD BOOKING
+
+router.post('/users/:id/rentals/:rentalId',[bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    debugger
+    routeHandler(() => {
+        const { params: { id, rentalId }, sub, body: { endAt, startAt, totalPrice, days, guests} } = req
+
+        debugger
+        if (id !== sub) throw Error('token sub does not match user id')
+        debugger
+
+        return logic.addBooking(id, rentalId, endAt, startAt, totalPrice, days, guests)
+            .then(() => {
+                res.status(201)
+
+                res.json({
+                    message: `your booking has been succesfully`
+                })
+            })
+    }, res)
+})
 
 
 

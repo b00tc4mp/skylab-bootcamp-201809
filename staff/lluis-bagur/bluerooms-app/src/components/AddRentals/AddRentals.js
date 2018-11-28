@@ -66,7 +66,7 @@ handleBedroomsChange = event => {
 
 handleSharedChange = event => {
   let shared = event.target.value
-  if(shared == "true"){
+  if(shared === "true"){
     shared=true
   }
   else{

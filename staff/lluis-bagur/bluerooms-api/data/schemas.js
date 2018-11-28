@@ -46,14 +46,7 @@ const Rental = new Schema({
         required: true,
         lowercase: true
     },
-    // latitude: {
-    //     type: Number,
-    //     required: true
-    // },
-    // longitud: {
-    //     type: Number,
-    //     required: true
-    // },
+   
     street: {
         type: String,
         required: true,

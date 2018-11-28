@@ -4,6 +4,8 @@ import Landing from './components/Landing/Landing'
 import logic from './logic'
 import Navbar from './components/Navbar/Navbar'
 import Profile from './components/UserProfile/UserProfile'
+import SearchResults from './components/SearchResults/SearchResults'
+import RentalPage from './components/RentalPage/RentalPage'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
 logic.url = 'http://localhost:5000/api' //poner en un .ENV, con la API KEY
@@ -46,10 +48,17 @@ class App extends Component {
 
         return <div className="body">
             <Navbar onLogoClick={this.handleLogoClick} handleLoggedIn={this.handleLoggedIn} onRegisterClick={this.handleRegisterClick} isLoggedIn={this.state.loggedIn} onLogoutClick={this.handleLogoutClick} onProfileClick={this.handleProfileClick} name={this.state.name} />
-            <Route exact path="/" render={() => <Landing isLoggedIn={this.state.loggedIn} />} />
+            
             <Route exact path="/user" render={() => <Profile isLoggedIn={this.state.loggedIn} />} />
+            <Route exact path="/" render={() => <Landing isLoggedIn={this.state.loggedIn} />} />
+            <Route exact path="/rentals/search/:query" render={props => <SearchResults query={props.match.params.query} />} />       
+            <Route exact path="/rental/:id" render={props => <RentalPage id={props.match.params.id} />} />       
+
+            
+           
             {/* <Route exact path="/user-profile/:id/rentals/:id" render={()=> <Rental></Rental>}/> */}
             {error && <Error message={error} />}
+            
 
 
             {/* <Route path="/postits" render={() => logic.loggedIn ? <div>

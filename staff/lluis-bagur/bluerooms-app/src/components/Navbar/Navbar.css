@@ -55,11 +55,28 @@
   border-radius: 50px;
   width: 50%;
   max-width: 200px;
-  height: 30px;
-  background: white;
-  border: 1px solid teal;
+  height: 50px;
+  background: #ffffff00;
+  border: 1px solid #00808000;
   align-content: center;
   outline: 0;
+  color: white;
+  font-size: x-large;
+  font-weight: 300;
+}
+.navbar .header .header__btns .header__btn:hover {
+  margin: 10px;
+  border-radius: 50px;
+  width: 50%;
+  max-width: 200px;
+  height: 50px;
+  background: #ffffff2b;
+  border: 1px solid #00808000;
+  align-content: center;
+  outline: 0;
+  color: #00a2a6;
+  font-size: x-large;
+  font-weight: 300;
 }
 
 /*# sourceMappingURL=Navbar.css.map */

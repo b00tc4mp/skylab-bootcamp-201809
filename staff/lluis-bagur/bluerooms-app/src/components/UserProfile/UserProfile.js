@@ -31,7 +31,6 @@ class Profile extends Component {
     }
 
     handleRemoveRental = id => {
-debugger
         return logic.removeRental(id)
             .then(() => this.handleRentalList())
             .then(() => logic.retriveUser())
@@ -70,7 +69,7 @@ debugger
                             </div>
                         </div>
                         <div class="buttons">
-                            <div class="button button-back" >
+                            <div class="button button-back" onClick={this.props.onGoBack}>
                                 {/* <a href="#" onClick={this.props.onGoBack}></a> */}
                                 <i class="fas fa-times-circle"></i>
                             </div>

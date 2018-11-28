@@ -131,8 +131,21 @@ const logic = {
     // LIST RENTALS BY ID
 
     retriveRentals() {
-
         return fetch(`${this.url}/rentals`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
+    retriveRental(idRental) {
+        return fetch(`${this.url}/rentals/${idRental}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
@@ -186,8 +199,6 @@ const logic = {
 
         if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
         if (!id.trim().length) throw Error('id is empty or blank')
-
-        debugger
         
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
@@ -199,15 +210,12 @@ const logic = {
         if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
         if (typeof dailyRate !== 'number') throw TypeError(`${dailyRate} is not a Number`)
 
-
         if (!title.trim()) throw Error('title is empty or blank')
         if (!city.trim()) throw Error('city is empty or blank')
         if (!street.trim()) throw Error('street is empty or blank')
         if (!category.trim()) throw Error('category is empty or blank')
         if (!description.trim()) throw Error('text is empty or blank')
         if (!image.trim()) throw Error('image is empty or blank')
-
-        debugger
 
         return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'PATCH',
@@ -221,7 +229,32 @@ const logic = {
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
-            debugger
+            
+    },
+
+    //SEARCH RENTALS
+
+    searchRentals(query) {
+
+        if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
+       
+        if (!query.trim()) throw Error('query is empty or blank')
+    
+        return fetch(`${this.url}/rentals/${query}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ query })
+        })
+            .then(res => res.json())
+            .then(res => {
+                
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+            
     },
 
 

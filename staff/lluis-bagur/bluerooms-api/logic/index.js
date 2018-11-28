@@ -181,9 +181,15 @@ const logic = {
     //LIST RENTAL BY ID'S
 
     retriveRentals() {
-
         return (async () => {
-            const rentals = await Rentals.map()
+            const rentals = await Rental.find({}).lean()
+
+            rentals.forEach(rental => {
+                rental.id=rental._id
+                delete rental._id
+                delete rental.__v
+
+            });
 
             return rentals
         })()
@@ -225,6 +231,46 @@ const logic = {
         })()
     },
 
+    listRentalByQuery(query) {
+
+        validate([{ key: 'query', value: query, type: String }])
+        
+        const city = query
+        const _query = city ? {city: city.toLowerCase()} : {};
+
+        return (async () => {
+            const rental = await Rental.find( _query, {  __v: 0 }).lean()
+
+            rental.forEach(rental => {
+                rental.id=rental._id
+                delete rental._id
+
+            });
+            return rental
+        })()
+    },
+
+    retriveRental(rentalId) {
+
+        validate([{ key: 'rentalId', value: rentalId, type: String }])
+
+        debugger
+
+        return (async () => {
+            const rental = await Rental.findById(rentalId, {  __v: 0 }).populate('bookings').populate('user').lean().exec()
+
+            rental.user.id = rental.user._id
+            delete rental.user._id
+            delete rental.user.__v
+
+            rental.id=rental._id
+            delete rental._id
+            debugger
+
+            return rental
+        })()
+    },
+
     //REMOVE
 
     removeRental(id, rentalId) {
@@ -255,6 +301,42 @@ const logic = {
         })()
     },
 
+    
+//........................... BOOKING LOGIC .......................//
+
+    // ADD BOOKING
+
+    addBooking(id, rentalId, endAt, startAt, totalPrice, days, guests) {
+        validate([{ key: 'id', value: id, type: String }, 
+        { key: 'rentalId', value: rentalId, type: String }, 
+        { key: 'endAt', value: endAt, type: Date }, 
+        { key: 'startAt', value: startAt, type: Date }, 
+        { key: 'totalPrice', value: totalPrice, type: Number }, 
+        { key: 'days', value: days, type: Number }, 
+        { key: 'guests', value: guests, type: Number }])
+
+        return (async () => {
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const rental = await Rental.findById(rentalId)
+
+            if (!rental) throw new NotFoundError(`rental with id ${rentalId} not found`)
+
+            booking = new Booking({ endAt, startAt, totalPrice, days, guests, user: user.id, rental: rental.id })
+            await booking.save()
+
+            user.bookings.push(booking)
+
+            await user.save()
+
+            rental.bookings.push(booking)
+
+            await rental.save()
+
+        })()
+    },
 
 
     // addCollaborator(id, collaboratorUsername) {

@@ -25,7 +25,7 @@ export function RentalCard(props) {
             <div className="info__btns">
 
                 <div class="buttons">
-                    <div class="button button-edit"onClick={() => props.onEditRental(props.rental.id)}>
+                    <div class="button button-edit" onClick={() => props.onEditRental(props.rental.id)}>
                     <i class="fas fa-edit"></i>
                     </div>
                 </div>

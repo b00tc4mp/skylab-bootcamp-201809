@@ -27,12 +27,10 @@ class Navbar extends Component {
 
     toggleModalLogin(){
         this.setState({ showLogin: !this.state.showLogin })
-        debugger
         
     }
     toggleModalRegister(){
         this.setState({ showRegister: !this.state.showRegister })
-        debugger
     }
 
     render() {

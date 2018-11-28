@@ -31,8 +31,17 @@
 }
 .home .result__container {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
+}
+.home .result__container .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  flex-wrap: wrap;
   align-items: center;
   width: 100vw;
   height: 100%;

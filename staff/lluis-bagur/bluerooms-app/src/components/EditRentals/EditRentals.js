@@ -91,17 +91,14 @@ handleSubmit = event => {
         const { title, city, street, category, image, bedrooms, shared, description, dailyRate } = this.state.rental
 
         this.handleEditRental(title, city, street, category, image, bedrooms, shared, description, dailyRate)
-debugger
     }
 
 handleEditRental = (title, city, street, category, image, bedrooms, shared, description, dailyRate) => {
 try {
-  debugger
     logic.editRental(this.state.rental.id,title, city, street, category, image, bedrooms, shared, description, dailyRate)
         .then(() => {
             this.setState({ error: null })
             this.props.onShowHideModal()
-            debugger
         })
         .catch(err => this.setState({ error: err.message }))
 } catch (err) {
