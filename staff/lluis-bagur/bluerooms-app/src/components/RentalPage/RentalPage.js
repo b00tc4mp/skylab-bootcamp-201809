@@ -85,18 +85,18 @@ class RentalPage extends Component {
                     </section>
                 </div>
             </div>
-           
-                <div className='details-section'>
-                    <div className='row'>
-                        <div className='col-md-8'>
-                            <RentalDetailInfo rental={this.state.rental} />
-                        </div>
-                        <div className='col-md-4'>
-                            <Booking rental={this.state.rental} />
-                        </div>
+
+            <div className='details-section'>
+                <div className='row'>
+                    <div className='col-md-8'>
+                        <RentalDetailInfo rental={this.state.rental} />
+                    </div>
+                    <div className='col-md-4'>
+                        <Booking rental={this.state.rental} id={this.props.id} isLoggedIn={this.props.isLoggedIn}/>
                     </div>
                 </div>
-            
+            </div>
+
             <div className="rental__page__footer">
             </div>
 

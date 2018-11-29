@@ -199,7 +199,7 @@ const logic = {
 
         if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
         if (!id.trim().length) throw Error('id is empty or blank')
-        
+
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
         if (typeof street !== 'string') throw TypeError(`${street} is not a string`)
@@ -207,7 +207,7 @@ const logic = {
         if (typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (typeof bedrooms !== 'number') throw TypeError(`${bedrooms} is not a Number`)
         if (typeof shared !== 'boolean') throw TypeError(`${shared} is not a Boolean`)
-        if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
+        // if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
         if (typeof dailyRate !== 'number') throw TypeError(`${dailyRate} is not a Number`)
 
         if (!title.trim()) throw Error('title is empty or blank')
@@ -215,7 +215,7 @@ const logic = {
         if (!street.trim()) throw Error('street is empty or blank')
         if (!category.trim()) throw Error('category is empty or blank')
         if (!description.trim()) throw Error('text is empty or blank')
-        if (!image.trim()) throw Error('image is empty or blank')
+        // if (!image.trim()) throw Error('image is empty or blank')
 
         return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'PATCH',
@@ -229,7 +229,7 @@ const logic = {
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
-            
+
     },
 
     //SEARCH RENTALS
@@ -237,9 +237,9 @@ const logic = {
     searchRentals(query) {
 
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
-       
+
         if (!query.trim()) throw Error('query is empty or blank')
-    
+
         return fetch(`${this.url}/rentals/${query}`, {
             method: 'POST',
             headers: {
@@ -250,59 +250,45 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
-                
+
                 if (res.error) throw Error(res.error)
                 return res.data
             })
-            
+
     },
 
+    //ADD BOOKING
 
-    // modifyPostit(id, text) {
-    //     if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+    createBooking(proposedBooking) {
+        const { startAt, endAt, guests, days, totalPrice, rental } = proposedBooking;
+        const rentalId = rental.id
 
-    //     if (!id.trim().length) throw Error('id is empty or blank')
+        if (typeof startAt !== 'string') throw TypeError(`${startAt} is not a string`)
+        if (typeof endAt !== 'string') throw TypeError(`${endAt} is not a string`)
+        if (typeof guests !== 'number') throw TypeError(`${guests} is not a Number`)
+        if (typeof days !== 'number') throw TypeError(`${days} is not a number`)
+        if (typeof totalPrice !== 'number') throw TypeError(`${totalPrice} is not a Number`)
 
-    //     if (typeof text !== 'string') throw TypeError(`${text} is not a string`)
+        if (!startAt.trim()) throw Error('startAt is empty or blank')
+        if (!endAt.trim()) throw Error('endAt is empty or blank')
 
-    //     if (!text.trim()) throw Error('text is empty or blank')
 
-    //     return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
-    //         method: 'PUT',
-    //         headers: {
-    //             'Content-Type': 'application/json; charset=utf-8',
-    //             'Authorization': `Bearer ${this._token}`
-    //         },
-    //         body: JSON.stringify({ text })
-    //     })
-    //         .then(res => res.json())
-    //         .then(res => {
-    //             if (res.error) throw Error(res.error)
-    //         })
-    // },
+        return fetch(`${this.url}/users/${this._userId}/rentals/${rentalId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this._token}`
+            },
+            body: JSON.stringify({ startAt, endAt, guests, days, totalPrice })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
 
-    // movePostit(id, status) {
-    //     if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+            })
+    },
 
-    //     if (!id.trim().length) throw Error('id is empty or blank')
-
-    //     if (typeof status !== 'string') throw TypeError(`${status} is not a string`)
-
-    //     if (!status.trim()) throw Error('status is empty or blank')
-
-    //     return fetch(`${this.url}/users/${this._userId}/postits/${id}`, {
-    //         method: 'PATCH',
-    //         headers: {
-    //             'Content-Type': 'application/json; charset=utf-8',
-    //             'Authorization': `Bearer ${this._token}`
-    //         },
-    //         body: JSON.stringify({ status })
-    //     })
-    //         .then(res => res.json())
-    //         .then(res => {
-    //             if (res.error) throw Error(res.error)
-    //         })
-    // },
 }
 
 // export default logic

@@ -4,6 +4,7 @@ import App from './App';
 import 'bootstrap-daterangepicker/daterangepicker.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import'font-awesome/css/font-awesome.min.css'
+import 'react-toastify/dist/ReactToastify.css';
 import * as serviceWorker from './serviceWorker';
 import { HashRouter } from 'react-router-dom'
 

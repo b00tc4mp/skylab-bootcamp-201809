@@ -52,7 +52,7 @@ class App extends Component {
             <Route exact path="/user" render={() => <Profile isLoggedIn={this.state.loggedIn} />} />
             <Route exact path="/" render={() => <Landing isLoggedIn={this.state.loggedIn} />} />
             <Route exact path="/rentals/search/:query" render={props => <SearchResults query={props.match.params.query} />} />       
-            <Route exact path="/rental/:id" render={props => <RentalPage id={props.match.params.id} />} />       
+            <Route exact path="/rental/:id" render={props => <RentalPage id={props.match.params.id} isLoggedIn={this.state.loggedIn}/>} />       
 
             
            

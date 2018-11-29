@@ -126,11 +126,10 @@ router.get('/rentals', (req, res) => {
     routeHandler(() => {
         return logic.retriveRentals()
             .then(rentals => {
-                debugger
                 return res.json({
                     data: rentals
                 })
-            }     
+            }
             )
     }, res)
 })
@@ -139,72 +138,68 @@ router.get('/rentals/:idRental', [jsonBodyParser], (req, res) => {
     routeHandler(() => {
         const { params: { idRental } } = req
 
-        debugger
-
         return logic.retriveRental(idRental)
             .then(rental => {
                 return res.json({
                     data: rental
                 })
-                debugger
-            }     
+            }
             )
     }, res)
 })
 
 
 router.get('/users/:id/rentals', [jsonBodyParser], (req, res) => {
-        routeHandler(() => {
-            const { params: { id }, sub } = req
-    
-            if (id !== sub) throw Error('token sub does not match user id')
-    
-            return logic.listRentalByUserId(id)
-                .then(rentals => {
-                    return res.json({
-                        data: rentals
-                    })
-                }     
-                )
-        }, res)
-    })
+    routeHandler(() => {
+        const { params: { id }, sub } = req
 
-    router.get('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-        routeHandler(() => {
-            const { sub, params: { id, rentalId } } = req
-    
-            if (id !== sub) throw Error('token sub does not match user id')
-    
-            return logic.listRentalByRentalId(id, rentalId)
-                .then(rentals => {
-                    return res.json({
-                        data: rentals
-                    })
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.listRentalByUserId(id)
+            .then(rentals => {
+                return res.json({
+                    data: rentals
                 })
-        }, res)
-    })
+            }
+            )
+    }, res)
+})
 
+router.get('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, rentalId } } = req
 
-    router.post('/rentals/:query', [jsonBodyParser], (req, res) => {
-        routeHandler(() => {
-            const { params: { query } } = req
-            debugger
-        
-            return logic.listRentalByQuery(query)
-                .then(rentals => {
-                    return res.json({
-                        data: rentals
-                    })
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.listRentalByRentalId(id, rentalId)
+            .then(rentals => {
+                return res.json({
+                    data: rentals
                 })
-        }, res)
-    })
+            })
+    }, res)
+})
 
-    //UPDATE RENTAL
+
+router.post('/rentals/:query', [jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { params: { query } } = req
+
+        return logic.listRentalByQuery(query)
+            .then(rentals => {
+                return res.json({
+                    data: rentals
+                })
+            })
+    }, res)
+})
+
+//UPDATE RENTAL
 
 router.patch('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-    
-        const { sub, params: { id, rentalId },  body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
+
+        const { sub, params: { id, rentalId }, body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
         if (id !== sub) throw Error('token sub does not match user id')
         return logic.updateRental(id, rentalId, title ? title : null, city ? city : null, street ? street : null, category ? category : null, image ? image : null, bedrooms ? bedrooms : null, shared ? shared : null, description ? description : null, dailyRate ? dailyRate : null)
             .then(() =>
@@ -219,17 +214,17 @@ router.patch('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, js
 // DELETE RENTAL
 
 router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-        routeHandler(() => {
-            const { sub, params: { id, rentalId } } = req
-    
-            if (id !== sub) throw Error('token sub does not match user id')
-    
-            return logic.removeRental(id, rentalId)
-                .then(() => res.json({
-                    message: 'Rental removed'
-                }))
-        }, res)
-    })
+    routeHandler(() => {
+        const { sub, params: { id, rentalId } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.removeRental(id, rentalId)
+            .then(() => res.json({
+                message: 'Rental removed'
+            }))
+    }, res)
+})
 
 //
 
@@ -238,20 +233,18 @@ router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, j
 
 //ADD BOOKING
 
-router.post('/users/:id/rentals/:rentalId',[bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-    debugger
+router.post('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        const { params: { id, rentalId }, sub, body: { endAt, startAt, totalPrice, days, guests} } = req
+        const { params: { id, rentalId }, sub, body: { endAt, startAt, totalPrice, days, guests } } = req
 
-        debugger
         if (id !== sub) throw Error('token sub does not match user id')
-        debugger
 
         return logic.addBooking(id, rentalId, endAt, startAt, totalPrice, days, guests)
-            .then(() => {
+            .then((booking) => {
                 res.status(201)
 
                 res.json({
+                    data: booking,
                     message: `your booking has been succesfully`
                 })
             })

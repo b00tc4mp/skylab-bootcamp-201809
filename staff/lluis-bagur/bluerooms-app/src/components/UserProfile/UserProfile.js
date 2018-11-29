@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
 import { RentalCard } from '../RentalCard/RentalCard'
+import { BookingList } from '../BookingList/BookingList'
 import AddRentals from '../AddRentals/AddRentals'
 import EditRentals from '../EditRentals/EditRentals'
 import { withRouter } from "react-router"
@@ -94,7 +95,7 @@ class Profile extends Component {
 
                 {this.state.showBookings && <div className="user__rentals">
                     BOOKINGS
-                    {/* {this.state.user.rentals.map((rental) => { return <RentalCard title={rental.title} city={rental.city} street={rental.street} category={rental.category} category={rental.category} bedrooms={rental.bedrooms} description={rental.description} dailyRate={rental.dailyRate} bookings={rental.bookings} key={rental.id} onRentalCardClick={this.handleRentalCardClick} /> })} */}
+                    {this.state.user.bookings.map((booking) => { return <BookingList booking={booking} onBookingCardClick={this.handleBookingCardClick} /> })}
                 </div>}
             </div>
         </div>
