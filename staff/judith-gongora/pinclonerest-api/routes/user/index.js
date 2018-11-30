@@ -15,9 +15,9 @@ const { env: { JWT_SECRET } } = process
 
 routerUser.post('/users', jsonBodyParser, (req, res) => {
     routeHandler(() => {
-        const { email, password, age } = req.body
+        const { email, password, _age } = req.body
 
-        return logic.registerUser(email, password, age)
+        return logic.registerUser(email, password, _age)
             .then(() => {
                 res.status(201)
 

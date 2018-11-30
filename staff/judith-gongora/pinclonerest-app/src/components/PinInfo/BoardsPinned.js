@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import './Home.sass'
+import '../Home/Home.sass'
 import logic from '../../logic'
 
-class Boards extends Component {
+class BoardsPinned extends Component {
     state = { boards: [] }
 
     componentDidMount() {
@@ -44,4 +44,4 @@ class Boards extends Component {
     }
 }
 
-export default Boards
+export default BoardsPinned

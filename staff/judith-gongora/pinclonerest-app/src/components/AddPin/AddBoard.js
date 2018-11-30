@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import './AddPin.css'
-import logic from '../../logic'
+import './AddPin.sass'
 
 class AddBoard extends Component {
     state = { boards: [], search: '', name: '', secret: false }
@@ -39,7 +38,7 @@ class AddBoard extends Component {
             <h3>Create board</h3>
             <div className="container__name">
                 <span>Name</span>
-                <input className="name__input" type="text" placeholder='Like "Places to Go" or "Recipes to Make"' onChange={this.handleNameChange}></input>
+                <input className="name__input" type="text" placeholder='Like "Places to Go" or "Recipes to Make"' onChange={this.handleNameChange} maxlength="15"></input>
             </div>
             <hr className='hr' />
             <div className='container__check'>

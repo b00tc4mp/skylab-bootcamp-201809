@@ -40,6 +40,20 @@ routerPin.get('/users/:id/allPins', [bearerTokenParser, jwtVerifier], (req, res)
     }, res)
 })
 
+// routerPin.get('/users/:id/board/:boardId', [bearerTokenParser, jwtVerifier], (req, res) => {
+//     routeHandler(() => {
+//         const { sub, params: { id, boardId } } = req
+
+//         if (id !== sub) throw Error('token sub does not match user id')
+
+//         return logic.listBoardPins(id, boardId)
+//             .then(pins => res.json({
+//                 data: pins
+//             }))
+//     }, res)
+// })
+
+
 routerPin.get('/users/:id/pinUser/:userPinId', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
 
@@ -56,7 +70,7 @@ routerPin.get('/users/:id/pinUser/:userPinId', [bearerTokenParser, jwtVerifier],
 
 routerPin.post('/users/:id/pins', [bearerTokenParser, jwtVerifier, jsonBodyParser, fileUpload()], (req, res) => {
     routeHandler(() => {
-        debugger
+
         const { sub, params: { id }, body: { board, url, title, description }, files: { photo } } = req
        
         if (id !== sub) throw Error('token sub does not match user id')
@@ -76,6 +90,32 @@ routerPin.get('/users/:id/pins', [bearerTokenParser, jwtVerifier], (req, res) =>
         if (id !== sub) throw Error('token sub does not match user id')
 
         return logic.listPins(id)
+            .then(pins => res.json({
+                data: pins
+            }))
+    }, res)
+})
+
+routerPin.get('/users/:id/pin/:pinId', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, pinId } } = req
+ 
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrievePin(id, pinId)
+            .then(pin => res.json({
+                data: pin
+            }))
+    }, res)
+})
+
+routerPin.get('/users/:id/board/:boardId/pins', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, boardId } } = req
+ 
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveBoardPins(id, boardId)
             .then(pins => res.json({
                 data: pins
             }))

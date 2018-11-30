@@ -2,11 +2,12 @@
     display: flex
     flex-direction: column
     margin-top: 60px
+    align-items: center
 
 .container__user
     display: flex
     justify-content: space-around
-    margin-top:30px
+    margin-top: 30px
     img 
         height: 100%
         width: 106px
@@ -60,23 +61,213 @@
 .container__boards-gallery 
     border-radius: 5px
     padding: 10px
-    margin-bottom: 10px
+    margin-bottom: 20px
     p 
-        margin:0
+        margin: 0
     &:hover
         background-color: #efefef
 
-.div__board
-    height: 200px
-    width: 300px
+.div__board-profile
+    height: 236px
+    width: 236px
     margin-bottom: 10px
     border-radius: 5px
     img 
         object-fit: cover
-        height: 200px
-        width: 300px
+        height: 236px
+        width: 236px
         border-radius: 5px
 
 .bold-title
     font-weight: bold
     font-size: 20px
+
+.icon-hover
+    svg 
+        fill: current-color
+        color: #8e8e8e
+
+.footer__board
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+
+// -------------- POPUP EDIT BOARD ----------------------//
+
+.popup__editBoard
+    position: fixed
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: rgba(51,51,50,0.9)
+    z-index: 1000
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-direction: column
+    border-radius: 4px
+
+.container__editBoard 
+    background-color: white
+    border-radius: 8px
+    margin-top: 100px
+    position: relative
+
+.editBoard__head
+    display: flex
+    align-items: center 
+
+.editBoard__title
+    width: 528px
+    height: 28px
+    padding: 20px 0 20px 50px
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    h2 
+        margin: 0
+
+.editBoard__close 
+    width: 40px
+    height: 40px
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-right: 10px
+    border-radius: 50%
+    svg 
+        color: #8e8e8e
+        fill: currentColor
+    &:hover
+        background-color: #efefef
+   
+    
+.title__board
+    display: flex
+    justify-content: center
+    input 
+        height: 22px
+        padding: 8px 14px 8px 14px
+        width: 75%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+        font-size: 14px
+    p 
+        width: 15%
+
+.description__board
+    display: flex
+    justify-content: center
+    textarea 
+        font-size: 14px
+        height: 22px
+        padding: 8px 14px 8px 14px
+        width: 75%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+        resize: none
+    p 
+        width: 15%
+
+.category__board
+    display: flex
+    justify-content: center
+    select
+        font-size: 14px
+        height: 38px
+        width: 80%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+    p 
+        width: 15%
+
+.container__check-editBoard
+    display: flex
+    justify-content: flex-start
+    width: 90%
+    span 
+        margin-left: 3%
+        margin-right: 8%
+    
+      
+
+
+.footer__editBoard
+    display: flex
+    justify-content: space-between
+    padding: 12px 16px 12px 16px
+
+.container__buttons
+    display: flex
+
+.button-bottom__editBoard 
+    padding: 10px 14px 10px 14px
+    background-color: #efefef
+    border-radius: 8px
+    align-items: center
+    cursor: pointer
+    &:hover
+        back-ground-color: rgb(216, 216, 216) 
+
+.red 
+    color: white
+    background-color: #bd081c
+    margin-left: 15px
+    &:hover 
+        background-color: #ad081b
+
+.edit 
+    cursor: pointer
+
+.space 
+    margin-left: 15px
+
+.pins__container-profile
+    column-count: 1
+    column-gap: 0
+    
+    @media screen and (min-width: 481px) 
+        column-count: 3
+    
+    @media screen and (min-width: 641px) 
+        column-count: 4
+    
+    @media screen and (min-width: 961px) 
+        column-count: 5
+    
+    @media screen and (min-width: 1025px) 
+        column-count: 6
+
+    @media screen and (min-width: 1281px) 
+        column-count: 7
+
+    // width: 980px 
+    margin: 20px 50px
+    // -webkit-column-count: 3  //* Chrome, Safari, Opera */
+    // -moz-column-count: 3  //* Firefox */
+    // column-count: 3 
+    // -webkit-column-gap: 20px  //* Chrome, Safari, Opera */
+    // -moz-column-gap: 20px  //* Firefox */
+    // column-gap: 20px 
+
+
+// ---------------------  ADD PIN  ----------------------//
+
+.add_pin
+    position: fixed
+    background-color: white
+    right: 20px
+    bottom: 40px
+    border-radius: 50%
+    padding: 12.5px
+    width: 14px
+    height: 14px
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04)
+    cursor: pointer
+    &:hover
+        background-color: #efefef

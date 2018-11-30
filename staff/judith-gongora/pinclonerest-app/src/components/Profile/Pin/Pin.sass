@@ -128,9 +128,14 @@
 .form-top
     margin-top: 5px
 
-.container__pinned-popup
+.buttons__container-pin
+    display: flex 
+    justify-content: flex-start
     width: 100%
-    padding-right: 10px
+    margin-left: 5px
+    margin-top: 5px
+
+.container__pinned-popup
     display: flex
     align-items: center
     position: relative
@@ -152,6 +157,7 @@
     align-items: center
     background-color: white
     cursor: pointer
+    margin-left: 5px
     svg 
         fill: currentColor
     &:hover
@@ -183,12 +189,12 @@
         height: 30px
         color: white
 
-.link__outside-pin
+.link__outside
     border-radius: 14px
     display: flex
     justify-content: space-around
     align-items: center
-    width: 160px
+    width: 135px
     margin-left: 10px
     cursor: pointer
     a 

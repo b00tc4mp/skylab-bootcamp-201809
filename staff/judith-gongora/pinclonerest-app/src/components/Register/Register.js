@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import logo from '../../pinterest.svg'
-import './Register.css'
+import './Register.sass'
 
 class Register extends Component {
     state = { email: '', age: '',  password: '' }
@@ -30,6 +30,7 @@ class Register extends Component {
     }
 
     handleSubmit = event => {
+        
         event.preventDefault()
 
         const { email, password, age } = this.state
@@ -47,14 +48,11 @@ class Register extends Component {
                         <div><p className="info">Access the best ideas with a free account</p> </div>      
                         <form className="register__form" onSubmit={this.handleSubmit}>
                             <input type="text" placeholder="email" onChange={this.handleEmailChange} />
-                            {/* <input type="text" placeholder="password" onChange={this.handleSurnameChange} /> */}
                             
                             <input type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-                            <input type="text" placeholder="age" onChange={this.handleAgeChange} />
+                            <input type='number' placeholder="age" onChange={this.handleAgeChange} />
                             <button className="register__button" type="submit">Continue</button> 
                         </form>
-                        <div className="center"><p className="register__or">or</p></div> 
-                        <button className="register__button register__button-google">Continue with google</button>
                         <p className="register__conditions">By continuing, you agree to Pinterest's Terms of Service, Privacy Policy and use of cookies.</p>
                         <a className="register__go center" href="#" onClick={this.handleLogin}>Already a member? Login here.</a>
                     </div>

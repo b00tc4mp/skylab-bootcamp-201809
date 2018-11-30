@@ -10,7 +10,7 @@ const streamBuffers = require('stream-buffers')
 const logic = {
     registerUser(email, password, age) {
         validate([{ key: 'email', value: email, type: String }, { key: 'password', value: password, type: String }, { key: 'age', value: age, type: Number }])
-
+        
         return (async () => {
             let user = await User.findOne({ email })
 
@@ -256,7 +256,7 @@ const logic = {
 
             pin.pins.push(user.id)
 
-            board.pins.push(user.id)
+            board.pins.push(pin.id)
 
             await pin.save()
 
@@ -430,6 +430,8 @@ const logic = {
 
             const pin = new Pin({ multimedia, user: user.id, board: board.id })
 
+            pin.pins.push(user.id)
+
             title != null && (pin.title = title)
             url != null && (pin.url = url)
             description != null && (pin.description = description)
@@ -443,6 +445,59 @@ const logic = {
             await board.save()
             await pin.save()
 
+        })()
+    },
+
+    /**
+    * List pin
+    * 
+    * @param {String} id The user id
+    * @param {String} pinid The pin id
+    * 
+    * @throws {TypeError} On non-string user id or pin id 
+    * @throws {Error} On empty or blank user id or pin id 
+    * 
+    * @returns {Pin} return pin  
+    */
+
+    retrievePin(id, pinId){
+
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'pinId', value: pinId, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const pin = await Pin.findById(pinId).lean()
+
+            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+   
+            pin.id = pin._id
+
+            delete pin._id
+            delete pin.__v
+           
+            if (pin.comments.length !== 0){
+
+                pin.comments.forEach(comment => {
+                    comment.id = comment._id
+                    delete comment._id
+                    delete comment.__v
+                })
+            }          
+       
+            if (pin.pins.length !== 0){
+                pin.pins.forEach(user => {
+                   
+                    user = user.toString()
+                })
+            }
+
+            return pin
         })()
     },
 
@@ -463,34 +518,100 @@ const logic = {
         ])
 
         return (async () => {
-            const user = await User.findById(id).lean()
+            // const pins = await User.findById(id, {pins: true}).lean().populate([
+            //     { path: 'pins.pin'}
+            //   ]).exec()
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            const exists = !!await User.findById(id).count()
 
-            const pins = await Pin.find({ user: user._id }).lean()
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const [{ pins }] = await User.aggregate([
+                {
+                    $match: {
+                        _id: ObjectId(id)
+                    }
+                },
+
+                {
+                    $lookup: {
+                        from: 'pins',
+                        localField: 'pins.pin',
+                        foreignField: '_id',
+                        as: 'pins'
+                    }
+                },
+
+                {
+                    $project: {
+                        _id: 0,
+
+                        pins: {
+                            $map: {
+                                input: '$pins',
+                                as: 'pin',
+                                in: {
+                                    id: '$$pin._id',
+                                    multimedia: '$$pin.multimedia',
+                                    user: '$$pin.user',
+                                    url: '$$pin.url',
+                                    title: '$$pin.title',
+                                    description: '$$pin.description',
+                                    board: '$$pin.board',
+                                    pins: '$$pin.pins'
+
+                                }
+                            }
+                        }
+                    }
+                }
+            ])
+
+            return pins
+
+        })()
+    },
+
+    /**
+    * List user pins
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {Error} On empty or blank user id 
+    * 
+    * @returns {Pin} return user pins 
+    */
+
+   retrieveBoardPins(id, boardId) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'boardId', value: boardId, type: String }
+        ])
+
+        return (async () => {
+            // const pins = await User.findById(id, {pins: true}).lean().populate([
+            //     { path: 'pins.pin'}
+            //   ]).exec()
+
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const boardPins = await Board.findById(boardId, {pins: true}).lean().populate('pins')
+
+            if (!boardPins) throw new NotFoundError(`board with id ${boardId} is empty`)
+
+            pins = boardPins.pins
 
             pins.forEach(pin => {
-                pin.id = pin._id.toString()
-
+                pin.id = pin._id
                 delete pin._id
-
-                pin.user = pin.user.toString()
-
-                pin.board = pin.board.toString()
-
-                if (pin.comments)
-                    pin.comments = pin.comments.toString()
-
-                if (pin.pins)
-                    pin.pins = pin.pins.toString()
-
-                if (pin.photos)
-                    pin.photos = pin.photos.toString()
-
-                return pin
+                delete pin.__v
             })
 
             return pins
+
         })()
     },
 
@@ -505,9 +626,9 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const _pinId = await Pin.findById(pinId)
+            const pin = await Pin.findById(pinId)
 
-            if (!_pinId) throw new NotFoundError(`pinId with id ${id} not found`)
+            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
             let board = null
 
@@ -763,6 +884,48 @@ const logic = {
     /**
     * 
     * @param {String} id The user id
+    * @param {String} boardtitle The title of user board
+    * 
+    * @throws {TypeError} On non-string user id, non-string board title or non-boolean secret
+    * @throws {Error} On empty or blank user id, board title or board secret
+    * 
+    * @returns {Board} Return user boards
+    */
+    retrieveBoard(id, boardTitle){
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'boardTitle', value: boardTitle, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id).lean()
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const board = await Board.findOne({ user: user._id, title: boardTitle }).lean()
+            
+            board.id = board._id.toString()
+
+            delete board._id
+            delete board.__v
+
+            board.user = board.user.toString()
+
+            user.followers != null && (user.followers = user.followers.length)
+            user.pins != null && (user.pins = user.pins.length)
+
+            if (board.collaborators)
+                    board.collaborators = board.collaborators.toString()
+          
+            return board
+            
+        })()
+    },
+
+
+    /**
+    * 
+    * @param {String} id The user id
     * @param {String} boardId The board id
     * 
     * @throws {TypeError} On non-string user id or non-string board id
@@ -806,7 +969,7 @@ const logic = {
     * 
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
     */
-    modifyBoard(id, boardId, title, description, category, cover, secret, collaborators, archive) {
+    modifyBoard(id, boardId, title, description, category, secret, cover, collaborators, archive) {
 
         validate([
             { key: 'id', value: id, type: String },
@@ -829,7 +992,8 @@ const logic = {
 
             if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
-            title != null && (board.title = title)
+            board.title = title
+            board.secret = secret
             description != null && (board.description = description)
             category != null && (board.category = category)
             cover != null && (board.cover = cover)
@@ -922,6 +1086,33 @@ const logic = {
 
         })()
     },
+
+    retrieveUserComment(id, pinId, commentId) { 
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'pinId', value: pinId, type: String },
+            { key: 'commentId', value: commentId, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const pin = await Pin.findById(pinId)
+
+            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+
+            const comment = pin.comments.id(commentId)
+
+            const _user = await User.findById(comment.user.toString())
+
+            if (!_user) throw new NotFoundError(`user with id ${comment.user.toString()} not found`)
+           
+            return _user 
+
+        })()
+},
 
 
     /**

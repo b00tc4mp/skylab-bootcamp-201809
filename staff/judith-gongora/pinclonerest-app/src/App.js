@@ -6,11 +6,12 @@ import PinInfo from './components/PinInfo/PinInfo'
 import AddPin from './components/AddPin/AddPin'
 import Profile from './components/Profile/Profile'
 import Error from './components/Error'
+import Board from './components/Board/Board'
 import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
 class App extends Component {
-    state = { error: null, post: false, profile: false, otherUser: false, search: false, pin: null }
+    state = { error: null, post: false, profile: false, otherUser: false, search: false, pin: null, board: null }
 
     handleLoginClick = () => this.props.history.push('/login')
 
@@ -40,8 +41,8 @@ class App extends Component {
     }
 
     handlePinInfo = pin => {
-        this.props.history.push(`/pin/${pin.id}`)
         this.setState({ pin })
+        this.props.history.push(`/pin/${pin.id}`)   
     }
 
     handleLogoutClick = () => {
@@ -66,6 +67,11 @@ class App extends Component {
 
     handleProfile = () => this.props.history.push('/profile')
 
+    handleOpenBoard = board => {
+        this.setState({board})
+        this.props.history.push(`/boards/${board.title}`)
+    }
+
     handleGoHome = () => this.props.history.push('/home')
    
 
@@ -89,46 +95,31 @@ class App extends Component {
             {error && <Error onErrorClose={this.handleErrorClose} message={error} />}
 
             <Route path="/home" render={() => logic.loggedIn
-                ? <Home onLogout={this.handleLogoutClick} onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile}/>
+                ? <Home onLogout={this.handleLogoutClick} onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard}/>
                 : <Redirect to="/" />}
             />
 
-            <Route path="/pin/:id" render={() => logic.loggedIn
-                ? <PinInfo onLogout={this.handleLogoutClick} onPinInfo={this.handlePinInfo} pin={this.state.pin} onHome={this.handleHome} />
+            <Route path="/pin/:id" render={props => logic.loggedIn
+                ? <PinInfo onLogout={this.handleLogoutClick} onPinInfo={this.handlePinInfo} pinId={props.match.params.id} onHome={this.handleHome} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile}/>
                 : <Redirect to="/home" />}
             />
 
             <Route path="/pin-builder" render={() => logic.loggedIn
-                ? <AddPin onHome={this.handleHome} onCreatePin={this.handleCreatePin} />
+                ? <AddPin onHome={this.handleHome} onCreatePin={this.handleCreatePin} onHandleProfile={this.handleProfile}/>
                 : <Redirect to="/home" />}
             />
 
             <Route path="/profile" render={() => logic.loggedIn
-                ? <Profile onHome={this.handleGoHome} onLogout={this.handleLogoutClick} />
+                ? <Profile onHome={this.handleGoHome} onLogout={this.handleLogoutClick} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} onHandleProfile={this.handleProfile}/>
+                : <Redirect to="/home" />}
+            />
+
+            <Route path="/boards/:titleBoard" render={props => logic.loggedIn
+                ? <Board onHome={this.handleGoHome} onLogout={this.handleLogoutClick} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} boardTitle={props.match.params.titleBoard} onHandleProfile={this.handleProfile} onHandleProfile={this.handleProfile}/>
                 : <Redirect to="/home" />}
             />
 
 
-            
-
-            {/* <Route path="/addpost" render={() => logic.loggedIn && post && !profile 
-                ? <AddPost onLogout={this.handleLogoutClick} onProfile={this.handleProfile} onPost={this.handleAddPost} onGoBack={this.handleGoBack2} onSearch={this.handleSearch}/> 
-                : <Redirect to="/home" />} 
-            />
-
-            <Route path="/profile" render={() =>logic.loggedIn && profile && !post 
-                ? <Profile onLogout={this.handleLogoutClick} onPost={this.handlePost} onGoBack={this.handleGoBack2} onSearch={this.handleSearch}/> 
-                : <Redirect to="/home" />} 
-            />
-            
-            <Route path="/user/:id" render={ ()=>logic.loggedIn && !post && !profile && otherUser 
-                ?  <OtherProfile onLogout={this.handleLogoutClick} onPost={this.handlePost} onGoBack={this.handleGoBack3} onGoHome={this.handleGoBack2} id={this.props.match.params.id} onInitialize={this.state.otherUser} onSearch={this.handleSearch}/> 
-                : <Redirect to="/home"/>}/>
-            
-            <Route path="/search" render={() =>logic.loggedIn && !profile && !post && search 
-                ? <Search onUserSearch={this.handleUserSearch} onLogout={this.handleLogoutClick} onPost={this.handlePost} onGoBack={this.handleGoBack2} onProfile={this.handleProfile}/> 
-                : <Redirect to="/home" />} 
-            /> */}
 
         </div>
     }

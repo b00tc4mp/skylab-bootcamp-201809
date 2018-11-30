@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './PinInfo.css'
+import './PinInfo.sass'
 import logic from '../../logic'
 
 class Boards extends Component {

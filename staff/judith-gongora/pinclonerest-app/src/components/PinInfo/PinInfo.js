@@ -1,33 +1,32 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
 import Navbar from '../Navbar/Navbar'
-import './PinInfo.css'
-import Photos from './Photos'
+import './PinInfo.sass'
 import Boards from './Boards'
+import PopUp from './PopUp'
 import Comments from './Comments'
 import Send from './Send'
 
 class PinInfo extends Component {
-    state = { pin: this.props.pin, comments: [], addComments: false, photos: true, user: '', boards: false, board: '', following: false, createBoard: false, mine: false, send: false }
+    state = { pin: null, comments: [], user: '', boards: false, board: '', following: false, createBoard: false, mine: false, send: false, editPin: false }
 
     componentDidMount() {
-        Promise.all([logic.retrievePinUser(this.props.pin.user), logic.isPinned(this.state.pin.id), logic.isMine(this.props.pin.user), logic.retrieveComments(this.state.pin.id)])
-            .then(([user, board, mine, comments]) => this.setState({ user, board, mine, comments }))
-            .then(() => logic.isFollowing(this.state.user.id))
-            .then(following => this.setState({ following }))
+        logic.retrievePin(this.props.pinId)
+            .then(pin =>
+                Promise.all([logic.retrievePinUser(pin.user), logic.isPinned(pin.id), logic.isMine(pin.user), logic.retrieveComments(pin.id), logic.isFollowing(pin.user)])
+                    .then(([user, board, mine, comments, following]) =>
+                        this.setState({ pin, following, user, board, mine, comments })
+                    )
+            )
     }
 
     handlePinInfo = name => {
         this.props.onUserSearch(name)
     }
 
-    handleComments = () => this.setState({ addComments: true, photos: false })
-
-    handlePhotos = () => this.setState({ addComments: false, photos: true })
-
     handleAddPinned = board => {
         logic.AddPinned(board.id)
-            .then(() => logic.isPinned(this.props.pin.id))
+            .then(() => logic.isPinned(this.state.pin.id))
             .then(board => this.setState(board))
     }
 
@@ -36,22 +35,29 @@ class PinInfo extends Component {
             logic.followUser(this.state.user.id)
                 .then(() => logic.isFollowing(this.state.user.id))
                 .then(following => this.setState({ following }))
+                .then(() => logic.retrievePinUser(this.state.pin.user))
+                .then(user => this.setState({ user }))
+
         } else {
             logic.unfollowUser(this.state.user.id)
                 .then(() => logic.isFollowing(this.state.user.id))
                 .then(following => this.setState({ following }))
+                .then(() => logic.retrievePinUser(this.state.pin.user))
+                .then(user => this.setState({ user }))
         }
     }
 
     handleClickThemes = () => {
-        
-        if (!this.state.boards)this.setState({ boards: true })
-        else this.setState({ boards: false})
+
+        if (!this.state.boards) this.setState({ boards: true })
+        else this.setState({ boards: false })
     }
 
     handleBoardChange = board => {
         logic.savePin(this.state.pin.id, board.id)
             .then(() => this.setState({ board, boards: false }))
+            .then(() => logic.retrievePin(this.state.pin.id))
+            .then(pin => this.setState({ pin }))
     }
 
     handleBoards = () => this.setState({ boards: true })
@@ -64,20 +70,36 @@ class PinInfo extends Component {
     handleClickCreateBoard = () => this.setState({ boards: false, createBoard: true })
 
     handleSend = () => {
-        if(!this.state.send) this.setState({ send: true })
-        else this.setState({ send: false})
+        if (!this.state.send) this.setState({ send: true })
+        else this.setState({ send: false })
     }
 
     handleComment = (comment) => {
         logic.addComment(this.state.pin.id, comment)
             .then(() => logic.retrieveComments(this.state.pin.id))
             .then(comments => this.setState({ comments }))
-            .then(() => this.setState({ addComments: false }))
+
+    }
+
+    handleModifyPin = (pin, board, description) => {
+        logic.modifyPinned(pin, board, description)
+            .then(() => logic.isPinned(this.state.pin.id))
+            .then(board => this.setState({ board, editPin: false }))
+    }
+
+    handleEditPin = () => this.setState({ editPin: true })
+
+    handleCloseEditPin = () => this.setState({ editPin: false })
+
+    handleChangePin = () => {
+        logic.isPinned(this.state.pin.id)
+            .then(board => this.setState({ board, editPin: false }))
     }
 
     render() {
-        return <div className="div__pinInfo">
+        return this.state.pin && <div className="div__pinInfo">
             <Navbar onHome={this.props.onHome} onLogout={this.props.onLogout} />
+            {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.pin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pinInfo__container">
                 <div className='pinInfo__home'>
                     <a onClick={this.props.onHome} >
@@ -88,12 +110,6 @@ class PinInfo extends Component {
                 <section className='info__container'>
                     <div>
                         <div className='container1'>
-                            <div className="icon-hover">
-                                <svg className="nav__icon" height="22" width="22" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
-                                    <path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3M3 9c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm18 0c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z">
-                                    </path>
-                                </svg>
-                            </div>
                             <div className='container2'>
                                 <div className="themes" onClick={this.handleSend}>
                                     <svg height="16" width="16" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
@@ -114,7 +130,7 @@ class PinInfo extends Component {
                                 </div> :
                                     <div className='container__pinned underline'>
                                         <p>Saved to <span className='bold'>{this.state.board.title}</span> </p>
-                                        <div className='icon-hover'>
+                                        <div className='icon-hover' onClick={this.handleEditPin}>
                                             <svg height="20" width="20" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
                                                 <path d="M13.386 6.018l4.596 4.596L7.097 21.499 1 22.999l1.501-6.096L13.386 6.018zm8.662-4.066a3.248 3.248 0 0 1 0 4.596L19.75 8.848 15.154 4.25l2.298-2.299a3.248 3.248 0 0 1 4.596 0z"></path>
                                             </svg>
@@ -124,12 +140,12 @@ class PinInfo extends Component {
                         </div>
                         <div className='container3'>
                             <img src={this.state.pin.multimedia} ></img>
-                            <div className='container__left'>
-                            {this.props.pin.url && <a href={this.props.pin.url} target="_blank"><div className="themes2">
+                            <div className='container__left-info'>
+                                {this.state.pin.url && <div className="themes2" onClick={event => {event.stopPropagation(); window.open(this.state.pin.url, "_blank")}}>
                                     <svg height="14" width="14" viewBox="0 0 24 24" aria-label="enlace" role="img"><path d="M4.9283,1 C3.6273,1 2.5713,2.054 2.5713,3.357 C2.5713,4.66 3.6273,5.714 4.9283,5.714 L14.9523,5.714 L1.6893,18.976 C0.7703,19.896 0.7703,21.389 1.6893,22.31 C2.1503,22.771 2.7533,23 3.3573,23 C3.9603,23 4.5633,22.771 5.0243,22.31 L18.2853,9.047 L18.2853,19.071 C18.2853,20.374 19.3413,21.429 20.6433,21.429 C21.9443,21.429 23.0003,20.374 23.0003,19.071 L23.0003,1 L4.9283,1 Z"></path></svg>
-                                    <span>{this.props.pin.url}</span>
-                                </div></a>} 
-                                <h3>{this.props.pin.title}</h3>
+                                    <span>{this.state.pin.url}</span>
+                                </div>}
+                                <h3>{this.state.pin.title}</h3>
                                 <div className='user__info'>
                                     <div className='user'>
                                         <img src={this.state.user.img} ></img>
@@ -142,19 +158,10 @@ class PinInfo extends Component {
                                     {this.state.following && !this.state.mine && <button className="button_u" type="submit" onClick={this.handleFollow} >Unfollow</button>}
                                 </div>
                                 <div className='comments__group'>
-                                    <p className='title'>Photos and comments</p>
-                                    <div className='comments__container'>
-                                        <div className={this.state.photos ? 'comments photos check' : 'comments photos'}>
-                                            <a onClick={this.handlePhotos} >Photos</a>
-                                        </div>
-                                        <div className={this.state.addComments ? 'comments check' : 'comments'}>
-                                            <a onClick={this.handleComments} >Comments</a>
-                                        </div>
-                                    </div>
-                                    {this.state.photos && !this.state.addComments && <Photos pinId={this.state.pin.id} />}
-                                    {this.state.addComments && !this.state.photos && <Comments comments={this.state.comments} pinId={this.state.pin.id} onAddComment={this.handleComment} />}
+                                    <p className='title'>Comments</p>
+                                    <Comments comments={this.state.comments} pinId={this.state.pin.id} onAddComment={this.handleComment} />
                                     <div className='pinned'>
-                                        <img></img> <p>saved to </p> <svg height="16" width="16" viewBox="0 0 24 24" aria-label="Pin" role="img"><title>Pin</title><path d="M18 13.5c0-2.22-1.21-4.15-3-5.19V2.45A2.5 2.5 0 0 0 17 0H7a2.5 2.5 0 0 0 2 2.45v5.86c-1.79 1.04-3 2.97-3 5.19h5v8.46L12 24l1-2.04V13.5h5z"></path></svg>
+                                        <svg height="16" width="16" viewBox="0 0 24 24" aria-label="Pin" role="img"><title>Pin</title><path d="M18 13.5c0-2.22-1.21-4.15-3-5.19V2.45A2.5 2.5 0 0 0 17 0H7a2.5 2.5 0 0 0 2 2.45v5.86c-1.79 1.04-3 2.97-3 5.19h5v8.46L12 24l1-2.04V13.5h5z"></path></svg>
                                         <span>{this.state.pin.pins ? this.state.pin.pins.length : 0}</span>
                                     </div>
                                 </div>
@@ -169,6 +176,11 @@ class PinInfo extends Component {
 
                 </section>
             </section>
+            <div className='add_pin' onClick={this.props.onHandleAddPin}>
+                <svg height="14" width="14" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
+                    <path d="M22 10h-8V2a2 2 0 0 0-4 0v8H2a2 2 0 0 0 0 4h8v8a2 2 0 0 0 4 0v-8h8a2 2 0 0 0 0-4"></path>
+                </svg>
+            </div>
         </div>
     }
 }

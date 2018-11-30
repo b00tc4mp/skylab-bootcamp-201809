@@ -3,7 +3,7 @@ import logic from '../../logic'
 import Pin from '../Pin/Pin'
 import PopUp from './PopUp'
 import Navbar from '../Navbar/Navbar'
-import './Home.css'
+import './Home.sass'
 
 class Home extends Component {
     state = { pins: [], editPin: null, board: null }
@@ -24,8 +24,10 @@ class Home extends Component {
     handleCloseEditPin = () => this.setState({ editPin: null, board: null })
 
     handleChangePin = () => {
-        logic.listAllPins()
-            .then(pins => this.setState({ pins, editPin: null, board: null }))
+        this.setState({ editPin: null, board: null }, () =>
+            logic.listAllPins()
+                .then(pins => this.setState({ pins }))
+        )
     }
 
     handleModifyPin = (pin, board, description) => {
@@ -37,6 +39,7 @@ class Home extends Component {
     handleSaveBoard = (pinId, boardId) => {
         logic.savePin(pinId, boardId)
             .then(() => this.setState({ board: null }))
+            .then(() => this.handleChangePin())
     }
 
 
@@ -45,7 +48,7 @@ class Home extends Component {
             <Navbar onHandleProfile={this.props.onHandleProfile} onLogout={this.props.onLogout} onHandleEditPin={this.handleEditPin} />
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.editPin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pins__container">
-                {this.state.pins.map(pin => <Pin key={pin.id} id={pin.id} pin={pin} onHandlePinInfo={this.handlePinInfo} onHandleEditPin={this.handleEditPin} onSavePin={this.handleSaveBoard} />)}
+                {this.state.pins.map(pin => <Pin key={pin.id} id={pin.id} pin={pin} onHandlePinInfo={this.handlePinInfo} onHandleEditPin={this.handleEditPin} onSavePin={this.handleSaveBoard} onChangePin={this.handleChangePin} onOpenBoard={this.props.onOpenBoard} />)}
             </section>
             <div className='add_pin' onClick={this.props.onHandleAddPin}>
                 <svg height="14" width="14" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">

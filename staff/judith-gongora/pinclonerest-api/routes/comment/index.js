@@ -140,4 +140,17 @@ routerComment.get('/users/:id/pins/:pinId/photos', [bearerTokenParser, jwtVerifi
     }, res)
 })
 
+routerComment.get('/users/:id/pins/:pinId/comment/:commentId', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, pinId, commentId }} = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveUserComment(id, pinId, commentId)
+            .then(user => res.json({
+                data: user
+            }))
+    }, res)
+})
+
 module.exports = routerComment

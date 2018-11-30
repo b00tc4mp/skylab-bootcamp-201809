@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import './Home.sass'
+import '../Profile/Profile.sass'
 import logic from '../../logic'
 
 class Boards extends Component {

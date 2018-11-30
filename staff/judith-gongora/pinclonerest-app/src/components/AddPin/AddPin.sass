@@ -3,7 +3,8 @@
     flex-direction: column
     margin-top: 60px
     background-color: #EEEEEE
-    height: 100vh
+    height: 100%
+    min-height: 100vh
     
 .addPin__container
     display: grid
@@ -14,6 +15,8 @@
 .addPin__home
     display: flex
     grid-column-start: 1
+    @media only screen and (max-width: 600px)
+        display: none
     a 
         width: 80px
         padding: 4px
@@ -32,6 +35,7 @@
     border-radius: 4px
     padding: 0 24px 24px 24px
     max-width: 811px
+    min-height: 567px
     @media only screen and (max-width: 954px)
         width: 390px
         max-height: 1024px
@@ -139,7 +143,7 @@
     justify-content: space-around
     background-color: #EFEFEF
     border-radius: 5px
-    margin-top:5px
+    margin-top: 5px
 
 .arrow__site
     width: 30px
@@ -238,7 +242,7 @@
     line-height: 1.2
     letter-spacing: -.4px
     margin-left: 0px
-    margin-top:24px
+    margin-top: 24px
 
 .icon-hover
     width: 40px

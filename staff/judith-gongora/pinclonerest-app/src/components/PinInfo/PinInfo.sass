@@ -3,7 +3,8 @@
     flex-direction: column
     margin-top: 60px
     background-color: #EEEEEE
-    height: 100vh
+    height: 100%
+    min-height: 100vh
     
 .pinInfo__container
     display: grid
@@ -13,6 +14,8 @@
 .pinInfo__home
     display: flex
     grid-column-start: 1
+    @media only screen and (max-width: 680px)
+        display: none
     a 
         width: 80px
         padding: 4px
@@ -24,6 +27,9 @@
 
         span 
             font-weight: bold
+   
+        
+    
 
 
 .info__container
@@ -56,7 +62,7 @@
     svg 
         margin-right: 10px
     span 
-        margin:0
+        margin: 0
 
 .themes1
     width: 144px
@@ -93,7 +99,11 @@
     svg 
         margin-right: 10px
     span 
-        margin:0
+        margin: 0
+        max-width: 320px
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
 
 .button
     background-color: rgb(189, 8, 28)
@@ -133,11 +143,12 @@
         height: 100%
         border-radius: 4px
 
-.container__left
+.container__left-info
     width: 344px
     display: flex
     align-items: flex-start
     flex-direction: column
+    justify-content: flex-start
     margin-left: 24px
     h3 
         width: 100%
@@ -200,7 +211,7 @@
     line-height: 1.2
     letter-spacing: -.4px
     margin-left: 0px
-    margin-top:24px
+    margin-top: 24px
 
 .icon-hover
     width: 40px
@@ -241,6 +252,19 @@
         text-decoration: underline
         color: black
 
+.user__info-comment 
+    display: flex
+    margin-bottom: 2px
+    img 
+        margin-right: 5px
+        width: 20px
+        height: 100%
+    span 
+        font-weight: bold
+
+.comment__content
+    margin-left: 10px
+
 .photos
     width: 52px
 
@@ -264,6 +288,7 @@
     display: flex
     flex-direction: column
     border-bottom: 1px solid #efefef
+    margin-top: 10px
     textarea
         width: 317px
         height: 48px
@@ -276,14 +301,17 @@
         margin-bottom: 15px
     p 
         font-weight: lighter
+        cursor: pointer
+        font-size: 12px
+        color: #8e8e8e
+        margin-top: 5px
 
 .pinned 
+    margin-top: 10px
     display: flex
+    justify-content: flex-end
+    width: 100%
     align-items: center
-    span 
-        width: 236px
-    svg
-        font-size: 1em
 
 
 
@@ -425,3 +453,40 @@
       display: flex
       justify-content: center
       align-items: center
+
+.input__share
+    background-color: #efefef
+    border: none
+    width: 90%
+    padding: 10px
+
+.share__group
+    display: flex
+    justify-content: center
+    width: 100%
+    button 
+        margin-left: 10px
+        border-radius: 50%
+        width: 30px
+        height: 30px
+        &:hover 
+            background-color: rgba(0,0,0,0.06)
+
+
+
+// ---------------------  ADD PIN  ----------------------//
+
+.add_pin
+    position: fixed
+    background-color: white
+    right: 20px
+    bottom: 40px
+    border-radius: 50%
+    padding: 12.5px
+    width: 14px
+    height: 14px
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04)
+    cursor: pointer
+    &:hover
+        background-color: #efefef
+        

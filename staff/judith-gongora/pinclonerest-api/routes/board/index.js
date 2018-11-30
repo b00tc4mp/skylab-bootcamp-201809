@@ -40,6 +40,21 @@ routerBoard.get('/users/:id/boards', [bearerTokenParser, jwtVerifier], (req, res
     }, res)
 })
 
+//List user board by board title
+routerBoard.get('/users/:id/board/:boardTitle', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, boardTitle } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveBoard(id, boardTitle)
+            .then(board => res.json({
+                data: board
+            }))
+    }, res)
+})
+
+
 //Modify user board
 routerBoard.patch('/users/:id/boards/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
@@ -47,7 +62,7 @@ routerBoard.patch('/users/:id/boards/:boardId', [bearerTokenParser, jwtVerifier,
 
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.modifyBoard(id, boardId, title, description, category, cover, secret, collaborators, archive )
+        return logic.modifyBoard(id, boardId, title, description, category, secret, cover, collaborators, archive )
             .then(() => res.json({
                 message: 'board modified'
             }))

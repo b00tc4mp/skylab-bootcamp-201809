@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import logo from '../../pinterest.svg'
-import './Login.css'
+import './Login.sass'
 
 class Login extends Component {
     state = { email: '', password: '' }
@@ -37,8 +37,6 @@ class Login extends Component {
                             <input type="password" placeholder="Password" onChange={this.handlePasswordChange} required />
                             <button className="login__button" type="submit">Login</button> 
                         </form>
-                        <div className="center"><p className="login__or">or</p></div> 
-                        <button className="login__button login__button-google">Continue with google</button>
                         <a className="login__go center" href="#" onClick={this.props.onRegister}>Need an account? Register now.</a>
                     </div>
                 </div>
