@@ -4,13 +4,22 @@ import './PinInfo.sass'
 
 
 class Comment extends Component {
-    state = { comment: this.props.comment, user: null }
+    state = { comment: this.props.comment, user: null, liked: false }
 
     componentDidMount() {
-        logic.retrieveUserComment(this.props.pinId, this.props.comment.id)
-            .then(user => this.setState({ user }))
+        this.retrieveComment(this.props.comment, this.props.pinId)
         // TODO error handling!
+    }
 
+    componentWillReceiveProps(props) {
+        this.setState({comment: props.comment})
+        this.retrieveComment(props.comment, props.pinId)
+    }
+
+    retrieveComment (comment, pinId){
+        Promise.all([logic.retrieveUserComment(pinId, comment.id), logic.isLiked(comment)])
+        .then(([user, liked]) => this.setState({ user, liked }))
+        
     }
 
     handleCommentChange = event => {
@@ -18,15 +27,21 @@ class Comment extends Component {
         this.setState({ comment })
     }
 
+    handleLike = () => this.props.onLike(this.state.comment.id)
+
+
     render() {
         return this.state.user && <section className="comment__container">
-            <div className='user__info-comment' >
+            <div className='user__info-comment'>
                 <img src={this.state.user.img}></img>
                 <span>{this.state.user.username}</span>
             </div>
             <div className='comment__content'>
                 <div>{this.state.comment.content}</div>
-                <div className='comment__like'>Like</div>
+                <div className='comment__like'>
+                <span className={this.state.liked ? 'liked' : 'like'} onClick={this.handleLike}>{this.state.liked ? 'Liked  ' : 'Like'}</span>
+                {this.state.comment.likes.length> 0 && <span className='likes' >{this.state.comment.likes.length} likes</span>}
+                </div>
             </div>
 
 

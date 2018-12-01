@@ -16,12 +16,13 @@ class Comments extends Component {
     componentWillReceiveProps(props) {
         this.retrieveComments(props.pinId)
 
+        
         // TODO error handling!
     }
 
     retrieveComments(pinId) {
         logic.retrieveComments(pinId)
-            .then(comments => this.setState({ comments, comment: '' }))
+            .then(comments => this.setState({ comments, comment: '', commentsLimit: this.props.comments.length < 2 ? this.props.comments.length : 2 }))
     }
 
     handleCommentChange = event => {
@@ -46,14 +47,15 @@ class Comments extends Component {
         let comments = []
 
         for (let i = 0; i < this.state.commentsLimit; i++) {
-            comments.push(<Comment key={this.state.comments[i].id} id={this.state.comments[i].id} comment={this.state.comments[i]} pinId={this.props.pinId} />)
+            comments.push(<Comment key={this.state.comments[i].id} id={this.state.comments[i].id} comment={this.state.comments[i]} pinId={this.props.pinId} onLike={this.props.onLike} />)
         }
 
         return comments
     }
 
     showMoreComments = () => {
-        this.setState({commentsLimit: this.state.commentsLimit+2})
+        if((this.state.comments.length-this.state.commentsLimit) < 2) this.setState({commentsLimit: this.state.commentsLimit+1})
+        else this.setState({commentsLimit: this.state.commentsLimit+2})
     }
 
 

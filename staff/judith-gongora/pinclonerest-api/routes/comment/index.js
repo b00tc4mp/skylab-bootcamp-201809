@@ -107,7 +107,7 @@ routerComment.put('/users/:id/pins/:pinId/comment/:commentId/like', [bearerToken
 
         if (id !== sub) throw Error('token sub does not match user id')
 
-        return logic.addLikeComment(id, pinId, commentId)
+        return logic.likeComment(id, pinId, commentId)
             .then(() => res.json({
                 message: 'add like to comment'
             }))

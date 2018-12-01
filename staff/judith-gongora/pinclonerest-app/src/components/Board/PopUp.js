@@ -12,22 +12,17 @@ class Popup extends Component {
         this.setState({ description })
     }
 
-    handlePopUpBoards = () => {
-        this.setState({ popup: true })
-    }
+    handlePopUpBoards = () => this.setState({ popup: true })
 
-    handleBoardChange = board => {
-        this.setState({ board, popup: false })
-    }
+    handleBoardChange = board => this.setState({ board, popup: false })
 
     handleDelete = () => {
         logic.removePin(this.state.pin.id)
         .then(() => this.props.onChangePin())
     }
 
-    handleEditPin = () => {
-        this.props.onEditPin(this.state.pin.id, this.state.board.id, this.state.description)
-    }
+    handleEditPin = () => this.props.onEditPin(this.state.pin.id, this.state.board.id, this.state.description)
+    
 
     render() {
         return <section className="popup__editPin">

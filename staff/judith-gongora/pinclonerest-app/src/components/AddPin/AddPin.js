@@ -75,7 +75,7 @@ class AddPin extends Component {
 
     render() {
         return <div className="div__addPin">
-            <Navbar onHome={this.props.onHome} onLogout={this.props.onLogout} />
+            <Navbar onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
             <section className="addPin__container">
                 <div className='addPin__home'>
                     <a onClick={this.props.onHome} >

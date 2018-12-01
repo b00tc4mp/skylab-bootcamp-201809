@@ -125,7 +125,6 @@ routerPin.get('/users/:id/board/:boardId/pins', [bearerTokenParser, jwtVerifier]
 routerPin.patch('/users/:id/pin/:pinId/board/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
         const { sub, params: { id, pinId, boardId }, body: { description } } = req
-
         if (id !== sub) throw Error('token sub does not match user id')
 
         return logic.modifyPin(id, pinId, boardId, description )

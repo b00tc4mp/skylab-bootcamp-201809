@@ -6,11 +6,12 @@ const cloudinary = require("../utils/cloudinary")
 const Screenshot = require('url-to-screenshot')
 const fs = require('fs')
 const streamBuffers = require('stream-buffers')
+const mongoose = require('mongoose');
 
 const logic = {
     registerUser(email, password, age) {
         validate([{ key: 'email', value: email, type: String }, { key: 'password', value: password, type: String }, { key: 'age', value: age, type: Number }])
-        
+
         return (async () => {
             let user = await User.findOne({ email })
 
@@ -282,15 +283,17 @@ const logic = {
 
             if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const board = await Board.findById(pin.board.toString())
+            const pinned = user.pins.filter(pinned => pinned.pin.toString() === pinId)
+
+            const board = await Board.findById(pinned[0].board.toString())
 
             if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
-            user.pins = user.pins.filter(pinned => pinned.pin.toString() != pinId)
+            user.pins = user.pins.filter(pinned => pinned.pin.toString() !== pinId)
 
-            pin.pins = pin.pins.filter(pin => pin.toString() != id)
+            pin.pins = pin.pins.filter(pin => pin.toString() !== id)
 
-            board.pins = board.pins.filter(pin => pin.toString() != pinId)
+            board.pins = board.pins.filter(pin => pin.toString() !== pinId)
 
             await pin.save()
 
@@ -333,16 +336,16 @@ const logic = {
                 _board.pins = _board.pins.filter(pin => pin.toString() === pinId)
 
                 await _board.save()
-            } else {
+
                 board.pins.push(pin.id)
 
                 await board.save()
+
             }
 
-            const _pinned = user.pins.id(pinned[0]._id)
+            pinned[0].board = board.id
+            description != null && (pinned[0].description = description)
 
-            _pinned.board = board.id
-            _pinned.description = description
             await user.save()
 
         })()
@@ -379,11 +382,11 @@ const logic = {
     // },
 
     uploadCloudinary(filename, data) {
-        debugger
+
         return new Promise((resolve, reject) => {
             cloudinary.v2.uploader.upload_stream({ resource_type: 'image' }, (error, res) => {
                 if (error) return reject(Error(`the file ${filename} could not be uploaded`));
-                debugger
+
                 resolve(res.secure_url)
 
             }).end(data)
@@ -460,7 +463,7 @@ const logic = {
     * @returns {Pin} return pin  
     */
 
-    retrievePin(id, pinId){
+    retrievePin(id, pinId) {
 
         validate([
             { key: 'id', value: id, type: String },
@@ -475,24 +478,24 @@ const logic = {
             const pin = await Pin.findById(pinId).lean()
 
             if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
-   
+
             pin.id = pin._id
 
             delete pin._id
             delete pin.__v
-           
-            if (pin.comments.length !== 0){
+
+            if (pin.comments.length !== 0) {
 
                 pin.comments.forEach(comment => {
                     comment.id = comment._id
                     delete comment._id
                     delete comment.__v
                 })
-            }          
-       
-            if (pin.pins.length !== 0){
+            }
+
+            if (pin.pins.length !== 0) {
                 pin.pins.forEach(user => {
-                   
+
                     user = user.toString()
                 })
             }
@@ -583,7 +586,7 @@ const logic = {
     * @returns {Pin} return user pins 
     */
 
-   retrieveBoardPins(id, boardId) {
+    retrieveBoardPins(id, boardId) {
         validate([
             { key: 'id', value: id, type: String },
             { key: 'boardId', value: boardId, type: String }
@@ -598,7 +601,7 @@ const logic = {
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
-            const boardPins = await Board.findById(boardId, {pins: true}).lean().populate('pins')
+            const boardPins = await Board.findById(boardId, { pins: true }).lean().populate('pins')
 
             if (!boardPins) throw new NotFoundError(`board with id ${boardId} is empty`)
 
@@ -826,7 +829,7 @@ const logic = {
             user.boards.push(board.id)
 
             await user.save()
-            debugger
+
             const _board = await Board.findById(board.id).lean()
 
             _board.id = _board._id.toString()
@@ -891,7 +894,7 @@ const logic = {
     * 
     * @returns {Board} Return user boards
     */
-    retrieveBoard(id, boardTitle){
+    retrieveBoard(id, boardTitle) {
         validate([
             { key: 'id', value: id, type: String },
             { key: 'boardTitle', value: boardTitle, type: String }
@@ -903,7 +906,7 @@ const logic = {
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const board = await Board.findOne({ user: user._id, title: boardTitle }).lean()
-            
+
             board.id = board._id.toString()
 
             delete board._id
@@ -915,10 +918,10 @@ const logic = {
             user.pins != null && (user.pins = user.pins.length)
 
             if (board.collaborators)
-                    board.collaborators = board.collaborators.toString()
-          
+                board.collaborators = board.collaborators.toString()
+
             return board
-            
+
         })()
     },
 
@@ -947,6 +950,22 @@ const logic = {
             const board = await Board.findOne({ user: user._id, _id: boardId })
 
             if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
+
+            const pinneds = board.pins
+
+            const pins = await Pin.find({ _id: { $in: pinneds } })
+
+            pins.forEach(async (pin) => {
+                pin.pins = pin.pins.filter(user => user.toString() !== id)
+                await pin.save()
+            })
+
+
+            user.pins = user.pins.filter(pinned => pinned.board.toString() !== boardId)
+
+            user.boards = user.boards.filter(board => board.toString() !== boardId)
+
+            await user.save()
 
             await board.remove()
         })()
@@ -1087,7 +1106,7 @@ const logic = {
         })()
     },
 
-    retrieveUserComment(id, pinId, commentId) { 
+    retrieveUserComment(id, pinId, commentId) {
         validate([
             { key: 'id', value: id, type: String },
             { key: 'pinId', value: pinId, type: String },
@@ -1108,11 +1127,11 @@ const logic = {
             const _user = await User.findById(comment.user.toString())
 
             if (!_user) throw new NotFoundError(`user with id ${comment.user.toString()} not found`)
-           
-            return _user 
+
+            return _user
 
         })()
-},
+    },
 
 
     /**
@@ -1305,7 +1324,7 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, comment id or pin id
     */
 
-    addLikeComment(id, pinId, commentId) {
+    likeComment(id, pinId, commentId) {
         validate([
             { key: 'id', value: id, type: String },
             { key: 'pinId', value: pinId, type: String },
@@ -1322,8 +1341,12 @@ const logic = {
             if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
             const comment = pin.comments.id(commentId)
-
-            comment.likes.push(user._id)
+            
+            if (comment.likes.length > 0) {
+                const likes = comment.likes.length
+                comment.likes = comment.likes.filter(like => like.toString() !== user.id)
+                if (likes === comment.likes.length) comment.likes.push(user._id)
+            } else comment.likes.push(user._id)
 
             await pin.save()
 
@@ -1442,6 +1465,7 @@ const logic = {
             pin.comments.forEach(comment => {
                 comment.id = comment._id.toString()
                 delete comment._id
+                comment.likes.forEach(like => like = like.toString())
             })
 
             return pin.comments

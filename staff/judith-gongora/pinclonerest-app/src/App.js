@@ -11,7 +11,7 @@ import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
 class App extends Component {
-    state = { error: null, post: false, profile: false, otherUser: false, search: false, pin: null, board: null }
+    state = { error: null, post: false, profile: false, otherUser: false, search: false, pin: null, board: null, path: null }
 
     handleLoginClick = () => this.props.history.push('/login')
 
@@ -65,16 +65,34 @@ class App extends Component {
         .then(() => this.props.history.push('/home'))
     }
 
-    handleProfile = () => this.props.history.push('/profile')
+    handleProfile = () => {
+        this.setState({path: 'profile'})
+        this.props.history.push('/profile')
+    }
 
     handleOpenBoard = board => {
-        this.setState({board})
+        this.setState({board, path: 'board'})
         this.props.history.push(`/boards/${board.title}`)
     }
 
-    handleGoHome = () => this.props.history.push('/home')
+    handleGoHome = () => {
+        this.setState({path: 'home'})
+        this.props.history.push('/home')
+    }
    
-
+    handleBack = () => {
+            switch(this.state.path){
+                case 'board':
+                    this.props.history.push(`/boards/${this.state.board.title}`)
+                    break;
+                case 'profile':
+                    this.props.history.push('/profile')
+                    break;
+                default: 
+                    this.props.history.push('/home')
+                    break;   
+            }
+    }
 
 
     render() {
@@ -100,7 +118,7 @@ class App extends Component {
             />
 
             <Route path="/pin/:id" render={props => logic.loggedIn
-                ? <PinInfo onLogout={this.handleLogoutClick} onPinInfo={this.handlePinInfo} pinId={props.match.params.id} onHome={this.handleHome} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile}/>
+                ? <PinInfo onLogout={this.handleLogoutClick} onPinInfo={this.handlePinInfo} pinId={props.match.params.id} onHome={this.handleBack} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard}/>
                 : <Redirect to="/home" />}
             />
 

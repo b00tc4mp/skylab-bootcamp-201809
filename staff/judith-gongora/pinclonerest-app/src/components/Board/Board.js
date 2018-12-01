@@ -13,8 +13,7 @@ class Board extends Component {
         logic.retrieveBoard(this.props.boardTitle)
         .then(board => this.setState({board}, () => logic.listBoardPins(this.state.board.id)
         .then( pins => this.setState({ pins }))))
-
-        // TODO error handling!
+           // TODO error handling!
 
     }
 
@@ -33,26 +32,38 @@ class Board extends Component {
     handleCloseEditPin = () => this.setState({ editPin: null, boardEdit: null })
 
     handleChangePin = () => {
-        logic.listAllPins()
+        logic.listBoardPins(this.state.board.id)
             .then(pins => this.setState({ pins, editPin: null, boardEdit: null }))
     }
 
     handleModifyPin = (pin, board, description) => {
         logic.modifyPinned(pin, board, description)
-            .then(() => logic.listAllPins())
+            .then(()=> logic.listBoardPins(this.state.board.id))
             .then(pins => this.setState({ pins, editPin: null, boardEdit: null }))
     }
 
     handlePinInfo = pin => this.props.onHandlePinInfo(pin)
 
 
+    // EDIT BOARD
+
     handleCloseEditBoard = () => this.setState ({editBoard : null})
 
-    handleEditBoard = board => this.setState({editBoard : board})
+    handleEditBoard = () => this.setState({editBoard : this.state.board})
+
+    handleModifyBoard = (boardId, title, secret, description, category) => {
+        logic.modifyBoard(boardId, title, secret, description, category)
+        .then(() => this.setState({ editBoard: null}, ()=> logic.retrieveBoard(title) .then(board=> this.setState({board}) )))
+    }
+
+    handleRemoveBoard = boardId => {
+        logic.removeBoard(boardId)
+        .then(()=> this.props.onHandleProfile())
+    }
 
     render() {
         return this.state.board && <div className="div__profile">
-            <Navbar onHome={this.props.onHome} onLogout={this.props.onLogout} />
+            <Navbar onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
             {this.state.editBoard && <EditBoard onCloseEditBoard={this.handleCloseEditBoard} board={this.state.editBoard} onEditBoard={this.handleModifyBoard} onDeleteBoard={this.handleRemoveBoard} />}
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.editPin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <div className='container__head'>
@@ -63,7 +74,7 @@ class Board extends Component {
                                 <path d="M21 14c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2v-6c0-1.1.9-2 2-2s2 .9 2 2v4h14v-4c0-1.1.9-2 2-2zM8.82 8.84c-.78.78-2.05.79-2.83 0-.78-.78-.79-2.04-.01-2.82L11.99 0l6.02 6.01c.78.78.79 2.05.01 2.83-.78.78-2.05.79-2.83 0l-1.2-1.19v6.18a2 2 0 1 1-4 0V7.66L8.82 8.84z"></path>
                             </svg>
                         </div>
-                        <div className='icon-hover'>
+                        <div className='icon-hover' onClick={this.handleEditBoard} >
                             <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
                                 <path d="M13.386 6.018l4.596 4.596L7.097 21.499 1 22.999l1.501-6.096L13.386 6.018zm8.662-4.066a3.248 3.248 0 0 1 0 4.596L19.75 8.848 15.154 4.25l2.298-2.299a3.248 3.248 0 0 1 4.596 0z"></path>
                             </svg>

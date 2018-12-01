@@ -311,6 +311,28 @@ const logic = {
             })
     },
 
+    likeComment(pinId, commentId){
+        if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
+        if (typeof commentId !== 'string') throw TypeError(`${commentId} is not a string`)
+        
+        let path = 'users/' + this._userId + '/pins/' + pinId + '/comment/' + commentId + '/like'
+        
+        return this._callApi(path, 'PUT', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+    },
+
+    isLiked(comment){
+        
+        let liked = false
+        comment.likes.forEach(like => {
+            if(like === this._userId) liked = true
+        })
+        return liked
+    },
+
+
     addPhoto(pinId, file, content) {
         const body = new FormData()
         body.append('photo', file)
@@ -415,19 +437,29 @@ const logic = {
     },
 
     modifyPinned(pinId, boardId, description){
-        console.log(description)
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
-        if (description.trim().length !== 0) {
-            if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
-        }
 
         let path = 'users/' + this._userId + '/pinned/' + pinId + '/board/' + boardId
 
-        return this._callApi(path, 'PATCH', this._token, {description})
+        if (description.trim().length !== 0) {
+            if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
+            console.log('lleno')
+            return this._callApi(path, 'PATCH', this._token, {description})
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
+        }else {
+
+            return this._callApi(path, 'PATCH', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+        }
+
+        
+
+        
 
     },
 

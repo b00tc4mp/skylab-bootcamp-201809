@@ -152,7 +152,7 @@ routerUser.patch('/users/:id/pin/:pinId/:boardId', [bearerTokenParser, jwtVerifi
 
 routerUser.patch('/users/:id/pinned/:pinId/board/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
-        
+       
         const { sub, params: { id, pinId, boardId }, body : {description}} = req
         
         if (id !== sub) throw Error('token sub does not match user id')
