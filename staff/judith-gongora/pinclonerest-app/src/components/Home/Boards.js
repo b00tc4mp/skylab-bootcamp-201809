@@ -3,42 +3,37 @@ import './Home.sass'
 import logic from '../../logic'
 
 class Boards extends Component {
-    state = { boards: [] }
+    state = { boards: [], search: [] }
 
     componentDidMount() {
         logic.listBoards()
-            .then(boards => this.setState({ boards }))
+            .then(boards => this.setState({ boards, search: boards }))
     }
 
-    handleInput = event => {
-        const board = event.target.value
-
-    }
-
-
-    handleSubmit = event => {
-        event.preventDefault()
-
-        this.props.onSubmitShare(this.state.text)
-        this.props.onClosePopup()
-
-        this.setState({ text: '' })
+    handleChangeInput = event => {
+        const input = event.target.value
+        if(!input.trim()) this.setState({search: this.state.boards})
+        else{
+            const find = this.state.boards.filter(board => board.title.toLowerCase().includes(input.toLowerCase()))
+            this.setState({search: find})
+        }
+        
     }
 
     render() {
         return <section className="container__boards-editPin">
-            <form onSubmit={this.handleSubmit}>
+            <form>
                 <div className="search__group-boards">
                     <div className="search__icon-boards">
                         <i className="fas fa-search nav__icon"></i>
                     </div>
                     <div className="search__container-boards">
-                    <input className="search__input-boards" type="text" placeholder="Search"></input>
+                    <input className="search__input-boards" type="text" placeholder="Search" onClick={event => event.stopPropagation()} onChange={this.handleChangeInput}></input>
                     </div>
                 </div>
             </form>
             <ul className='list__board'>
-            {this.state.boards.map(board => <li className='list__boards-item' id={board.id} onClick={() => this.props.handleSelectBoard(board)} > <span>{board.title} </span></li> )}
+            {this.state.search.map(board => <li className='list__boards-item' id={board.id} onClick={() => this.props.handleSelectBoard(board)} > <span>{board.title} </span></li> )}
             </ul>
         </section>
     }

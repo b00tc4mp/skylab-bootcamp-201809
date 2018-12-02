@@ -4,7 +4,7 @@ import './Pin.sass'
 
 
 
-class Pin extends Component {
+class PinUser extends Component {
 
     handleEditPin = board => this.props.onHandleEditPin(this.props.pin, board)
     
@@ -25,4 +25,4 @@ class Pin extends Component {
     }
 }
 
-export default Pin
+export default PinUser

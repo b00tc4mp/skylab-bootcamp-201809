@@ -2,19 +2,16 @@ import React, { Component } from 'react'
 import logic from '../../logic'
 import Navbar from '../Navbar/Navbar'
 import Board from './Board'
-import PopUp from './PopUp'
-import Pin from './Pin/Pin'
+import Pin from '../Pin/Pin'
 import './Profile.sass'
-import EditBoard from './EditBoard';
 
-class Profile extends Component {
+class OtherProfile extends Component {
     state = { user: '', pins: [], boards: [], tries: [], boardsSel: true, pinsSel: false, editBoard : null, editPin: null, board: null }
 
     componentDidMount() {
-        Promise.all([logic.retrieveUser(), logic.listBoards(), logic.listUserPins()])
-            .then(([user, boards, pins]) => {
-                this.setState({ user, boards, pins })
-            })
+        
+        Promise.all([logic.retrieveOtherUser(this.props.username), logic.listOtherBoards(this.props.username), logic.listOtherPins(this.props.username)])
+            .then(([user, boards, pins]) => this.setState({ user, boards, pins }))
 
         // TODO error handling!
 
@@ -42,16 +39,14 @@ class Profile extends Component {
         .then(boards => this.setState({boards, editBoard : null}))
     }
 
-
-
     handleSaveBoard = (pinId, boardId) => {
         logic.savePin(pinId, boardId)
             .then(() => this.setState({ board: null }))
     }
 
-    handlePinInfo = pin => {
-        this.props.onHandlePinInfo(pin)
-    }
+    handleOpenBoard = board => this.props.onOpenBoard(board, this.state.user.username)
+
+    handlePinInfo = pin => this.props.onHandlePinInfo(pin)
 
     handleEditPin = (pin, board) => this.setState({ editPin: pin, board })
 
@@ -75,8 +70,6 @@ class Profile extends Component {
     render() {
         return <div className="div__profile">
             <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
-            {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.editPin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
-            {this.state.editBoard && <EditBoard onCloseEditBoard={this.handleCloseEditBoard} board={this.state.editBoard} onEditBoard={this.handleModifyBoard} onDeleteBoard={this.handleRemoveBoard} />}
             <div className='container__user'>
                 <div className='user__profile'>
                     <h2>{this.state.user.username}</h2>
@@ -93,10 +86,10 @@ class Profile extends Component {
                 </div>
             </div>
             {this.state.boardsSel && <section className="container__user-boards">
-                {this.state.boards.map(board => <Board key={board.id} id={board.id} board={board} userId={this.state.user.id} onOpenEditBoard={this.handleEditBoard} onOpenBoard={this.props.onOpenBoard} username={this.state.user.username} />)}
+                {this.state.boards.map(board => <Board key={board.id} id={board.id} board={board} user={this.state.user} onOpenEditBoard={this.handleEditBoard} onOpenBoard={this.props.onOpenBoard} onOpenBoard={this.handleOpenBoard}/>)}
             </section>}
             {this.state.pinsSel && <section className="pins__container-profile">
-                {this.state.pins.map(pin => <Pin key={pin.id} id={pin.id} pin={pin} onHandlePinInfo={this.handlePinInfo} onHandleEditPin={this.handleEditPin} onSavePin={this.handleSaveBoard} />)}
+                {this.state.pins.map(pin => <Pin key={pin.id} id={pin.id} pin={pin} onHandlePinInfo={this.handlePinInfo} onHandleEditPin={this.handleEditPin} onSavePin={this.handleSaveBoard} onOpenBoard={this.handleOpenBoard}/>)}
             </section>}
 
             <div className='add_pin' onClick={this.props.onHandleAddPin}>
@@ -108,4 +101,4 @@ class Profile extends Component {
     }
 }
 
-export default Profile
+export default OtherProfile

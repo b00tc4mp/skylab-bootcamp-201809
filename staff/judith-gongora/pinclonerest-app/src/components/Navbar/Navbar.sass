@@ -52,12 +52,16 @@
     font-weight: bold
     letter-spacing: 0.3px
 .icons__container
-  display: flex
-  justify-content: space-between
-  margin-right: 40px
-  margin-left: 15px
-  svg 
+    display: flex
+    justify-content: space-between
+    margin-right: 40px
+    margin-left: 15px
+    svg 
       fill: currentColor
+    img 
+        width: 22px
+        height: 22px
+        object-fit: cover
 
 .icon-hover
     width: 48px
@@ -68,6 +72,25 @@
     align-items: center
     &:hover
         background-color: rgba(0,0,0,0.06)
+
+.fa-cog
+    color: #8e8e8e
+    cursor: pointer
+        
+.icon-hover-img
+    width: 100px
+    height: 40px
+    border-radius: 999px 
+    display: flex
+    justify-content: center
+    align-items: center
+    &:hover
+        background-color: rgba(0,0,0,0.06)
+    span 
+        margin-left: 10px
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
 
 .nav__icon
   font-size: 1.5em

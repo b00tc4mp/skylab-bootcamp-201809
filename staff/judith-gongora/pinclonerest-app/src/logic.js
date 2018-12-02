@@ -63,7 +63,7 @@ const logic = {
         if (!age.trim()) throw Error('age is empty or blank')
         if (!password.trim()) throw Error('password is empty or blank')
 
-        const _age = Number(age) 
+        const _age = Number(age)
 
         return this._callApi('users', 'POST', undefined, { email, password, _age })
             .then(res => {
@@ -117,7 +117,7 @@ const logic = {
     *
     */
     logout() {
-        
+
         this._userId = null
         this._token = null
 
@@ -153,9 +153,9 @@ const logic = {
             })
     },
 
-    listBoardPins(boardId) {
-        let path = 'users/' + this._userId + '/board/' + boardId +'/pins'
-        return this._callApi(path, 'GET', this._token, undefined) 
+    listOtherPins(username) {
+        let path = 'users/' + this._userId + '/user/' + username + '/pins'
+        return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 if (res.error) throw Error(res.error)
 
@@ -164,6 +164,32 @@ const logic = {
                 return sortedPins || []
             })
     },
+
+    listBoardPins(boardId) {
+        let path = 'users/' + this._userId + '/board/' + boardId + '/pins'
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+
+                let sortedPins = res.data.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+                return sortedPins || []
+            })
+    },
+
+    listOtherBoardPins(userId, boardId) {
+
+        let path = 'users/' + this._userId + '/user/' + userId + '/board/' + boardId + '/pins'
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+
+                let sortedPins = res.data.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+                return sortedPins || []
+            })
+    },
+
 
     retrievePinUser(id) {
         if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
@@ -185,8 +211,26 @@ const logic = {
             })
     },
 
+    listOtherBoards(username) {
+        let path = 'users/' + this._userId + '/user/' + username + '/boards'
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
     retrieveUser() {
         let path = 'users/' + this._userId
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
+    retrieveOtherUser(username) {
+        let path = 'users/' + this._userId + '/user/' + username
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 if (res.error) throw Error(res.error)
@@ -299,10 +343,10 @@ const logic = {
      * 
      * 
      */
-    addComment(pinId, content){
+    addComment(pinId, content) {
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof content !== 'string') throw TypeError(`${content} is not a string`)
-        
+
         let path = 'users/' + this._userId + '/pins/' + pinId + '/comment'
 
         return this._callApi(path, 'POST', this._token, { content })
@@ -311,23 +355,23 @@ const logic = {
             })
     },
 
-    likeComment(pinId, commentId){
+    likeComment(pinId, commentId) {
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof commentId !== 'string') throw TypeError(`${commentId} is not a string`)
-        
+
         let path = 'users/' + this._userId + '/pins/' + pinId + '/comment/' + commentId + '/like'
-        
+
         return this._callApi(path, 'PUT', this._token, undefined)
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
     },
 
-    isLiked(comment){
-        
+    isLiked(comment) {
+
         let liked = false
         comment.likes.forEach(like => {
-            if(like === this._userId) liked = true
+            if (like === this._userId) liked = true
         })
         return liked
     },
@@ -354,10 +398,10 @@ const logic = {
 
     },
 
-    isFollowing(userId){
+    isFollowing(userId) {
         if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
 
-        let path = 'users/' + this._userId + '/following/' + userId 
+        let path = 'users/' + this._userId + '/following/' + userId
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 if (res.error) throw Error(res.error)
@@ -366,10 +410,10 @@ const logic = {
 
     },
 
-    followUser(userId){
+    followUser(userId) {
         if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
 
-        let path = 'users/' + this._userId + '/follow/' + userId + '/user' 
+        let path = 'users/' + this._userId + '/follow/' + userId + '/user'
         return this._callApi(path, 'PATCH', this._token, undefined)
             .then(res => {
                 if (res.error) throw Error(res.error)
@@ -378,7 +422,7 @@ const logic = {
 
     },
 
-    unfollowUser(userId){
+    unfollowUser(userId) {
         if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
 
         let path = 'users/' + this._userId + '/unfollow/' + userId + '/user'
@@ -390,7 +434,7 @@ const logic = {
 
     },
 
-    addBoard(title, secret){
+    addBoard(title, secret) {
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
         if (typeof secret !== 'boolean') throw TypeError(`${secret} is not a boolean`)
 
@@ -404,7 +448,7 @@ const logic = {
 
     },
 
-    savePin(pinId, boardId){
+    savePin(pinId, boardId) {
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
 
@@ -417,7 +461,7 @@ const logic = {
 
     },
 
-    removePin(pinId){
+    removePin(pinId) {
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
 
         let path = 'users/' + this._userId + '/pin/' + pinId + '/remove'
@@ -429,42 +473,42 @@ const logic = {
 
     },
 
-    isMine(userId){
+    isMine(userId) {
         if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
         if (userId === this._userId) return true
         else return false
-
     },
 
-    modifyPinned(pinId, boardId, description){
+    modifyPinned(pinId, boardId, description) {
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
 
         let path = 'users/' + this._userId + '/pinned/' + pinId + '/board/' + boardId
 
         if (description.trim().length !== 0) {
+          
             if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
-            console.log('lleno')
-            return this._callApi(path, 'PATCH', this._token, {description})
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
-        }else {
-
+          
+            return this._callApi(path, 'PATCH', this._token, { description })
+                .then(res => {
+                    if (res.error) throw Error(res.error)
+                })
+        } else {
+            
             return this._callApi(path, 'PATCH', this._token, undefined)
-            .then(res => {
-                if (res.error) throw Error(res.error)
-            })
+                .then(res => {
+                    if (res.error) throw Error(res.error)
+                })
         }
 
-        
 
-        
+
+
 
     },
 
-    modifyBoard(boardId, title, secret, description, category){
-        
+    modifyBoard(boardId, title, secret, description, category) {
+
         if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
         if (typeof secret !== 'boolean') throw TypeError(`${secret} is not a boolean`)
@@ -478,17 +522,17 @@ const logic = {
 
         let path = 'users/' + this._userId + '/boards/' + boardId
 
-        return this._callApi(path, 'PATCH', this._token, {title, description, category, secret})
+        return this._callApi(path, 'PATCH', this._token, { title, description, category, secret })
             .then(res => {
                 if (res.error) throw Error(res.error)
             })
     },
 
 
-    removeBoard(boardId){
+    removeBoard(boardId) {
         if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
 
-        let path = 'users/' + this._userId + '/boards/' + boardId 
+        let path = 'users/' + this._userId + '/boards/' + boardId
 
         return this._callApi(path, 'DELETE', this._token, undefined)
             .then(res => {
@@ -498,16 +542,16 @@ const logic = {
     },
 
     retrieveUserComment(pinId, commentId) {
-     
+
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
         if (typeof commentId !== 'string') throw TypeError(`${commentId} is not a string`)
 
-        let path = 'users/' + this._userId + '/pins/' + pinId + '/comment/' + commentId 
+        let path = 'users/' + this._userId + '/pins/' + pinId + '/comment/' + commentId
 
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 return res.data
-             })
+            })
 
     },
 
@@ -515,28 +559,57 @@ const logic = {
 
         if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
 
-        let path = 'users/' + this._userId + '/pin/' + pinId 
+        let path = 'users/' + this._userId + '/pin/' + pinId
 
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 return res.data
-             })
+            })
 
     },
 
     retrieveBoard(boardTitle) {
-
         if (typeof boardTitle !== 'string') throw TypeError(`${boardTitle} is not a string`)
 
-        let path = 'users/' + this._userId + '/board/' + boardTitle 
+        let path = 'users/' + this._userId + '/board/' + boardTitle
 
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {
                 return res.data
-             })
+            })
+
+    },
+
+    retrieveCover(id, boardId) {
+        if (typeof id !== 'string') throw TypeError(`${id} is not a string`)
+        if (typeof boardId !== 'string') throw TypeError(`${boardId} is not a string`)
+
+        let path = 'users/' + this._userId + '/user/' + id + '/board/' + boardId + '/covers'
+
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+              
+                return res.data
+            })
+
+    },
+
+    retrieveOtherBoard(userId, boardTitle) {
+
+        if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
+        if (typeof boardTitle !== 'string') throw TypeError(`${boardTitle} is not a string`)
+
+        let path = 'users/' + this._userId + '/user/' + userId + '/board/' + boardTitle
+
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                return res.data
+            })
 
     }
 }
+
+
 
 export default logic
 // module.exports = logic

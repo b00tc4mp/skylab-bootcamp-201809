@@ -60,6 +60,22 @@ routerUser.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
+routerUser.get('/users/:id/user/:username', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { params: { id, username }, sub } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveOtherUser(id, username)
+            .then(user =>
+                res.json({
+                    data: user
+                })
+            )
+    }, res)
+})
+
+
 routerUser.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
         const { params: { id }, sub, body: { name, surname, username, newPassword, email, age, password } } = req

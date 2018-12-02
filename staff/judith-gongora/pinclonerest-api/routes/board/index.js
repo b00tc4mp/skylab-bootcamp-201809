@@ -40,6 +40,20 @@ routerBoard.get('/users/:id/boards', [bearerTokenParser, jwtVerifier], (req, res
     }, res)
 })
 
+//List other user boards
+routerBoard.get('/users/:id/user/:username/boards', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, username } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.listOtherBoards(id, username)
+            .then(boards => res.json({
+                data: boards
+            }))
+    }, res)
+})
+
 //List user board by board title
 routerBoard.get('/users/:id/board/:boardTitle', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
@@ -54,6 +68,33 @@ routerBoard.get('/users/:id/board/:boardTitle', [bearerTokenParser, jwtVerifier]
     }, res)
 })
 
+//List other user board by board title
+routerBoard.get('/users/:id/user/:userId/board/:boardTitle', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, userId, boardTitle } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveOtherBoard(id, userId, boardTitle)
+            .then(board => res.json({
+                data: board
+            }))
+    }, res)
+})
+
+//List covers of user board by board id
+routerBoard.get('/users/:id/user/:userId/board/:boardId/covers', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, userId, boardId } } = req
+    
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveCover(id, userId, boardId)
+            .then(board => res.json({
+                data: board
+            }))
+    }, res)
+})
 
 //Modify user board
 routerBoard.patch('/users/:id/boards/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {

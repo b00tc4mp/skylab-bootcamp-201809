@@ -11,7 +11,10 @@ class Pin extends Component {
 
     handlePinClick = () => this.props.onHandlePinInfo(this.props.pin)
 
-    handleBoards = () => this.setState({ themes: true })
+    handleBoards = () => {
+        if (!this.state.themes) this.setState({ themes: true })
+        else this.setState({ themes: false })
+    }
 
     handleSave = boardId => {
         logic.savePin(this.props.id, boardId)
@@ -36,6 +39,8 @@ class Pin extends Component {
             .then(()=>this.setState({ themes: false, addBoard: false }))
     }
 
+    handleOpenBoard = board => this.props.onOpenBoard(board)
+
     render() {
         return <article className="pin__container" onClick={this.handlePinClick}>
             {this.state.addBoard && <AddBoard key={this.props.id} pin={this.props.pin} onCloseEditPin={this.handleCloseEdit} onCreateBoard={this.handleCreateBoard} />}
@@ -43,7 +48,7 @@ class Pin extends Component {
                 <div className="content">
                     <div className="img__container">
                         <img className="pin__img" src={this.props.pin.multimedia}></img>
-                        <PopUp key={this.props.key} id={this.props.id} url={this.props.pin.url} onHandleBoards={this.handleBoards} onHandleEditPin={this.handleEditPin} onSaveBoard={this.handleSaveBoard} onOpenBoard={this.props.onOpenBoard} />
+                        <PopUp key={this.props.key} id={this.props.id} url={this.props.pin.url} onHandleBoards={this.handleBoards} onHandleEditPin={this.handleEditPin} onSaveBoard={this.handleSaveBoard} onOpenBoard={this.handleOpenBoard} />
                         {this.state.themes && <Boards onSave={this.handleSave} onAddBoard={this.handleAddBoard} />}
                     </div>
                     <p className="pin__title">{this.props.pin.title}</p>

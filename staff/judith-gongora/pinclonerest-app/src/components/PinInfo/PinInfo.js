@@ -13,12 +13,12 @@ class PinInfo extends Component {
 
     componentDidMount() {
         logic.retrievePin(this.props.pinId)
-            .then(pin =>
+            .then(pin => { 
                 Promise.all([logic.retrievePinUser(pin.user), logic.isPinned(pin.id), logic.isMine(pin.user), logic.retrieveComments(pin.id), logic.isFollowing(pin.user)])
                     .then(([user, board, mine, comments, following]) =>
                         this.setState({ pin, following, user, board, mine, comments })
                     )
-            )
+                })
     }
 
     handlePinInfo = name => {
@@ -114,9 +114,11 @@ class PinInfo extends Component {
         .then(comments => this.setState({comments}))
     } 
 
+    handleOtherProfile = () => this.props.onOtherProfile(this.state.user.username)
+
     render() {
         return this.state.pin && <div className="div__pinInfo">
-            <Navbar onHome={this.props.onHome} onLogout={this.props.onLogout} />
+            <Navbar onSettings={this.props.onSettings} onHome={this.props.onHome} onLogout={this.props.onLogout} onHandleProfile={this.props.onHandleProfile}/>
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.pin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pinInfo__container">
                 <div className='pinInfo__home'>
@@ -165,7 +167,7 @@ class PinInfo extends Component {
                                 </div>}
                                 <h3>{this.state.pin.title}</h3>
                                 <div className='user__info'>
-                                    <div className='user'>
+                                    <div className='user' onClick={!this.state.mine ? this.handleOtherProfile : this.props.onHandleProfile} >
                                         <img src={this.state.user.img} ></img>
                                         <div>
                                             <p className='username'>{this.state.user.username} </p>

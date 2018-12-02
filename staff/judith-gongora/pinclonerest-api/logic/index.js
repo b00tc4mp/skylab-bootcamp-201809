@@ -62,6 +62,29 @@ const logic = {
         })()
     },
 
+    retrieveOtherUser(id, username) {
+        validate([{ key: 'id', value: id, type: String },
+        { key: 'username', value: username, type: String }])
+
+        return (async () => {
+            const _user = await User.findById(id)
+
+            if (!_user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const user = await User.findOne({ username: username }, { password: 0, pins: 0, __v: 0, tries: 0, boards: 0 }).lean()
+
+            if (!user) throw new NotFoundError(`user with username ${username} not found`)
+
+            user.id = user._id.toString()
+            delete user._id
+
+            user.followers != null && (user.followers = user.followers.length)
+            user.following != null && (user.following = user.following.length)
+
+            return user
+        })()
+    },
+
     updateUser(id, name, surname, username, newPassword, email, age, password) {
         validate([
             { key: 'id', value: id, type: String },
@@ -326,14 +349,14 @@ const logic = {
             if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
             const pinned = user.pins.filter(pinned => pinned.pin.toString() === pinId)
-
+        
             if (pinned[0].board.toString() !== boardId) {
-
+             
                 const _board = await Board.findById(pinned[0].board)
 
                 if (!_board) throw new NotFoundError(`_board with id ${_boardId} not found`)
 
-                _board.pins = _board.pins.filter(pin => pin.toString() === pinId)
+                _board.pins = _board.pins.filter(pin => pin.toString() !== pinId)
 
                 await _board.save()
 
@@ -575,6 +598,71 @@ const logic = {
         })()
     },
 
+    listOtherPins(id, username) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'username', value: username, type: String }
+        ])
+
+        return (async () => {
+            // const pins = await User.findById(id, {pins: true}).lean().populate([
+            //     { path: 'pins.pin'}
+            //   ]).exec()
+
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const _exists = !!await User.findOne({ username: username }).count()
+
+            if (!_exists) throw new NotFoundError(`user with username ${username} not found`)
+
+            const [{ pins }] = await User.aggregate([
+                {
+                    $match: {
+                        username: username
+                    }
+                },
+
+                {
+                    $lookup: {
+                        from: 'pins',
+                        localField: 'pins.pin',
+                        foreignField: '_id',
+                        as: 'pins'
+                    }
+                },
+
+                {
+                    $project: {
+                        _id: 0,
+
+                        pins: {
+                            $map: {
+                                input: '$pins',
+                                as: 'pin',
+                                in: {
+                                    id: '$$pin._id',
+                                    multimedia: '$$pin.multimedia',
+                                    user: '$$pin.user',
+                                    url: '$$pin.url',
+                                    title: '$$pin.title',
+                                    description: '$$pin.description',
+                                    board: '$$pin.board',
+                                    pins: '$$pin.pins'
+
+                                }
+                            }
+                        }
+                    }
+                }
+            ])
+
+            return pins
+
+        })()
+    },
+
     /**
     * List user pins
     * 
@@ -600,6 +688,52 @@ const logic = {
             const exists = !!await User.findById(id).count()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const boardPins = await Board.findById(boardId, { pins: true }).lean().populate('pins')
+
+            if (!boardPins) throw new NotFoundError(`board with id ${boardId} is empty`)
+
+            pins = boardPins.pins
+
+            pins.forEach(pin => {
+                pin.id = pin._id
+                delete pin._id
+                delete pin.__v
+            })
+
+            return pins
+
+        })()
+    },
+
+    /**
+    * List other user pins in board
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The other user id
+    * @param {String} boardId The board of other user
+    * 
+    * @throws {TypeError} On non-string user id, id or board id
+    * @throws {Error} On empty or blank user id, id or board id
+    * 
+    * @returns {Pin} return user pins 
+    */
+    retrieveOtherBoardPins(id, userId, boardId) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'userId', value: userId, type: String },
+            { key: 'boardId', value: boardId, type: String }
+        ])
+
+        return (async () => {
+
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const _exists = !!await User.findById(userId).count()
+
+            if (!_exists) throw new NotFoundError(`user with id ${userId} not found`)
 
             const boardPins = await Board.findById(boardId, { pins: true }).lean().populate('pins')
 
@@ -885,6 +1019,54 @@ const logic = {
     },
 
     /**
+   * 
+   * @param {String} id The user id
+   * 
+   * @throws {TypeError} On non-string user id, non-string board title or non-boolean secret
+   * @throws {Error} On empty or blank user id, board title or board secret
+   * 
+   * @returns {Board} Return user boards
+   */
+    listOtherBoards(id, username) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'username', value: username, type: String }
+        ])
+
+        return (async () => {
+
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const user = await User.findOne({ username: username }).lean()
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const boards = await Board.find({ user: user._id, secret: false }).lean()
+
+            boards.forEach(board => {
+                board.id = board._id.toString()
+
+                delete board._id
+                delete board.__v
+
+                board.user = board.user.toString()
+
+                user.followers != null && (user.followers = user.followers.length)
+                user.pins != null && (user.pins = user.pins.length)
+
+                if (board.collaborators)
+                    board.collaborators = board.collaborators.toString()
+
+                return board
+            })
+
+            return boards
+        })()
+    },
+
+    /**
     * 
     * @param {String} id The user id
     * @param {String} boardtitle The title of user board
@@ -925,6 +1107,94 @@ const logic = {
         })()
     },
 
+    /**
+    * 
+    * @param {String} id The user id
+    * @param {String} username The user username of other user
+    * @param {String} boardtitle The title of user board
+    * 
+    * @throws {TypeError} On non-string user id, non-string board title or non-boolean secret
+    * @throws {Error} On empty or blank user id, board title or board secret
+    * 
+    * @returns {Board} Return user boards
+    */
+    retrieveOtherBoard(id, userId, boardTitle) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'userId', value: userId, type: String },
+            { key: 'boardTitle', value: boardTitle, type: String }
+        ])
+
+        return (async () => {
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const user = await User.findById(userId).lean()
+
+            if (!user) throw new NotFoundError(`user with id ${userId} not found`)
+
+            const board = await Board.findOne({ user: user._id, title: boardTitle }).lean()
+
+            board.id = board._id
+
+            delete board._id
+            delete board.__v
+
+            board.user = board.user
+
+            user.followers != null && (user.followers = user.followers.length)
+            user.pins != null && (user.pins = user.pins.length)
+
+            if (board.collaborators)
+                board.collaborators = board.collaborators.toString()
+
+            return board
+
+        })()
+    },
+
+    retrieveCover(id, userId, boardId) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'userId', value: userId, type: String },
+            { key: 'boardId', value: boardId, type: String }
+        ])
+
+        return (async () => {
+            const exists = !!await User.findById(id).count()
+
+            if (!exists) throw new NotFoundError(`user with id ${id} not found`)
+
+            const user = await User.findById(userId).count()
+
+            if (!user) throw new NotFoundError(`user with id ${userId} not found`)
+
+            const board = await Board.findById(boardId).populate('pins')
+
+            if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
+
+            let pins = board.pins.map(pin => pin.multimedia)
+
+            if (pins.length > 4) {
+
+                function shuffle(a) {
+                    for (let i = a.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [a[i], a[j]] = [a[j], a[i]];
+                    }
+                    return a;
+                }
+
+                shuffle(pins)
+                pins = pins.slice(0, 4);
+
+            }
+
+            return pins
+
+        })()
+    },
 
     /**
     * 
@@ -1341,7 +1611,7 @@ const logic = {
             if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
             const comment = pin.comments.id(commentId)
-            
+
             if (comment.likes.length > 0) {
                 const likes = comment.likes.length
                 comment.likes = comment.likes.filter(like => like.toString() !== user.id)

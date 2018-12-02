@@ -96,6 +96,19 @@ routerPin.get('/users/:id/pins', [bearerTokenParser, jwtVerifier], (req, res) =>
     }, res)
 })
 
+routerPin.get('/users/:id/user/:username/pins', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, username } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.listOtherPins(id, username)
+            .then(pins => res.json({
+                data: pins
+            }))
+    }, res)
+})
+
 routerPin.get('/users/:id/pin/:pinId', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
         const { sub, params: { id, pinId } } = req
@@ -116,6 +129,19 @@ routerPin.get('/users/:id/board/:boardId/pins', [bearerTokenParser, jwtVerifier]
         if (id !== sub) throw Error('token sub does not match user id')
 
         return logic.retrieveBoardPins(id, boardId)
+            .then(pins => res.json({
+                data: pins
+            }))
+    }, res)
+})
+
+routerPin.get('/users/:id/user/:userId/board/:boardId/pins', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, userId, boardId } } = req
+ 
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveOtherBoardPins(id, userId, boardId)
             .then(pins => res.json({
                 data: pins
             }))
