@@ -3,6 +3,8 @@ import './Login.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import logic from '../../logic'
 import { withRouter } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 
 class Login extends Component {
@@ -15,7 +17,7 @@ class Login extends Component {
 
     toggle = () => {
         this.props.onShowHideModal()
-      }
+    }
 
     handleUsernameChange = event => {
         const username = event.target.value
@@ -33,8 +35,9 @@ class Login extends Component {
         event.preventDefault()
 
         const { username, password } = this.state
-
         this.handleLogin(username, password)
+
+
     }
 
     handleLogin = (username, password) => {
@@ -42,22 +45,30 @@ class Login extends Component {
             logic.login(username, password)
                 .then(() => {
                     this.setState({ loggedIn: true })
+                    toast.info('You are logged in!');
                     this.props.onShowHideModal()
                     this.props.handleLoggedIn()
                 })
 
-                .catch(err => this.setState({ error: err.message }))
+                .catch(err => {
+                    this.setState({ error: err.message })
+                    toast.warn(this.state.error)
+                })
+
         } catch (err) {
             this.setState({ error: err.message })
+            toast.warn(this.state.error)
+            this.setState({ error: null })
         }
     }
 
+
     render() {
         return <div className="login__form">
-
+            <ToastContainer />
             <Modal isOpen={this.state.modal} toggle={this.toggle} className="login-form">
-                <ModalHeader toggle={this.toggle}>Add a new rental</ModalHeader>
-                <ModalBody>
+                <ModalHeader toggle={this.toggle}>Login</ModalHeader>
+                <ModalBody className="modal__body">
                     <form className="form__container" onSubmit={this.handleSubmit}>
                         <div className="header__logo">
                             <div className="img__logo" />
@@ -66,7 +77,6 @@ class Login extends Component {
                             <input className="input__form" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
                             <input className="input__form" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
                             <button className="form__btn" type="submit">Login</button>
-                            <button className="form__btn" onClick={this.props.toggle}>back</button>
                         </div>
                     </form>
                 </ModalBody>

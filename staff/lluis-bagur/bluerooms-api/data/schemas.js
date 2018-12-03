@@ -117,6 +117,10 @@ const User = new Schema({
         lowercase: true,
         required: 'email is required',
     },
+    image: {
+        type: String,
+        required: true
+    },
     rentals: [{
         type: ObjectId,
         ref: 'Rental'

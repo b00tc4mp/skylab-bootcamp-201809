@@ -1,42 +1,52 @@
 import React from 'react'
 import './list.css'
+import '.././RentalCardLanding/RentalCardLanding'
+import '.././RentalCardSearch/RentalCardSearch'
+import { ToastContainer, toast } from 'react-toastify';
+import { Link } from 'react-router-dom'
+
+
 
 
 
 export function RentalCard(props) {
 
     return (
-        <div className='card__rental'>
-            <div className='img__card'>
-                <img className='card-img-top' src='http://via.placeholder.com/350x250' alt=''></img>
+        <div className='landingCard__rental'>
+            <ToastContainer />
+            <div className='img__landingCard'>
+                <Link className='link' to={`/rental/${props.rental.id}`}><img className='card-img-top' src={props.rental.image} alt=''></img></Link>
             </div>
-            <div className='info__card'>
 
-                <div className="card__title"><h4 className='card__title--text'> &nbsp; &nbsp; {props.rental.title}</h4></div>
-                <div className="card_line"><h6 className='card__city'><i class="fas fa-city"></i> </h6><p className="card__text">&nbsp; &nbsp;{props.rental.city}</p></div>
-                <div className="card_line"><h6 className='card__street'><i class="fas fa-map-marker-alt"></i> </h6><p className="card__text">&nbsp; &nbsp;{props.rental.street}</p></div>
-                <div className="card_line"><h6 className='card__dess'><i class="fas fa-info-circle"></i> </h6><p className="card__text">&nbsp; &nbsp;{props.rental.description}</p></div>
+            <div className="landingCard__title"><h4 className='landingCard__title--text'> {props.rental.title}</h4></div>
+
+            <div className='info__landingCard'>
+                <div className="landingCard_line"><h4 className='landingCard__city'> </h4><i class="fas fa-map-marker-alt"></i><p className="landingCard__city">&nbsp;{props.rental.city}</p></div>
+                <div className="card_line"><h6 className='card__street'></h6><p className="card__text">{props.rental.street}</p></div>
+                <div className="landingCard_line"><h4 className='landingCard__city'> </h4><p className="landingCard__text">{props.rental.description}</p></div>
+
+
             </div>
-            <div className='info__card2'>
+            <div className='info__landingCard2'>
+                <div className="landingCard_line"><h5 className='landingCard__bed'> </h5><p className="landingCard__text"> {props.rental.bedrooms}&nbsp;&nbsp;<h5 className="price_day"> GUESTS</h5></p></div>
+                <div className="landingCard_line"><h5 className='landingCard__rate'> </h5><p className="landingCard__text"> {props.rental.dailyRate}$ <h5 className="price_day">NIGHT</h5></p></div>
+                <div className="info__btns">
 
-                <div className="card_line"><h6 className='card__bed'><i className='fa fa-user'> </i> </h6><p className="card__text"> &nbsp; &nbsp;{props.rental.bedrooms}</p></div>
-                <div className="card_line"><h6 className='card__rate'><i class="fas fa-dollar-sign"></i> </h6><p className="card__text"> &nbsp; &nbsp;{props.rental.dailyRate} /day</p></div>
-            </div>
-            <div className="info__btns">
-
-                <div class="buttons">
-                    <div class="button button-edit" onClick={() => props.onEditRental(props.rental.id)}>
-                    <i class="fas fa-edit"></i>
+                    <div class="buttons">
+                        <div class="button button-edit" onClick={() => props.onEditRental(props.rental.id)}>
+                            <i class="fas fa-edit"></i>
+                        </div>
                     </div>
-                </div>
-                <div class="buttons">
-                    <div class="button button-remove" onClick={() => props.onDeleteRental(props.rental.id)}>
-                    <i class="fas fa-trash-alt"></i>
+                    <div class="buttons">
+                        <div class="button button-remove" onClick={() => props.onDeleteRental(props.rental.id)}>
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
+
     )
 }
 

@@ -1,71 +1,75 @@
 .details-section {
-  width: 100%;
+  width: 80%;
   height: 100%;
   margin-top: 60px;
   padding: 20px;
 }
-.details-section .rental-type {
+.details-section .row {
+  justify-content: space-around;
+}
+.details-section .row .rental-type {
   font-size: 14px;
   font-weight: 300;
   text-transform: uppercase;
   margin: 0;
 }
-.details-section .rental-owner {
+.details-section .row .rental-owner {
   float: right;
 }
-.details-section .rental-owner img {
+.details-section .row .rental-owner img {
   height: 50px;
   border-radius: 50%;
   display: block;
   margin: 0 auto;
 }
-.details-section .rental-owner span {
+.details-section .row .rental-owner span {
   display: block;
   font-size: 13px;
   font-weight: 300;
 }
-.details-section .rental-label {
+.details-section .row .rental-label {
   margin-right: 10px;
 }
-.details-section .rental-title {
+.details-section .row .rental-title {
   margin-bottom: 5px;
   font-size: 32px;
   font-weight: 700;
 }
-.details-section .rental-city {
+.details-section .row .rental-city {
+  font-size: 14px;
+  font-weight: 300;
+  margin-bottom: 20px;
+  color: #00d3ff;
+}
+.details-section .row .rental-street {
   font-size: 14px;
   font-weight: 300;
   margin-bottom: 20px;
 }
-.details-section .rental-street {
-  font-size: 14px;
-  font-weight: 300;
-  margin-bottom: 20px;
-}
-.details-section .rental-room-info {
+.details-section .row .rental-room-info {
   margin-bottom: 20px;
   font-weight: 300;
   font-size: 16px;
 }
-.details-section .rental-room-info .rental-bedrooms {
+.details-section .row .rental-room-info .rental-bedrooms {
   margin-right: 0;
 }
-.details-section .rental-room-info span {
+.details-section .row .rental-room-info span {
   margin-right: 10px;
 }
-.details-section .rental-room-info i {
+.details-section .row .rental-room-info i {
   margin-right: 2px;
 }
-.details-section .rental-description {
+.details-section .row .rental-description {
   font-weight: 300;
   margin-bottom: 30px;
 }
-.details-section .rental-assets .title {
+.details-section .row .rental-assets .title {
   margin-bottom: 10px;
   font-weight: 700;
   font-size: 22px;
 }
-.details-section .rental-assets span {
+.details-section .row .rental-assets span {
   display: block;
   margin-bottom: 15px;
   font-weight: 300;

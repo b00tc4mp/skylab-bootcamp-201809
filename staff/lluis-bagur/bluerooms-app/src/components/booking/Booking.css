@@ -1,6 +1,37 @@
+#userBookings .card {
+  margin-bottom: 20px;
+}
+#userBookings h1 {
+  margin-bottom: 20px;
+}
+#userBookings .card-block {
+  padding: 20px;
+}
+#userBookings .card-header {
+  text-transform: capitalize;
+}
+#userBookings .card-title {
+  font-size: 18px;
+}
+#userBookings .booking-desc {
+  font-size: 14px;
+}
+#userBookings .booking-days {
+  font-size: 14px;
+  font-weight: bold;
+}
+#userBookings .booking-price-value {
+  font-weight: 700;
+}
+#userBookings .btn-bwm {
+  color: white;
+  font-size: 14px;
+  padding: 15px;
+}
+
 .booking {
   padding: 20px;
-  border: 1px solid red;
+  border: 1px solid black;
 }
 .booking a:hover {
   color: white;
@@ -9,6 +40,8 @@
   font-size: 17px;
   font-weight: 700;
   padding: 13px;
+  background: #00d3ff;
+  color: white;
 }
 .booking label {
   font-size: 12px;
@@ -36,20 +69,12 @@
   margin-bottom: 10px;
 }
 
-.booking-modal .title {
-  font-weight: 700;
-  font-size: 26px;
+.daterangepicker td.in-range {
+  background-color: red;
 }
-.booking-modal .buttons {
-  margin: 15px 0px;
-}
-.booking-modal em {
-  font-style: normal;
-  font-size: 17px;
-  font-weight: 700;
-}
-.booking-modal p {
-  margin: 0;
+
+.daterangepicker td.active {
+  background-color: blue;
 }
 
 /*# sourceMappingURL=Booking.css.map */

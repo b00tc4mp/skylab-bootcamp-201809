@@ -71,38 +71,37 @@ class RentalPage extends Component {
         return <div className="rental__page">
             <div className="rental__page__top">
                 <div className="rental__fotos">
-                    FOTOS
+                    <img className='card-img-top' src={this.state.rental.image} alt=''></img>
                 </div>
-                <div className="rental__map">
-                    <section className="map">
-                        <GoogleMapReact
-                            defaultCenter={{ lat: 28.4, lng: -16.3 }}
-                            defaultZoom={14}
-                            bootstrapURLKeys={{ key: "AIzaSyD2T4oMLr7caT6MwUYZI0N_6u65KBZ97jk", language: 'es', region: 'es' }}
-                            //onClick={this.handleMapClick}
-                            onGoogleApiLoaded={this.setMapInstance}>
-                        </GoogleMapReact>
-                    </section>
                 </div>
-            </div>
-
-            <div className='details-section'>
-                <div className='row'>
-                    <div className='col-md-8'>
-                        <RentalDetailInfo rental={this.state.rental} />
+                <div className='details-section'>
+                    <div className='row'>
+                        <div className='col-md-6'>
+                            <RentalDetailInfo rental={this.state.rental} />
+                        </div>
+                        <div className='col-md-4'>
+                            <Booking rental={this.state.rental} id={this.props.id} isLoggedIn={this.props.isLoggedIn} />
+                        </div>
                     </div>
-                    <div className='col-md-4'>
-                        <Booking rental={this.state.rental} id={this.props.id} isLoggedIn={this.props.isLoggedIn}/>
+                    <div className="rental__map">
+                        <section className="map">
+                            <GoogleMapReact
+                                defaultCenter={{ lat: 28.4, lng: -16.3 }}
+                                defaultZoom={14}
+                                bootstrapURLKeys={{ key: "AIzaSyD2T4oMLr7caT6MwUYZI0N_6u65KBZ97jk", language: 'es', region: 'es' }}
+                                //onClick={this.handleMapClick}
+                                onGoogleApiLoaded={this.setMapInstance}>
+                            </GoogleMapReact>
+                        </section>
                     </div>
                 </div>
+
+                <div className="rental__page__footer">
+                </div>
+
             </div>
 
-            <div className="rental__page__footer">
-            </div>
-
-        </div>
-
-    }
-}
-
+            }
+        }
+        
 export default RentalPage

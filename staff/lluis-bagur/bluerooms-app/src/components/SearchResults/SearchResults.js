@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withRouter, Route } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import logic from '../../logic'
 import Search from '../Search/Search'
 import { RentalCardSearch } from '../RentalCardSearch/RentalCardSearch'
@@ -22,17 +23,19 @@ class SearchResults extends Component {
 
     searchRentals(query) {
         try {
+            debugger
             logic.searchRentals(query)
                 .then(rentals => {
-
-                    console.log(rentals)
-                    debugger
                     this.setState({ rentals })
                 })
-                .catch(err => this.setState({ error: err.message }))
-        }
+                .catch(err =>{ 
+                this.setState({ error: err.message })
+                toast.warn(this.state.error)
+                })
+            }
         catch (err) {
             this.setState({ error: err.message })
+            toast.warn(this.state.error)
         }
     }
 
@@ -43,6 +46,8 @@ class SearchResults extends Component {
 
     render() {
         return <div className="contain__search">
+                 <ToastContainer />
+
             <div className="contain__search__form">
                     <Search query={this.props.query} />
             </div>
@@ -51,7 +56,7 @@ class SearchResults extends Component {
             </div>
             <div className="contain__search__results">
                 {this.state.rentals.map((rental) => {
-                    return <RentalCardSearch id={rental.id} title={rental.title} city={rental.city} street={rental.street} category={rental.category} category={rental.category} bedrooms={rental.bedrooms} description={rental.description} dailyRate={rental.dailyRate} bookings={rental.bookings} key={rental.id} onBookRental={this.handleRentalCardClick} />
+                    return <RentalCardSearch id={rental.id} title={rental.title} city={rental.city} street={rental.street} category={rental.category} category={rental.category} bedrooms={rental.bedrooms} description={rental.description} image={rental.image} dailyRate={rental.dailyRate} bookings={rental.bookings} key={rental.id} onBookRental={this.handleRentalCardClick} />
                 })}
             </div>
         </div>

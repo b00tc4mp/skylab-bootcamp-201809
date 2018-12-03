@@ -2,6 +2,7 @@ import React from 'react';
 import { RentalAssets } from './RentalAssets';
 import './RentalDetailInfo.css'
 
+
 export function RentalDetailInfo(props) {
   const rental = props.rental;
 
@@ -10,7 +11,7 @@ export function RentalDetailInfo(props) {
         {/* <h2 className={`rental-type ${rental.category}`}>{rentalType(rental.shared)} {rental.category}</h2> */}
         <div className="rental-owner">
           <img src="https://api.adorable.io/avatars/285/abott@adorable.png" alt="owner"/>
-          <p>{rental.user && rental.user.username}</p>
+          <p>{rental.user && rental.user.name}</p>
         </div>
         <h1 className='rental-title'>{rental.title}</h1>
         <h2 className='rental-city'>{rental.city}</h2>

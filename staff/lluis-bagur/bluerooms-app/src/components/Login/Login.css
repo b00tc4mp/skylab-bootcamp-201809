@@ -85,3 +85,8 @@
       outline: none;
       box-shadow: 0 4px 10px 0 rgba(31, 152, 182, 0.26);
     }
+
+    .modal__body{
+      display: flex;
+      justify-content: center;
+    }

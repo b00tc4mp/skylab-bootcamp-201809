@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
 import { RentalCard } from '../RentalCard/RentalCard'
-import { BookingList } from '../BookingList/BookingList'
+import BookingList from '../BookingList/BookingList'
 import AddRentals from '../AddRentals/AddRentals'
 import EditRentals from '../EditRentals/EditRentals'
 import { withRouter } from "react-router"
@@ -71,7 +71,6 @@ class Profile extends Component {
                         </div>
                         <div class="buttons">
                             <div class="button button-back" onClick={this.props.onGoBack}>
-                                {/* <a href="#" onClick={this.props.onGoBack}></a> */}
                                 <i class="fas fa-times-circle"></i>
                             </div>
                         </div>
@@ -94,7 +93,6 @@ class Profile extends Component {
                 </div>}
 
                 {this.state.showBookings && <div className="user__rentals">
-                    BOOKINGS
                     {this.state.user.bookings.map((booking) => { return <BookingList booking={booking} onBookingCardClick={this.handleBookingCardClick} /> })}
                 </div>}
             </div>

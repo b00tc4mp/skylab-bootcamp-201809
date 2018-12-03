@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const { User, Postit } = require('../data')
+const { User, Rental, Booking } = require('../data')
 const logic = require('.')
 const { AlreadyExistsError, ValueError } = require('../errors')
 
@@ -14,7 +14,8 @@ const MONGO_URL = 'mongodb://localhost:27017/bluerooms-test'
 describe('logic', () => {
     before(() => mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true }))
 
-    beforeEach(() => Promise.all([User.deleteMany(), Postit.deleteMany()]))
+    beforeEach(() => Promise.all([User.deleteMany(), Rental.deleteMany(), Booking.deleteMany()]))
+
 
     describe('user', () => {
         describe('register', () => {
@@ -71,12 +72,46 @@ describe('logic', () => {
                 expect(() => logic.registerUser(name, '   \t\n', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
             })
 
-            // TODO other test cases
+            it('should fail on undefined username', () => {
+                expect(() => logic.registerUser(name, surname, undefined, password, email)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty username', () => {
+                expect(() => logic.registerUser(name, surname, '', password, email)).to.throw(ValueError, 'username is empty or blank')
+            })
+
+            it('should fail on blank username', () => {
+                expect(() => logic.registerUser(name, surname, '   \t\n', password, email)).to.throw(ValueError, 'username is empty or blank')
+            })
+
+            it('should fail on undefined password', () => {
+                expect(() => logic.registerUser(name, surname, username, undefined, email)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty password', () => {
+                expect(() => logic.registerUser(name, surname, username, '', email)).to.throw(ValueError, 'password is empty or blank')
+            })
+
+            it('should fail on blank password', () => {
+                expect(() => logic.registerUser(name, surname, username, '   \t\n', email)).to.throw(ValueError, 'password is empty or blank')
+            })
+
+            it('should fail on undefined email', () => {
+                expect(() => logic.registerUser(name, surname, username, password, undefined)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty email', () => {
+                expect(() => logic.registerUser(name, surname, username, password, '')).to.throw(ValueError, 'email is empty or blank')
+            })
+
+            it('should fail on blank email', () => {
+                expect(() => logic.registerUser(name, surname, username, password, '   \t\n')).to.throw(ValueError, 'email is empty or blank')
+            })
         })
 
         describe('authenticate', () => {
             let user
-            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })).save())
+            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })).save())
 
             it('should authenticate on correct credentials', async () => {
                 const { username, password } = user
@@ -97,379 +132,289 @@ describe('logic', () => {
                 expect(() => logic.authenticateUser(undefined, user.password)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            // TODO other test cases
+            it('should fail on undefined password', () => {
+                expect(() => logic.authenticateUser(user.username, undefined)).to.throw(TypeError, 'undefined is not a string')
+            })
         })
 
         describe('retrieve', () => {
             let user
 
             beforeEach(async () => {
-                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })
 
                 await user.save()
             })
 
-            it('should succeed on valid id', async () => {
+            it('should succeed on valid id, and control (_id,__V...)', async () => {
                 const _user = await logic.retrieveUser(user.id)
 
                 expect(_user).not.to.be.instanceof(User)
 
-                const { id, name, surname, username, password, postits } = _user
+                const { id, _id, __v, name, surname, username, password, email, rentals, bookings } = _user
 
                 expect(id).to.exist
                 expect(id).to.be.a('string')
                 expect(id).to.equal(user.id)
+                expect(_id).not.to.exist
+                expect(__v).not.to.exist
                 expect(name).to.equal(user.name)
                 expect(surname).to.equal(user.surname)
                 expect(username).to.equal(user.username)
+                expect(email).to.equal(user.email)
                 expect(password).to.be.undefined
-                expect(postits).not.to.exist
+                expect(rentals).to.exist
+                expect(bookings).to.exist
             })
         })
+    })
 
-        describe('update', () => {
-            let user
-
-            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })).save())
-
-            it('should update on correct data and password', async () => {
-                const { id, name, surname, username, password } = user
-
-                const newName = `${name}-${Math.random()}`
-                const newSurname = `${surname}-${Math.random()}`
-                const newUsername = `${username}-${Math.random()}`
-                const newPassword = `${password}-${Math.random()}`
-
-                const res = await logic.updateUser(id, newName, newSurname, newUsername, newPassword, password)
-
-                expect(res).to.be.undefined
-
-                const _users = await User.find()
-
-                const [_user] = _users
-
-                expect(_user.id).to.equal(id)
-
-                expect(_user.name).to.equal(newName)
-                expect(_user.surname).to.equal(newSurname)
-                expect(_user.username).to.equal(newUsername)
-                expect(_user.password).to.equal(newPassword)
-            })
-
-            it('should update on correct id, name and password (other fields null)', async () => {
-                const { id, name, surname, username, password } = user
-
-                const newName = `${name}-${Math.random()}`
-
-                const res = await logic.updateUser(id, newName, null, null, null, password)
-
-                expect(res).to.be.undefined
-
-                const _users = await User.find()
-
-                const [_user] = _users
-
-                expect(_user.id).to.equal(id)
-
-                expect(_user.name).to.equal(newName)
-                expect(_user.surname).to.equal(surname)
-                expect(_user.username).to.equal(username)
-                expect(_user.password).to.equal(password)
-            })
-
-            it('should update on correct id, surname and password (other fields null)', async () => {
-                const { id, name, surname, username, password } = user
-
-                const newSurname = `${surname}-${Math.random()}`
-
-                const res = await logic.updateUser(id, null, newSurname, null, null, password)
-
-                expect(res).to.be.undefined
-
-                const _users = await User.find()
-
-                const [_user] = _users
-
-                expect(_user.id).to.equal(id)
-
-                expect(_user.name).to.equal(name)
-                expect(_user.surname).to.equal(newSurname)
-                expect(_user.username).to.equal(username)
-                expect(_user.password).to.equal(password)
-            })
-
-            // TODO other combinations of valid updates
-
-            it('should fail on undefined id', () => {
-                const { id, name, surname, username, password } = user
-
-                expect(() => logic.updateUser(undefined, name, surname, username, password, password)).to.throw(TypeError, 'undefined is not a string')
-            })
-
-            // TODO other test cases
-
-            describe('with existing user', () => {
-                let user2
+        describe('rentals', () => {
+            describe('add', () => {
+                let user, title, city, street, category, image, bedrooms, shared, description, dailyRate
 
                 beforeEach(async () => {
-                    user2 = new User({ name: 'John', surname: 'Doe', username: 'jd2', password: '123' })
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })
 
-                    await user2.save()
+                    title = `title-${Math.random()}`
+                    city = `city-${Math.random()}`
+                    category = `category-${Math.random()}`
+                    street = `street-${Math.random()}`
+                    image = `image-${Math.random()}`
+                    bedrooms = 4
+                    shared = false
+                    description = `description-${Math.random()}`
+                    dailyRate = 125
+                    
+                    await user.save()
                 })
 
-                it('should update on correct data and password', async () => {
-                    const { id, name, surname, username, password } = user2
+                it('should succeed on correct data', async () => {
+                    const res = await logic.addRental(user.id, title, city, street, category, image, bedrooms, shared, description, dailyRate)
 
-                    const newUsername = 'jd'
+                    expect(res).to.be.undefined
 
-                    try {
-                        const res = await logic.updateUser(id, null, null, newUsername, null, password)
+                    const rentals = await Rental.find()
 
-                        expect(true).to.be.false
-                    } catch (err) {
-                        expect(err).to.be.instanceof(AlreadyExistsError)
-                    } finally {
-                        const _user = await User.findById(id)
+                    const [rental] = rentals
 
-                        expect(_user.id).to.equal(id)
+                    expect(rental.title).to.equal(title)
+                    expect(rental.city).to.equal(city)
+                    expect(rental.street).to.equal(street)
+                    expect(rental.category).to.equal(category)
+                    expect(rental.image).to.equal(image)
+                    expect(rental.bedrooms).to.equal(bedrooms)
+                    expect(rental.shared).to.equal(shared)
+                    expect(rental.description).to.equal(description)
+                    expect(rental.dailyRate).to.equal(dailyRate)
+                    expect(rental.bookings).to.exist
+                    expect(rental.user).to.exist
+                    expect(rental.user.toString()).to.equal(user.id)
+                })
 
-                        expect(_user.name).to.equal(name)
-                        expect(_user.surname).to.equal(surname)
-                        expect(_user.username).to.equal(username)
-                        expect(_user.password).to.equal(password)
-                    }
+                it('should fail on undefined title', () => {
+                    expect(() => logic.addRental(user.id, undefined, city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on undefined city', () => {
+                    expect(() => logic.addRental(user.id, title, undefined, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on undefined street', () => {
+                    expect(() => logic.addRental(user.id, title, city, undefined, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on undefined category', () => {
+                    expect(() => logic.addRental(user.id, title, city, street, undefined, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on undefined image', () => {
+                    expect(() => logic.addRental(user.id, title, city, street, category, undefined, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on undefined bedrooms', () => {
+                    expect(() => logic.addRental(user.id, title, city, street, category, image, undefined, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a number')
+                })
+
+                it('should fail on undefined shared', () => {
+                    expect(() => logic.addRental(user.id, title, city, street, category, image, bedrooms, undefined, description, dailyRate)).to.throw(TypeError, 'undefined is not a boolean')
+                })
+
+                it('should fail on undefined description', () => {
+                    expect(() => logic.addRental(user.id, title, city, street, category, image, bedrooms, shared, undefined, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                })
+
+                it('should fail on empty title or other cases', () => {
+                    expect(() => logic.addRental(user.id, '', city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
+                })
+
+                it('should fail on blank title or other cases', () => {
+                    expect(() => logic.addRental(user.id, '   \t\n', city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
+                })
+
+
+            })
+
+            describe('listByUserId', () => {
+                let user, rental1, rental2
+
+                beforeEach(async () => {
+
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com' })
+
+                    await user.save()
+
+                    rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image:'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123})
+                    rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image:'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+                  
+                    await rental1.save()
+                    await rental2.save()
+                })
+
+                it('should succeed on correct data', async () => {
+                    
+                    
+                    const rentals = await logic.listRentalByUserId(user.id)
+
+                    console.log(rentals)
+
+                    const _rentals = await Rental.find()
+
+                    expect(_rentals.length).to.equal(2)
+                    expect(rentals.length).to.equal(_rentals.length)
+
+                    expect(rentals._id).not.to.exist
+                    expect(rentals.__v).not.to.exist
+                    expect(_rentals._id).not.to.exist
+                    expect(_rentals.__v).not.to.exist
+
+                    rentals.forEach(rentals => {
+                        expect(rentals.title).to.equal(_rentals.title)
+                        expect(rentals.city).to.equal(_rentals.city)
+                        expect(rentals.street).to.equal(_rentals.street)
+                        expect(rentals.category).to.equal(_rentals.category)
+                        expect(rentals.image).to.equal(_rentals.image)
+                        expect(rentals.bedrooms).to.equal(_rentals.bedrooms)
+                        expect(rentals.shared).to.equal(_rentals.shared)
+                        expect(rentals.description).to.equal(_rentals.description)
+                        expect(rentals.dailyRate).to.equal(_rentals.dailyRate)
+                        expect(rentals.bookings).to.exist
+                        expect(rentals.user).to.exist
+                        expect(rentals.user.toString()).to.equal(user.id)
+                    });
+                    
+                    
+
+
                 })
             })
+
+            describe('remove', () => {
+                let user, rentals
+
+                beforeEach(async () => {
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                    rentals = new rentals({ text: 'hello text', user: user.id })
+
+                    await Promise.all([user.save(), rentals.save()])
+                })
+
+                it('should succeed on correct data', async () => {
+                    const res = await logic.removerentals(user.id, rentals.id)
+
+                    expect(res).to.be.undefined
+
+                    const rentals = await rentals.find()
+
+                    expect(rentals.length).to.equal(0)
+                })
+            })
+
+            describe('modify', () => {
+                let user, rentals, newText
+
+                beforeEach(async () => {
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                    rentals = new rentals({ text: 'hello text', user: user.id })
+
+                    newText = `new-text-${Math.random()}`
+
+                    await Promise.all([user.save(), rentals.save()])
+                })
+
+                it('should succeed on correct data', async () => {
+                    const res = await logic.modifyrentals(user.id, rentals.id, newText)
+
+                    expect(res).to.be.undefined
+
+                    const rentals = await rentals.find()
+
+                    expect(rentals.length).to.equal(1)
+
+                    const [_rental] = rentals
+
+                    expect(_rental.text).to.equal(newText)
+                })
+            })
+
+            describe('move', () => {
+                let user, rentals, newStatus
+
+                beforeEach(async () => {
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                    rentals = new rentals({ text: 'hello text', user: user.id })
+
+                    newStatus = 'DOING'
+
+                    await Promise.all([user.save(), rentals.save()])
+                })
+
+                it('should succeed on correct data', async () => {
+                    const res = await logic.moverentals(user.id, rentals.id, newStatus)
+
+                    expect(res).to.be.undefined
+
+                    const rentals = await rentals.find()
+
+                    expect(rentals.length).to.equal(1)
+
+                    const [_rental] = rentals
+
+                    expect(_rental.status).to.equal(newStatus)
+                })
+            })
+
+            describe('assign', () => {
+                let user, rentals, user2
+
+                beforeEach(async () => {
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
+                    rentals = new rentals({ text: 'hello text', user: user.id })
+                    user2 = new User({ name: 'Pepito', surname: 'Grillo', username: 'pg', password: '123' })
+
+                    await Promise.all([user.save(), rentals.save(), user2.save()])
+                })
+
+                it('should succeed on correct data', async () => {
+                    const res = await logic.assignrentals(user.id, rentals.id, user2.id)
+
+                    expect(res).to.be.undefined
+
+                    const rentals = await rentals.find()
+
+                    expect(rentals.length).to.equal(1)
+
+                    const [_rental] = rentals
+
+                    expect(_rental.id).to.equal(rentals.id)
+                    expect(_rental.user.toString()).to.equal(user.id)
+                    expect(_rental.text).to.equal(rentals.text)
+                    expect(_rental.assignedTo.toString()).to.equal(user2.id)
         })
+    })
+})
 
-    //     describe('add collaborator', () => {
-    //         let user, user2
+afterEach(() => Promise.all([User.deleteMany(), Rental.deleteMany(), Booking.deleteMany()]))
 
-    //         beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })).save()
-    //             .then(() => (user2 = new User({ name: 'Pepe', surname: 'Grillo', username: 'pg', password: '123' })).save()))
-
-    //         it('should update on correct data and password', async () => {
-    //             const res = await logic.addCollaborator(user.id, user2.username)
-
-    //             expect(res).to.be.undefined
-
-    //             const _user = await User.findById(user.id)
-
-    //             expect(_user.id).to.equal(user.id)
-
-    //             expect(_user.collaborators.length).to.equal(1)
-
-    //             const [collaboratorId] = _user.collaborators
-
-    //             expect(collaboratorId.toString()).to.equal(user2.id)
-    //         })
-    //     })
-
-    //     describe('list collaborators', () => {
-    //         let user, user2
-
-    //         beforeEach(() => (user2 = new User({ name: 'Pepe', surname: 'Grillo', username: 'pg', password: '123' })).save()
-    //             .then(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', collaborators: [user2.id] })).save()))
-
-    //         it('should update on correct data and password', async () => {
-    //             const collaborators = await logic.listCollaborators(user.id)
-
-    //             expect(collaborators.length).to.equal(1)
-
-    //             const [collaborator] = collaborators
-
-    //             const { _id, id, username, name, surname, password } = collaborator
-
-    //             expect(_id).to.be.undefined
-    //             expect(id).to.equal(user2.id)
-    //             expect(username).to.equal(user2.username)
-    //             expect(name).to.be.undefined
-    //             expect(surname).to.be.undefined
-    //             expect(password).to.be.undefined
-    //         })
-    //     })
-    // })
-
-
-    // describe('postits', () => {
-    //     describe('add', () => {
-    //         let user, text
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-
-    //             text = `text-${Math.random()}`
-
-    //             await user.save()
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const res = await logic.addPostit(user.id, text)
-
-    //             expect(res).to.be.undefined
-
-    //             const postits = await Postit.find()
-
-    //             const [postit] = postits
-
-    //             expect(postit.text).to.equal(text)
-
-    //             expect(postit.user.toString()).to.equal(user.id)
-    //         })
-
-    //         // TODO other test cases
-    //     })
-
-    //     describe('list', () => {
-    //         let user, postit, postit2
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-
-    //             postit = new Postit({ text: 'hello text', user: user.id })
-    //             postit2 = new Postit({ text: 'hello text 2', user: user.id })
-
-    //             await user.save()
-    //             await postit.save()
-    //             await postit2.save()
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const postits = await logic.listPostits(user.id)
-
-    //             const _postits = await Postit.find()
-
-    //             expect(_postits.length).to.equal(2)
-
-    //             expect(postits.length).to.equal(_postits.length)
-
-    //             const [_postit, _postit2] = _postits
-
-    //             expect(_postit.id).to.equal(postit.id)
-    //             expect(_postit.text).to.equal(postit.text)
-
-    //             expect(_postit2.id).to.equal(postit2.id)
-    //             expect(_postit2.text).to.equal(postit2.text)
-
-    //             const [__postit, __postit2] = postits
-
-    //             expect(__postit).not.to.be.instanceof(Postit)
-    //             expect(__postit2).not.to.be.instanceof(Postit)
-
-    //             expect(_postit.id).to.equal(__postit.id)
-    //             expect(_postit.text).to.equal(__postit.text)
-
-    //             expect(_postit2.id).to.equal(__postit2.id)
-    //             expect(_postit2.text).to.equal(__postit2.text)
-    //         })
-    //     })
-
-    //     describe('remove', () => {
-    //         let user, postit
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-    //             postit = new Postit({ text: 'hello text', user: user.id })
-
-    //             await Promise.all([user.save(), postit.save()])
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const res = await logic.removePostit(user.id, postit.id)
-
-    //             expect(res).to.be.undefined
-
-    //             const postits = await Postit.find()
-
-    //             expect(postits.length).to.equal(0)
-    //         })
-    //     })
-
-    //     describe('modify', () => {
-    //         let user, postit, newText
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-    //             postit = new Postit({ text: 'hello text', user: user.id })
-
-    //             newText = `new-text-${Math.random()}`
-
-    //             await Promise.all([user.save(), postit.save()])
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const res = await logic.modifyPostit(user.id, postit.id, newText)
-
-    //             expect(res).to.be.undefined
-
-    //             const postits = await Postit.find()
-
-    //             expect(postits.length).to.equal(1)
-
-    //             const [_postit] = postits
-
-    //             expect(_postit.text).to.equal(newText)
-    //         })
-    //     })
-
-    //     describe('move', () => {
-    //         let user, postit, newStatus
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-    //             postit = new Postit({ text: 'hello text', user: user.id })
-
-    //             newStatus = 'DOING'
-
-    //             await Promise.all([user.save(), postit.save()])
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const res = await logic.movePostit(user.id, postit.id, newStatus)
-
-    //             expect(res).to.be.undefined
-
-    //             const postits = await Postit.find()
-
-    //             expect(postits.length).to.equal(1)
-
-    //             const [_postit] = postits
-
-    //             expect(_postit.status).to.equal(newStatus)
-    //         })
-    //     })
-
-    //     describe('assign', () => {
-    //         let user, postit, user2
-
-    //         beforeEach(async () => {
-    //             user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-    //             postit = new Postit({ text: 'hello text', user: user.id })
-    //             user2 = new User({ name: 'Pepito', surname: 'Grillo', username: 'pg', password: '123' })
-
-    //             await Promise.all([user.save(), postit.save(), user2.save()])
-    //         })
-
-    //         it('should succeed on correct data', async () => {
-    //             const res = await logic.assignPostit(user.id, postit.id, user2.id)
-
-    //             expect(res).to.be.undefined
-
-    //             const postits = await Postit.find()
-
-    //             expect(postits.length).to.equal(1)
-
-    //             const [_postit] = postits
-
-    //             expect(_postit.id).to.equal(postit.id)
-    //             expect(_postit.user.toString()).to.equal(user.id)
-    //             expect(_postit.text).to.equal(postit.text)
-    //             expect(_postit.assignedTo.toString()).to.equal(user2.id)
-    //         })
-    //     })
-     })
-
-    afterEach(() => Promise.all([User.deleteMany(), Postit.deleteMany()]))
-
-    after(() => mongoose.disconnect())
+after(() => mongoose.disconnect())
 })

@@ -1,61 +1,114 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,900);
-.card__rental {
+.landingCard__rental {
   width: 30%;
-  height: 100%;
+  min-width: 350px;
   display: flex;
   justify-content: space-between;
   align-items: start;
   flex-direction: column;
   margin-top: 20px;
   margin: 10px;
+  margin-bottom: 30px;
+  height: 550px;
   box-shadow: 0px 0px 11px 1px rgba(111, 89, 93, 0.19);
 }
-.card__rental .img__card {
+.landingCard__rental .img__landingCard {
+  width: 100%;
+  height: 250px;
+}
+.landingCard__rental .img__landingCard:hover {
+  transform: translateY(-5%);
+  transition: 0.2s;
+}
+.landingCard__rental .img__landingCard:hover .link {
+  width: 100%;
+  height: 250px;
+}
+.landingCard__rental .card-img-top {
   width: 100%;
   height: 100%;
 }
-.card__rental .info__card {
+.landingCard__rental .landingCard__title {
+  margin: 0;
+  padding: 20px;
+  color: black;
   display: flex;
+  justify-content: start;
+  align-items: start;
+  width: 100%;
+  height: 200px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.3em;
+}
+.landingCard__rental .landingCard__title .landingCard__title--text {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.2em;
+}
+.landingCard__rental .info__landingCard {
+  font-family: "Montserrat", sans-serif;
+  display: flex;
+  justify-content: start;
   align-items: start;
   flex-direction: column;
+  font-size: 1em;
+  color: grey;
   width: 100%;
   height: 100%;
-  padding: 20px;
-  justify-content: start;
+  max-height: 150px;
+  padding-top: 10px;
+  padding-right: 20px;
+  padding-left: 20px;
 }
-.card__rental .info__card2 {
-  justify-content: start;
-  flex-direction: column;
+.landingCard__rental .info__landingCard .landingCard__city {
+  color: #00d5ff;
+}
+.landingCard__rental .info__landingCard .landingCard__text {
+  overflow: scroll;
+  text-overflow: ellipsis;
+  max-height: 100px;
+}
+.landingCard__rental .info__landingCard2 {
+  margin-top: 50px;
+  justify-content: flex-end;
+  flex-direction: row;
   width: 100%;
   height: 100%;
   align-items: center;
   display: flex;
+  padding-left: 20px;
 }
-.card__rental .info__btns {
+.landingCard__rental .info__landingCard2 .landingCard__text {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  font-size: 1em;
+  color: red;
+  font-weight: bold;
+}
+.landingCard__rental .info__landingCard2 .landingCard__text .price_day {
+  font-size: 12px;
+  color: #000000ab;
+  font-weight: normal;
+  margin: 6px;
+}
+.landingCard__rental .info__btns {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   width: 100%;
-  height: 100%;
+  height: 60px;
 }
-.card__rental .card_line {
+.landingCard__rental .landingCard_line {
   display: flex;
   justify-content: start;
   align-items: start;
   flex-direction: row;
 }
-.card__rental .card_line .card__text {
+.landingCard__rental .landingCard_line .landingCard__text {
   margin-bottom: 0.5rem;
 }
-.card__rental .card__title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 10px;
-}
-.card__rental .card__title .card__title--text {
+.landingCard__rental .landingCard_line .landingCard__title--text {
   font-size: 1.5em;
 }
 
@@ -73,7 +126,7 @@
   cursor: pointer;
 }
 * .buttons .button-edit {
-  background-color: #009ca2;
+  background-color: #00d5ff;
   color: #ffffff;
   width: 35px;
   height: 35px;

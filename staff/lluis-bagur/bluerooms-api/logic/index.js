@@ -2,29 +2,34 @@ const { User, Rental, Booking, Picture, ProfilePicture } = require('../data')
 const { AlreadyExistsError, AuthError, NotAllowedError, NotFoundError } = require('../errors')
 const validate = require('../utils/validate')
 const moment = require('moment');
+const cloudinary = require('cloudinary')
 
-
-
-
+cloudinary.config({
+    cloud_name:'lluis09',
+    api_key:'483753711391589',
+    api_secret:'FpGiCT6wIAg3IJ9EyBZBbFyI9mc'
+})
 
 // ....................  USER LOGIC .....................//
 
 const logic = {
-    registerUser(name, surname, username, password, email) { //REGISTER
-        validate([{ key: 'name', value: name, type: String }, { key: 'surname', value: surname, type: String }, { key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }, { key: 'email', value: email, type: String }])
+    registerUser(filename, fileData, name, surname, username, password, email) { //REGISTER && TESTED
+        validate([{ key: 'name', value: name, type: String }, { key: 'filename', value: filename, type: String }, { key: 'surname', value: surname, type: String }, { key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }, { key: 'email', value: email, type: String }])
 
         return (async () => {
             let user = await User.findOne({ username })
 
             if (user) throw new AlreadyExistsError(`username ${username} already registered`)
 
-            user = new User({ name, surname, username, password, email })
+            const image = await this.uploadCloudinary(filename, fileData)
+
+            user = new User({ name, surname, username, password, email, image })
 
             await user.save()
         })()
     },
 
-    authenticateUser(username, password) { //LOGIN - AUTHENTICATIONS
+    authenticateUser(username, password) { //LOGIN - AUTHENTICATIONS && TESTED
         validate([{ key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }])
 
         return (async () => {
@@ -36,7 +41,7 @@ const logic = {
         })()
     },
 
-    retrieveUser(id) { // RETRIEVE USER BY ID
+    retrieveUser(id) { // RETRIEVE USER BY ID && TESTED
         validate([{ key: 'id', value: id, type: String }])
 
         return (async () => {
@@ -65,47 +70,35 @@ const logic = {
         })()
     },
 
-    addProfilePicture(userId, file) {
-        validate([
-            { key: 'userId', value: userId, type: String },
+//........................... UPLOAD PHOTOS  .......................//
 
-        ])
 
-        return (async () => {
-            let user = await User.findById(userId)
+    uploadCloudinary(filename, data) {
+        debugger
+        return new Promise((resolve, reject) => {
+            cloudinary.v2.uploader.upload_stream({ resource_type: 'image' }, (error, res) => {
+                if (error) return reject(Error(`the file ${filename} could not be uploaded`));
+                debugger
+                resolve(res.secure_url)
 
-            if (!user) throw new NotFoundError(`user does not exist`)
-
-            const result = await new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream((result, error) => {
-                    if (error) return reject(error)
-
-                    resolve(result)
-                })
-
-                file.pipe(stream)
-            })
-            profilePicture = new ProfilePicture({ url: result.url, public_id: result.public_id, userId })
-
-            await profilePicture.save()
-
-            user.profilePicture = profilePicture.id
-
-            await user.save()
-        })()
+            }).end(data)
+        })
     },
 
     //........................... RENTAL LOGIC .......................//
 
-    // ADD RENTAL
+    // ADD RENTAL && TESTED
 
-    addRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate) {
-        validate([{ key: 'id', value: id, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
+    addRental(id, filename, fileData, title, city, street, category, bedrooms, shared, description, dailyRate) {
+        validate([{ key: 'id', value: id, type: String },  { key: 'filename', value: filename, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
 
+        
         return (async () => {
             const user = await User.findById(id)
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const image = await this.uploadCloudinary(filename, fileData)
 
             rental = new Rental({ title, city, street, category, image, bedrooms, shared, description, dailyRate, user: user.id })
             await rental.save()
@@ -203,7 +196,7 @@ const logic = {
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const rental = await Rental.findById(rentalId, { '_id': 0, __v: 0 }).lean().exec()
-            if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
+            if (!rental) throw new NotFoundError(`rental with id ${rentalId} not found`)
             rental.id = rentalId
 
             return rental
@@ -225,6 +218,8 @@ const logic = {
                 delete rental._id
 
             });
+            if (!rental.length>0) throw new NotFoundError(`Not rentals found in ${query}`)
+            debugger
             return rental
         })()
     },
@@ -232,8 +227,6 @@ const logic = {
     retriveRental(rentalId) {
 
         validate([{ key: 'rentalId', value: rentalId, type: String }])
-
-        debugger
 
         return (async () => {
             const rental = await Rental.findById(rentalId, { __v: 0 }).populate('bookings').populate('user').lean().exec()
@@ -270,11 +263,11 @@ const logic = {
 
             user.rentals = _rent
 
-            await user.save() // delete Rewntal ID form User.rentals
+            await user.save() // delete Rental ID form User.rentals
 
             const rental = await Rental.findById(rentalId)
 
-            if (!rental) throw new NotFoundError(`postit with id ${rentalId} not found`)
+            if (!rental) throw new NotFoundError(`rental with id ${rentalId} not found`)
 
             await rental.remove()
 

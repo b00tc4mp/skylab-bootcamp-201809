@@ -7,15 +7,14 @@
     height: 100%
 
     .search__container
-        margin-top:-100px
         display: flex
         flex-direction: column
         justify-content: center
         align-items: center
         width: 100vw
-        height: 100vh
+        height: 87vh
         background: url('./media/landing.jpg')
-        background-position: top
+        background-position: center
         background-repeat: no-repeat
         background-size: cover
 
@@ -31,18 +30,28 @@
     
     .result__container
         display: flex
-        flex-direction: row
-        justify-content: start
+        flex-direction: column
+        justify-content: center
         align-items: center
         width: 100vw
         height: 100%
+        margin-top: 50px
+
+        .title-h2
+            display: flex
+            justify-content: flex-start
+            align-items: flex-start
+            font-family: 'Montserrat', sans-serif
+            margin-bottom: 30px
+            border-bottom: 1px solid black
+
 
         .container
             display: flex
             flex-direction: row
             justify-content: start
             flex-wrap: wrap
-            align-items: center
+            align-items: start
             width: 100vw
             height: 100%
 

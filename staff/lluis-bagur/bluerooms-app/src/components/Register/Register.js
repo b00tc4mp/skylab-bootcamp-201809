@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { ToastContainer, toast } from 'react-toastify';
 import { withRouter } from "react-router";
 import logic from '../../logic'
+import './Register.css'
 
 
 
 
 class Register extends Component {
-    state = { name: '', surname: '', username: '', password: '', email: '', loggedIn: false }
+    state = { name: '', surname: '', username: '', password: '', email: '', loggedIn: false, imgPreview: null, errorFile: false }
 
     componentWillReceiveProps(props) {
         this.setState({ modal: props.showModal })
@@ -47,43 +49,82 @@ class Register extends Component {
         this.setState({ email })
     }
 
+    handleChangeFile = event => {
+        this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], errorFile: false })
+    }
+    
+      handleRemovePreview = () => this.setState({ file: null, imgPreview: null })
+    
+
     handleSubmit = event => {
         event.preventDefault()
+        const { name, file, surname, username, password, email } = this.state
 
-        const { name, surname, username, password, email } = this.state
+        debugger
 
-        this.handleRegister(name, surname, username, password, email)
+        if (!file) this.setState({ errorFile: true })
+        if (file) this.handleRegister(name, file,  surname, username, password, email)
     }
 
-    handleRegister = (name, surname, username, password, email) => {
+    handleRegister = (name, file, surname, username, password, email) => {
         try {
-            logic.registerUser(name, surname, username, password, email)
+
+            debugger
+            logic.registerUser(name, file, surname, username, password, email)
                 .then(() => {
                     this.setState({ error: null })
+                    toast.info('Now you can login!')
+                    debugger
                     this.props.toggle()
                 })
-                .catch(err => this.setState({ error: err.message }))
+                .catch(err => {
+                    this.setState({ error: err.message })
+                    debugger
+                    toast.warn(this.state.error)
+
+                })
         } catch (err) {
             this.setState({ error: err.message })
+            toast.error(this.state.error)
         }
     }
 
     render() {
         return <div className="login__form">
+            <ToastContainer />
 
             <Modal isOpen={this.state.modal} toggle={this.toggle} className="login-form">
-                <ModalHeader toggle={this.toggle}>Add a new rental</ModalHeader>
-                <ModalBody>
+                <ModalHeader toggle={this.toggle}>Register</ModalHeader>
+                <ModalBody className="modal__body">
                     <form className="form__container" onSubmit={this.handleSubmit}>
                         <div className="header__logo">
                             <div className="img__logo" />
                         </div>
                         <input className="input__form" type="text" placeholder="Name" onChange={this.handleNameChange} />
                         <input className="input__form" type="text" placeholder="Surname" onChange={this.handleSurnameChange} />
-                        <input className="input__form" type="text" placeholder="email" onChange={this.handleEmailChange} />
+                        <input className="input__form" type="email" placeholder="email" onChange={this.handleEmailChange} />
                         <input className="input__form" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
                         <input className="input__form" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-                        <button className="header__btn" type="submit">Register</button> <button className="header__btn" href="#" onClick={this.props.toggle}>back</button>
+                        <div className="image__form">
+                            <div>
+                                <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} required />
+                                <label for='file-form'>
+                                    <div className={!this.state.errorFile ? 'add__photo' : 'add__photo error'}>
+                                        <i className="fas fa-camera fa-2x"></i>
+                                        Click to upload profile image
+                  </div>
+                                </label>
+                            </div>
+                            <div className='preview__container'>
+                                <img className='photo__preview' src={this.state.imgPreview}></img>
+                                <div onClick={this.handleRemovePreview} className='icon_x'>
+                                    <svg height="20" width="20" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
+                                        <path d="M15.18 12l7.16-7.16c.88-.88.88-2.3 0-3.18-.88-.88-2.3-.88-3.18 0L12 8.82 4.84 1.66c-.88-.88-2.3-.88-3.18 0-.88.88-.88 2.3 0 3.18L8.82 12l-7.16 7.16c-.88.88-.88 2.3 0 3.18.44.44 1.01.66 1.59.66.58 0 1.15-.22 1.59-.66L12 15.18l7.16 7.16c.44.44 1.01.66 1.59.66.58 0 1.15-.22 1.59-.66.88-.88.88-2.3 0-3.18L15.18 12z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <button className="form__btn" type="submit">Register</button>
                     </form>
                 </ModalBody>
                 <ModalFooter>

@@ -8,6 +8,7 @@ import logic from '../../logic'
 import * as moment from 'moment';
 import Login from '../Login/Login'
 
+
 class Booking extends React.Component {
 
   constructor() {
@@ -18,6 +19,7 @@ class Booking extends React.Component {
 
     this.state = {
       rental: [],
+      bookings: "",
       proposedBooking: {
         startAt: '',
         endAt: '',
@@ -45,11 +47,12 @@ class Booking extends React.Component {
     //         .then(rental => { this.setState({ rental }) })
     // }
 
-    const rental = props.rental;
+    const rental = props.rental
     const guests = props.rental.bedrooms
+    const bookingsNum = props.rental.bookings
 
     this.setState({
-      rental, proposedBooking: {
+      bookingsNum, rental, proposedBooking: {
         ...this.state.proposedBooking,
         guests: guests
       }
@@ -210,7 +213,7 @@ class Booking extends React.Component {
         <hr></hr>
         <p className='booking-note-title'>People are interested into this house</p>
         <p className='booking-note-text'>
-          More than 500 people checked this rental in last month.
+          {this.state.bookings.length} people have booked this apartment.
         </p>
         <BookingModal open={this.state.modal.open}
           closeModal={this.cancelConfirmation}

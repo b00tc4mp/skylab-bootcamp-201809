@@ -2,14 +2,16 @@
     display: flex;
     justify-content: center;
     max-width: 700px;
-    max-height: 500px;
+	max-height: 500px;
+	width: 100%;
 }
 
 
 .booking-form {
     background: rgba(255, 255, 255, 0.64);
     padding: 20px;
-    border-radius: 6px;
+	border-radius: 6px;
+	width: 100%;
 }
 
 .booking-form .form-group {
@@ -143,7 +145,7 @@
 
 .booking-form .submit-btn {
 	color: #fff;
-	background-color: #009fa4;
+	background-color: #00d3ff;
 	font-weight: 400;
 	height: 50px;
 	font-size: 14px;
@@ -153,9 +155,11 @@
 	text-transform: uppercase;
 	-webkit-transition: 0.2s all;
 	transition: 0.2s all;
+	outline: 0;
 }
 
 .booking-form .submit-btn:hover,
 .booking-form .submit-btn:focus {
-	opacity: 0.9;
+	opacity: 0.6;
+	color: black;
 }

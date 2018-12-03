@@ -6,7 +6,7 @@ const logic = {
 
     //.......................... USER LOGIC .............................//
 
-    registerUser(name, surname, username, password, email) {
+    registerUser(name, file, surname, username, password, email) {
         if (typeof name !== 'string') throw TypeError(`${name} is not a string`)
         if (typeof surname !== 'string') throw TypeError(`${surname} is not a string`)
         if (typeof username !== 'string') throw TypeError(`${username} is not a string`)
@@ -20,15 +20,25 @@ const logic = {
         if (!password.trim()) throw Error('password is empty or blank')
         if (!email.trim()) throw Error('email is empty or blank')
 
+        const body = new FormData()
+        body.append('photo', file)
+        body.append('name', name)
+        body.append('surname', surname)
+        body.append('username', username)
+        body.append('password', password)
+        body.append('email', email)
+
+
         return fetch(`${this.url}/users`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8'
             },
-            body: JSON.stringify({ name, surname, username, password, email })
+            body
         })
             .then(res => res.json())
             .then(res => {
+                debugger
                 if (res.error) throw Error(res.error)
             })
     },
@@ -50,6 +60,7 @@ const logic = {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
+                
 
                 const { id, token } = res.data
 
@@ -66,7 +77,6 @@ const logic = {
     },
 
     logout() {
-        this._postits = []
         this._userId = null
         this._token = null
 
@@ -94,7 +104,8 @@ const logic = {
 
     //ADD RENTALS
 
-    addRentals(title, city, street, category, image, bedrooms, shared, description, dailyRate) {
+    addRentals(title, file, city, street, category, bedrooms, shared, description, dailyRate) {
+        
         if (typeof title !== 'string') throw TypeError(`${title} is not a string`)
         if (typeof city !== 'string') throw TypeError(`${city} is not a string`)
         if (typeof street !== 'string') throw TypeError(`${street} is not a string`)
@@ -102,25 +113,34 @@ const logic = {
         if (typeof description !== 'string') throw TypeError(`${description} is not a string`)
         if (typeof bedrooms !== 'number') throw TypeError(`${bedrooms} is not a Number`)
         if (typeof shared !== 'boolean') throw TypeError(`${shared} is not a Boolean`)
-        if (typeof image !== 'string') throw TypeError(`${image} is not a string`)
         if (typeof dailyRate !== 'number') throw TypeError(`${dailyRate} is not a Number`)
 
-
+        debugger
         if (!title.trim()) throw Error('title is empty or blank')
         if (!city.trim()) throw Error('city is empty or blank')
         if (!street.trim()) throw Error('street is empty or blank')
         if (!category.trim()) throw Error('category is empty or blank')
         if (!description.trim()) throw Error('text is empty or blank')
-        if (!image.trim()) throw Error('image is empty or blank')
 
+        const body = new FormData()
+        body.append('photo', file)
+        body.append('title', title)
+        body.append('city', city)
+        body.append('street', street)
+        body.append('category', category)
+        body.append('description', description)
+        body.append('bedrooms', bedrooms)
+        body.append('shared', shared)
+        body.append('dailyRate', dailyRate)
+        
+        debugger
 
         return fetch(`${this.url}/users/${this._userId}/rentals`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': `Bearer ${this._token}`
             },
-            body: JSON.stringify({ title, city, street, category, image, bedrooms, shared, description, dailyRate })
+            body
         })
             .then(res => res.json())
             .then(res => {
@@ -235,7 +255,6 @@ const logic = {
     //SEARCH RENTALS
 
     searchRentals(query) {
-
         if (typeof query !== 'string') throw TypeError(`${query} is not a string`)
 
         if (!query.trim()) throw Error('query is empty or blank')

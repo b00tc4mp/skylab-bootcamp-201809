@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const bearerTokenParser = require('../utils/bearer-token-parser')
 const jwtVerifier = require('./jwt-verifier')
 const routeHandler = require('./route-handler')
+const fileUpload = require('express-fileupload')
 
 const jsonBodyParser = bodyParser.json()
 
@@ -15,11 +16,14 @@ const { env: { JWT_SECRET } } = process
 
 // ....................  USER ROUTES .....................//
 
-router.post('/users', jsonBodyParser, (req, res) => {
+router.post('/users', [jsonBodyParser, fileUpload()], (req, res) => {
     routeHandler(() => {
-        const { name, surname, username, password, email } = req.body
+        const { body: { name, surname, username, password, email }, files: { photo } } = req
 
-        return logic.registerUser(name, surname, username, password, email)
+        debugger
+
+
+        return logic.registerUser(photo.name, photo.data, name, surname, username, password, email)
             .then(() => {
                 res.status(201)
 
@@ -63,29 +67,6 @@ router.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
-router.post('/users/:id/profilePicture', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-    routeHandler(() => {
-        const { params: { id }, sub } = req
-        if (id !== sub) throw Error('token sub does not match user id')
-
-        return new Promise((resolve, reject) => {
-            const busboy = new Busboy({ headers: req.headers })
-
-            busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-                logic.addProfilePicture(id, file)
-            })
-
-            busboy.on('finish', () => resolve())
-
-            busboy.on('error', err => reject(err))
-
-            req.pipe(busboy)
-        })
-            .then(() => res.json({
-                message: 'photo uploaded'
-            }))
-    }, res)
-})
 
 router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
@@ -106,10 +87,15 @@ router.patch('/users/:id', [bearerTokenParser, jwtVerifier, jsonBodyParser], (re
 
 //ADD RENTALS
 
-router.post('/users/:id/rentals', jsonBodyParser, (req, res) => {
+router.post('/users/:id/rentals', [bearerTokenParser, jwtVerifier, jsonBodyParser, fileUpload()], (req, res) => {
     routeHandler(() => {
-        const { params: { id }, sub, body: { title, city, street, category, image, bedrooms, shared, description, dailyRate } } = req
-        return logic.addRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate)
+        debugger
+        const { params: { id }, sub, body: { title, city, street, category, bedrooms, shared, description, dailyRate }, files: { photo } } = req
+        const bedroomsNum = Number(bedrooms)
+        const dailyRateNum = Number(dailyRate)
+        const sharedBool = Boolean(shared)
+        if (id !== sub) throw Error('token sub does not match user id')
+        return logic.addRental(id, photo.name, photo.data, title, city, street, category, bedroomsNum, sharedBool, description, dailyRateNum)
             .then(() => {
                 res.status(201)
 
@@ -251,127 +237,5 @@ router.post('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jso
     }, res)
 })
 
-
-
-// router.get('/rentals', [bearerTokenParser, jwtVerifier], (req, res) => {
-//     routeHandler(() => {
-
-//         return logic.retrieveUser(id)
-//             .then(user =>
-//                 res.json({
-//                     data: user
-//                 })
-//             )
-//     }, res)
-// })
-
-// router.patch('/users/:id/collaborators', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { params: { id }, sub, body: { collaboratorUsername } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.addCollaborator(id, collaboratorUsername)
-//             .then(() =>
-//                 res.json({
-//                     message: 'collaborator added'
-//                 })
-//             )
-//     }, res)
-// })
-
-// router.get('/users/:id/collaborators', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { params: { id }, sub } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.listCollaborators(id)
-//             .then(collaborators =>
-//                 res.json({
-//                     data: collaborators
-//                 })
-//             )
-//     }, res)
-// })
-
-// router.post('/users/:id/postits', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id }, body: { text } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.addPostit(id, text)
-//             .then(() => res.json({
-//                 message: 'postit added'
-//             }))
-
-//     }, res)
-// })
-
-// router.get('/users/:id/postits', [bearerTokenParser, jwtVerifier], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.listPostits(id)
-//             .then(postits => res.json({
-//                 data: postits
-//             }))
-//     }, res)
-// })
-
-// router.put('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id, postitId }, body: { text } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.modifyPostit(id, postitId, text)
-//             .then(() => res.json({
-//                 message: 'postit modified'
-//             }))
-//     }, res)
-// })
-
-// router.delete('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id, postitId } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.removePostit(id, postitId)
-//             .then(() => res.json({
-//                 message: 'postit removed'
-//             }))
-//     }, res)
-// })
-
-// router.patch('/users/:id/postits/:postitId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id, postitId }, body: { status } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.movePostit(id, postitId, status)
-//             .then(() => res.json({
-//                 message: 'postit moved'
-//             }))
-//     }, res)
-// })
-
-// router.patch('/users/:id/postits/:postitId/collaborator', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
-//     routeHandler(() => {
-//         const { sub, params: { id, postitId }, body: { collaboratorId } } = req
-
-//         if (id !== sub) throw Error('token sub does not match user id')
-
-//         return logic.assignPostit(id, postitId, collaboratorId)
-//             .then(() => res.json({
-//                 message: 'postit assigned'
-//             }))
-//     }, res)
-// })
 
 module.exports = router
