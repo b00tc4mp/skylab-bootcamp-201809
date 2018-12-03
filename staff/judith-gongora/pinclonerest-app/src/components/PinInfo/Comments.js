@@ -14,15 +14,18 @@ class Comments extends Component {
     }
 
     componentWillReceiveProps(props) {
+        debugger
         this.retrieveComments(props.pinId)
 
-        
+
         // TODO error handling!
     }
 
     retrieveComments(pinId) {
         logic.retrieveComments(pinId)
-            .then(comments => this.setState({ comments, comment: '', commentsLimit: this.props.comments.length < 2 ? this.props.comments.length : 2 }))
+            .then(comments => {
+                this.setState({ comments, comment: '', commentsLimit: this.state.commentsLimit > 2 ? this.state.commentsLimit : (this.props.comments.length < 2 ? this.props.comments.length : 2) })
+            })
     }
 
     handleCommentChange = event => {
@@ -54,8 +57,8 @@ class Comments extends Component {
     }
 
     showMoreComments = () => {
-        if((this.state.comments.length-this.state.commentsLimit) < 2) this.setState({commentsLimit: this.state.commentsLimit+1})
-        else this.setState({commentsLimit: this.state.commentsLimit+2})
+        if ((this.state.comments.length - this.state.commentsLimit) < 2) this.setState({ commentsLimit: this.state.commentsLimit + 1 })
+        else this.setState({ commentsLimit: this.state.commentsLimit + 2 })
     }
 
 
@@ -63,8 +66,8 @@ class Comments extends Component {
         return <section className="comment__container">
             {!this.state.comments && <p>Share feedback, ask a question or give a high five</p>}
             {this.getComments()}
-            {this.state.comments.length > 2 && this.state.comments.length-this.state.commentsLimit > 0 && <div>
-                <p onClick={this.showMoreComments} >{this.state.comments.length-this.state.commentsLimit} comments</p>
+            {this.state.comments.length > 2 && this.state.comments.length - this.state.commentsLimit > 0 && <div>
+                <p onClick={this.showMoreComments} >{this.state.comments.length - this.state.commentsLimit} comments</p>
             </div>}
             <form>
                 <textarea placeholder="Add coment" onChange={this.handleCommentChange} onKeyDown={this.handleKeyDown} value={this.state.comment} />

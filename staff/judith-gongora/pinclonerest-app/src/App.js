@@ -13,7 +13,7 @@ import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
 class App extends Component {
-    state = { error: null, board: null, path: null}
+    state = { error: null, board: null, path: null, username: null}
 
     handleLoginClick = () => this.props.history.push('/login')
 
@@ -75,12 +75,19 @@ class App extends Component {
     }
 
     handleOpenBoard = (board, username) => {
-        this.setState({board, path: 'board'})
+        
         if(!username) {
             logic.retrieveUser()
-            .then(user => this.props.history.push(`/${user.username}/board/${board.title}`))
+            .then(user => {
+                this.props.history.push(`/${user.username}/board/${board.title}`)
+                this.setState({board, path: 'board', username: user.username})
+            })
         }
-        else this.props.history.push(`/${username}/board/${board.title}`)
+        else {
+            this.props.history.push(`/${username}/board/${board.title}`)
+            this.setState({board, path: 'board', username})
+        }
+
     }
 
     handleGoHome = () => {
@@ -97,7 +104,7 @@ class App extends Component {
     handleBack = () => {
             switch(this.state.path){
                 case 'board':
-                    this.props.history.push(`/boards/${this.state.board.title}`)
+                    this.props.history.push(`/${this.state.username}/board/${this.state.board.title}`)
                     break;
                 case 'profile':
                     this.props.history.push('/profile')

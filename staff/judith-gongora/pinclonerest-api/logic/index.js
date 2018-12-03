@@ -85,23 +85,18 @@ const logic = {
         })()
     },
 
-    updateUser(id, name, surname, username, newPassword, email, age, password) {
+    updateUser(id, name, surname, username) {
         validate([
             { key: 'id', value: id, type: String },
-            { key: 'email', value: email, type: String },
-            { key: 'age', value: age, type: Number },
             { key: 'name', value: name, type: String, optional: true },
             { key: 'surname', value: surname, type: String, optional: true },
-            { key: 'username', value: username, type: String, optional: true },
-            { key: 'password', value: password, type: String }
+            { key: 'username', value: username, type: String, optional: true }
         ])
 
         return (async () => {
             const user = await User.findById(id)
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
-
-            if (user.password !== password) throw new AuthError('invalid password')
 
             if (username) {
                 const _user = await User.findOne({ username })
@@ -111,15 +106,11 @@ const logic = {
                 name != null && (user.name = name)
                 surname != null && (user.surname = surname)
                 user.username = username
-                newPassword != null && (user.password = newPassword)
-                user.age = age
 
                 await user.save()
             } else {
                 name != null && (user.name = name)
                 surname != null && (user.surname = surname)
-                newPassword != null && (user.password = newPassword)
-                user.age = age
 
                 await user.save()
             }

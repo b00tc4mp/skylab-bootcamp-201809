@@ -103,6 +103,18 @@ const logic = {
                 sessionStorage.setItem('token', token)
             })
     },
+
+
+    updateUser(name, surname, username) {
+
+        let path = 'users/' + this._userId 
+
+        return this._callApi(path, 'PATCH', this._token, {name, surname, username})
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+    },
+
     /**
    * 
    * @returns {boolean} If the user is logged in or not
