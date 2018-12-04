@@ -9,6 +9,20 @@ const streamBuffers = require('stream-buffers')
 const mongoose = require('mongoose');
 
 const logic = {
+
+// ------------ USER -------------------- //
+    /**
+    * Register User
+    * 
+    * @param {String} email The user email
+    * @param {String} password The user password
+    * @param {Number} age The user age
+    * 
+    * @throws {TypeError} On non-string user id, non-string password or non-number age
+    * @throws {AlreadyExistsError} if already exist the email
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     registerUser(email, password, age) {
         validate([{ key: 'email', value: email, type: String }, { key: 'password', value: password, type: String }, { key: 'age', value: age, type: Number }])
 
@@ -33,6 +47,17 @@ const logic = {
         })()
     },
 
+    /**
+    * Authenticate User
+    * 
+    * @param {String} email The user email
+    * @param {String} password The user password
+    * 
+    * @throws {TypeError} On non-string user id, non-string password 
+    * @throws {AuthError} if invalid email or password
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     authenticateUser(email, password) {
         validate([{ key: 'email', value: email, type: String }, { key: 'password', value: password, type: String }])
 
@@ -45,6 +70,16 @@ const logic = {
         })()
     },
 
+    /**
+    * Retrieve User
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     retrieveUser(id) {
         validate([{ key: 'id', value: id, type: String }])
 
@@ -62,6 +97,17 @@ const logic = {
         })()
     },
 
+    /**
+    * Retrieve Other User
+    * 
+    * @param {String} id The user id
+    * @param {String} username The user username of other user
+    * 
+    * @throws {TypeError} On non-string user id, or username of other user
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     retrieveOtherUser(id, username) {
         validate([{ key: 'id', value: id, type: String },
         { key: 'username', value: username, type: String }])
@@ -85,6 +131,18 @@ const logic = {
         })()
     },
 
+    /**
+    * Update User
+    * 
+    * @param {String} id The user id
+    * @param {String} username The user username 
+    * 
+    * @throws {TypeError} On non-string user id, non-string name, non-string surname, non-string username 
+    * @throws {NotFoundError} if user not found
+    * @throws {AlreadyExistsError} if username already exists
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     updateUser(id, name, surname, username) {
         validate([
             { key: 'id', value: id, type: String },
@@ -117,6 +175,18 @@ const logic = {
         })()
     },
 
+    /**
+    * Update Photo of User
+    * 
+    * @param {String} id The user id
+    * @param {String} filename The name of file
+    * @param {Buffer} data The buffer of file
+    * 
+    * @throws {TypeError} On non-string user id, non-string filename
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     addUserPhoto(id, filename, data) {
         validate([
             { key: 'id', value: id, type: String },
@@ -132,6 +202,19 @@ const logic = {
         })()
     },
 
+    /**
+    * Add follow
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The user id to follow
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * @throws {AlreadyExistsError} if user already exists in the followings
+    * @throws {Error} if user that you want follow are you
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     followUser(id, userId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -161,6 +244,17 @@ const logic = {
         })()
     },
 
+    /**
+    * remove follow
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The user id to follow
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     unfollowUser(id, userId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -185,6 +279,17 @@ const logic = {
         })()
     },
 
+    /**
+    * User is in followings
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The user id to follow
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     isFollowing(id, userId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -217,6 +322,17 @@ const logic = {
         })()
     },
 
+    /**
+    * Add board to follow
+    * 
+    * @param {String} id The user id
+    * @param {String} boardId The board id to follow
+    * 
+    * @throws {TypeError} On non-string user id or board id
+    * @throws {NotFoundError} if user or board not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     followBoard(id, boardId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -239,6 +355,19 @@ const logic = {
         })()
     },
 
+    /**
+    * Add Pinned
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The user id to follow
+    * @param {String} boardId The board id to follow
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user, pin or board not found
+    * @throws {AlreadyExistsError} if pin already exists in your pinneds
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     savePin(id, pinId, boardId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -282,6 +411,17 @@ const logic = {
         })()
     },
 
+    /**
+    * Remove Pinned
+    * 
+    * @param {String} id The user id
+    * @param {String} pinId The pin id to pinned
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user or pin not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     removePinned(id, pinId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -318,6 +458,19 @@ const logic = {
         })()
     },
 
+    /**
+    * Remove Pinned
+    * 
+    * @param {String} id The user id
+    * @param {String} pinId The pin id to pinned
+    * @param {String} boardId The board id 
+    * @param {String} description The description to pinned
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user, boards or pin not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     modifyPinned(id, pinId, boardId, description) {
         validate([
             { key: 'id', value: id, type: String },
@@ -474,7 +627,7 @@ const logic = {
     * @throws {TypeError} On non-string user id or pin id 
     * @throws {Error} On empty or blank user id or pin id 
     * 
-    * @returns {Pin} return pin  
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
     */
 
     retrievePin(id, pinId) {
@@ -526,7 +679,7 @@ const logic = {
     * @throws {TypeError} On non-string user id
     * @throws {Error} On empty or blank user id 
     * 
-    * @returns {Pin} return user pins 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
     */
 
     listPins(id) {
@@ -589,6 +742,18 @@ const logic = {
         })()
     },
 
+    /**
+    * List pins of other user
+    * 
+    * @param {String} id The user id
+    * @param {String} username The username of other user
+    * 
+    * @throws {TypeError} On non-string user id or username
+    * @throws {Error} On empty or blank user id 
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
     listOtherPins(id, username) {
         validate([
             { key: 'id', value: id, type: String },
@@ -596,9 +761,6 @@ const logic = {
         ])
 
         return (async () => {
-            // const pins = await User.findById(id, {pins: true}).lean().populate([
-            //     { path: 'pins.pin'}
-            //   ]).exec()
 
             const exists = !!await User.findById(id).count()
 
@@ -655,16 +817,16 @@ const logic = {
     },
 
     /**
-    * List user pins
+    * List user pins in a determinate board
     * 
     * @param {String} id The user id
+    * @param {String} boardId The board id
     * 
     * @throws {TypeError} On non-string user id
     * @throws {Error} On empty or blank user id 
     * 
-    * @returns {Pin} return user pins 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
     */
-
     retrieveBoardPins(id, boardId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -672,9 +834,6 @@ const logic = {
         ])
 
         return (async () => {
-            // const pins = await User.findById(id, {pins: true}).lean().populate([
-            //     { path: 'pins.pin'}
-            //   ]).exec()
 
             const exists = !!await User.findById(id).count()
 
@@ -707,7 +866,7 @@ const logic = {
     * @throws {TypeError} On non-string user id, id or board id
     * @throws {Error} On empty or blank user id, id or board id
     * 
-    * @returns {Pin} return user pins 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
     */
     retrieveOtherBoardPins(id, userId, boardId) {
         validate([
@@ -743,6 +902,17 @@ const logic = {
         })()
     },
 
+    /**
+    * Return board if is pinned
+    * 
+    * @param {String} id The user id
+    * @param {String} pinId The pin id
+    * 
+    * @throws {TypeError} On non-string user id or pin id 
+    * @throws {Error} On empty or blank user id or pin id
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
     isPinned(id, pinId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -779,6 +949,16 @@ const logic = {
         })()
     },
 
+    /**
+    * List all Pins of app
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {Error} On empty or blank user id
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data 
+    */
     listAllPins(id) {
         return (async () => {
 
@@ -1032,7 +1212,7 @@ const logic = {
 
             const user = await User.findOne({ username: username }).lean()
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            if (!user) throw new NotFoundError(`user with username ${username} not found`)
 
             const boards = await Board.find({ user: user._id, secret: false }).lean()
 
@@ -1101,7 +1281,7 @@ const logic = {
     /**
     * 
     * @param {String} id The user id
-    * @param {String} username The user username of other user
+    * @param {String} userId The user id of other user
     * @param {String} boardtitle The title of user board
     * 
     * @throws {TypeError} On non-string user id, non-string board title or non-boolean secret
@@ -1127,12 +1307,12 @@ const logic = {
 
             const board = await Board.findOne({ user: user._id, title: boardTitle }).lean()
 
-            board.id = board._id
+            board.id = board._id.toString()
 
             delete board._id
             delete board.__v
 
-            board.user = board.user
+            board.user = board.user.toString()
 
             user.followers != null && (user.followers = user.followers.length)
             user.pins != null && (user.pins = user.pins.length)
@@ -1145,6 +1325,17 @@ const logic = {
         })()
     },
 
+    /**
+    * 
+    * @param {String} id The user id
+    * @param {String} userId The user id of other user
+    * @param {String} boardId The id of user board
+    * 
+    * @throws {TypeError} On non-string user id, non-string board id or non-boolean secret
+    * @throws {NotFoundError} if users or board not found
+    * 
+    * @returns {Board} Return user boards
+    */
     retrieveCover(id, userId, boardId) {
         validate([
             { key: 'id', value: id, type: String },
@@ -1293,6 +1484,17 @@ const logic = {
         })()
     },
 
+    /**
+    * 
+    * @param {String} id The user id
+    * @param {String} boardIdFrom The board id from
+    * @param {String} boardIdTo The board id to
+    * 
+    * @throws {TypeError} On non-string user id or non-string board id
+    * @throws {NotFoundError} if boards or user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong user id or board id
+    */
     mergeBoard(id, boardIdFrom, boardIdTo) {
 
         validate([
@@ -1367,6 +1569,17 @@ const logic = {
         })()
     },
 
+    /**
+    * 
+    * @param {String} id The user id
+    * @param {String} pinId The pin id
+    * @param {String} content The comment id
+    * 
+    * @throws {TypeError} On non-string user id, non-string comment id or non-string pin id
+    * @throws {NotFoundError} if user, pin or board not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
+    */
     retrieveUserComment(id, pinId, commentId) {
         validate([
             { key: 'id', value: id, type: String },

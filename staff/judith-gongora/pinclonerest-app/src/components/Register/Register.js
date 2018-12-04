@@ -3,12 +3,16 @@ import logo from '../../pinterest.svg'
 import './Register.sass'
 
 class Register extends Component {
-    state = { email: '', age: '',  password: '' }
+    state = { email: '', age: '',  password: '', error: this.props.error, errorEmail: false }
+
+    componentWillReceiveProps (props){
+        this.setState({error: props.error})
+    }
 
     handleEmailChange = event => {
         const email = event.target.value
 
-        this.setState({ email })
+        this.setState({ email, errorEmail: false })
     }
 
     handleAgeChange = event => {
@@ -34,8 +38,9 @@ class Register extends Component {
         event.preventDefault()
 
         const { email, password, age } = this.state
-
-        this.props.onRegister(email, password, age)
+        if ( /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)) this.props.onRegister(email, password, age)
+        else this.setState({errorEmail: true})
+        
     }
 
     render() {
@@ -47,13 +52,13 @@ class Register extends Component {
                         <div><p className="welcome">Register to see more</p> </div>  
                         <div><p className="info">Access the best ideas with a free account</p> </div>      
                         <form className="register__form" onSubmit={this.handleSubmit}>
-                            <input type="text" placeholder="email" onChange={this.handleEmailChange} />
+                            <input className={this.state.error || this.state.errorEmail ? 'error-red' : 'input-login'} type="text" placeholder="email" onChange={this.handleEmailChange} />
                             
-                            <input type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-                            <input type='number' placeholder="age" onChange={this.handleAgeChange} />
+                            <input className={this.state.error ? 'error-red' : 'input-login'} type="password" placeholder="Password" onChange={this.handlePasswordChange} required/>
+                            <input className={this.state.error ? 'error-red' : 'input-login'} type='number' placeholder="age" onChange={this.handleAgeChange} required />
                             <button className="register__button" type="submit">Continue</button> 
                         </form>
-                        <p className="register__conditions">By continuing, you agree to Pinterest's Terms of Service, Privacy Policy and use of cookies.</p>
+                        <p className="register__conditions">By continuing, you agree to Pinclonerest's Terms of Service, Privacy Policy and use of cookies.</p>
                         <a className="register__go center" href="#" onClick={this.handleLogin}>Already a member? Login here.</a>
                     </div>
                 </div>
@@ -62,8 +67,8 @@ class Register extends Component {
                 <div className="button__register-position"><button className="button__register" onClick={this.handleLogin}>Login</button></div>
                 <div className="guide-position">
                     <div className="guide">
-                        <p>Pinterest helps you find ideas to try.</p>
-                        <button>how it works?</button>
+                        <p>Pinclonerest helps you find ideas to try.</p>
+                    
                     </div>
                 </div>
             </div>

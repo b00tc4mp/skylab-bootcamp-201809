@@ -13,7 +13,7 @@ import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 
 class App extends Component {
-    state = { error: null, board: null, path: null, username: null}
+    state = { error: null, board: null, path: null, username: null, search: null}
 
     handleLoginClick = () => this.props.history.push('/login')
 
@@ -38,8 +38,8 @@ class App extends Component {
     }
 
     handleHome = () => {
-        this.props.history.push('/home')
-        this.setState({ pin: null })
+        this.setState({ pin: null, search: null }, ()=> this.props.history.push('/home'))
+        
     }
 
     handlePinInfo = pin => {
@@ -100,6 +100,11 @@ class App extends Component {
         this.props.history.push(`/user/${username}`)
     }
 
+    handleSearch = search => {
+        this.setState({path: 'home', search})
+        this.props.history.push('/home')
+    }
+
     
     handleBack = () => {
             switch(this.state.path){
@@ -122,19 +127,19 @@ class App extends Component {
         return <div>
 
             <Route exact path="/" render={() => !logic.loggedIn
-                ? <Register onRegister={this.handleRegister} onGoBack={this.handleLoginClick} />
+                ? <Register onRegister={this.handleRegister} onGoBack={this.handleLoginClick} error={this.state.error}/>
                 : <Redirect to="/home" />}
             />
 
             <Route path="/login" render={() => !logic.loggedIn
-                ? <Login onLogin={this.handleLogin} onGoBack={this.handleGoBack} />
+                ? <Login onLogin={this.handleLogin} onGoBack={this.handleGoBack} error={this.state.error}/>
                 : <Redirect to="/home" />}
             />
 
             {error && <Error onErrorClose={this.handleErrorClose} message={error} />}
 
             <Route path="/home" render={() => logic.loggedIn
-                ? <Home onLogout={this.handleLogoutClick} onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard} onSettings={this.handleSettings}/>
+                ? <Home onLogout={this.handleLogoutClick} onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard} onSettings={this.handleSettings}  search={this.state.search} onHome={this.handleBack}  />
                 : <Redirect to="/" />}
             />
 

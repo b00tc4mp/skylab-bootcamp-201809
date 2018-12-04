@@ -10,6 +10,10 @@ class Board extends Component {
             .then(collage => this.setState({ collage }))
     }
 
+    componentWillReceiveProps(props){
+        this.setState({board: props.board})
+    }
+
     handleOpenEditBoard = () => {
         this.props.onOpenEditBoard(this.state.board)
     }

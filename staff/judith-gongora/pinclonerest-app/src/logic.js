@@ -115,6 +115,26 @@ const logic = {
             })
     },
 
+    updateUserPhoto(file) {
+        const body = new FormData()
+        body.append('photo', file)
+
+        let path = 'http://localhost:5000/api/users/' + this._userId + '/photo'
+
+        return fetch(path, {
+            method: 'POST',
+            headers: {
+                authorization: `bearer ${this._token}`
+            },
+            body
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+
+    },
+
     /**
    * 
    * @returns {boolean} If the user is logged in or not

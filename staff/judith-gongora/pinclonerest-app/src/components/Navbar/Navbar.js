@@ -4,19 +4,32 @@ import logo from '../../pinterest.svg'
 import './Navbar.sass'
 
 class Navbar extends Component {
-    state = {  user: null }
+    state = {  user: null, search: '' }
         
     componentDidMount() {
        logic.retrieveUser()
        .then(user=> this.setState({user}))
     }
-    
+
+    componentWillReceiveProps(props){
+        logic.retrieveUser()
+       .then(user=> this.setState({user}))
+    }
+
+    handleSearchCahnge = event =>{
+        const search = event.target.value
+        this.setState({ search })
+    }
+
+    handleSubmit = () => {
+        this.props.onSearch(this.state.search)
+    }
     
     render() {
     return this.state.user && <nav className="nav"><div className="logo" onClick={this.props.onHome}><img className ="logo__img" src={logo}/></div>
     <div className="search__group">
         <div className="search__icon"><i className="fas fa-search nav__icon"></i></div>
-        <div className="search__container"><form><input className="search__input" type="text" placeholder="Search"></input></form></div>
+        <div className="search__container"><form onSubmit={this.handleSubmit} ><input className="search__input" type="text" placeholder="Search" onChange={this.handleSearchCahnge} ></input></form></div>
     </div>
     <div className="icons__container">
         <div className="icon-hover-img" onClick={this.props.onHandleProfile} >

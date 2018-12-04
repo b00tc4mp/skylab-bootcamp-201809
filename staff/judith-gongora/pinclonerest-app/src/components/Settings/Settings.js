@@ -14,7 +14,7 @@ class Settings extends Component {
     }
 
     handleChangeFile = event => {
-        this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0]})
+        this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], save: true})
     }
 
     handleRemovePreview = () => this.setState({ file: null, imgPreview: null, save: false })
@@ -38,9 +38,9 @@ class Settings extends Component {
     }
 
     handleSaveSettings = () => {
-        if(this.state.file) Promise.all([logic.updatePhotoUser(this.state.file), logic.updateUser(this.state.name, this.state.surname, this.state.username)])
+        if(this.state.file) Promise.all([logic.updateUserPhoto(this.state.file), logic.updateUser(this.state.name, this.state.surname, this.state.username)])
         .then(() =>  logic.retrieveUser()
-        .then(user => this.setState({ user, save : false })))
+        .then(user => this.setState({ user, save : false, file: null, imgPreview: null })))
         else logic.updateUser(this.state.name, this.state.surname, this.state.username)
             .then(() =>  logic.retrieveUser()
             .then(user => this.setState({ user, save : false })))
@@ -50,7 +50,7 @@ class Settings extends Component {
         return this.state.user && <section className="container__settings">
             <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onLogout={this.props.onLogout} onHome={this.props.onHome} />
             <div className='container__head'>
-                <div className='container__user'>
+                <div className='container__user-settings'>
                     <div className='user__profile'>
                         <h2>{this.state.user.username}</h2>
                         <p>{this.state.user.followers} followers · {this.state.user.following} following</p>
@@ -86,7 +86,7 @@ class Settings extends Component {
                     </div>
                     <div className='group2'>
                         <label>Username</label>
-                        <input type='text' onChange={this.handleUsernameChange} defaultValue={this.state.user.username}></input>
+                        <input type='text' onChange={this.handleUsernameChange} defaultValue={this.state.user.username} maxLength='8' ></input>
                     </div>
                     <div className='buttons__settings'>
                         <div onClick={this.props.onClose} className="themes add">

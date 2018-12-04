@@ -42,8 +42,6 @@ class Profile extends Component {
         .then(boards => this.setState({boards, editBoard : null}))
     }
 
-
-
     handleSaveBoard = (pinId, boardId) => {
         logic.savePin(pinId, boardId)
             .then(() => this.setState({ board: null }))

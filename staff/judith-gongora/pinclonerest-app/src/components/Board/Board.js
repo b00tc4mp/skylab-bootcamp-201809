@@ -4,11 +4,12 @@ import Navbar from '../Navbar/Navbar'
 import Pin from '../Pin/Pin'
 import PinUser from './Pin/PinUser'
 import PopUp from './PopUp'
+import Send from './Send'
 import EditBoard from '../Profile/EditBoard'
 import './Board.sass'
 
 class Board extends Component {
-    state = { pins: [], editPin: null, board: null, boardEdit: null, editPin: null, editBoard: null, mine: false, user: null }
+    state = { pins: [], editPin: null, board: null, boardEdit: null, editPin: null, editBoard: null, mine: false, user: null, send: false }
 
     componentDidMount() {
         this.getBoard(this.props.username, this.props.boardTitle)
@@ -81,6 +82,11 @@ class Board extends Component {
             .then(() => this.props.onHandleProfile())
     }
 
+    handleSend = () => {
+        if (!this.state.send) this.setState({ send: true })
+        else this.setState({ send: false })
+    }
+
     render() {
         return this.state.board && <div className="div__profile">
             <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
@@ -89,7 +95,7 @@ class Board extends Component {
             <div className='container__head'>
                 <div className='board__info'>
                     <div className='icons__board'>
-                        <div className='icon-hover'>
+                        <div className='icon-hover' onClick={this.handleSend}>
                             <svg height="24" width="24" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
                                 <path d="M21 14c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2v-6c0-1.1.9-2 2-2s2 .9 2 2v4h14v-4c0-1.1.9-2 2-2zM8.82 8.84c-.78.78-2.05.79-2.83 0-.78-.78-.79-2.04-.01-2.82L11.99 0l6.02 6.01c.78.78.79 2.05.01 2.83-.78.78-2.05.79-2.83 0l-1.2-1.19v6.18a2 2 0 1 1-4 0V7.66L8.82 8.84z"></path>
                             </svg>
@@ -99,12 +105,14 @@ class Board extends Component {
                                 <path d="M13.386 6.018l4.596 4.596L7.097 21.499 1 22.999l1.501-6.096L13.386 6.018zm8.662-4.066a3.248 3.248 0 0 1 0 4.596L19.75 8.848 15.154 4.25l2.298-2.299a3.248 3.248 0 0 1 4.596 0z"></path>
                             </svg>
                         </div>}
+                        {this.state.send && <Send id={this.state.board.id} username={this.props.username} boardTitle={this.props.boardTitle} onBlur={this.handleSend} />}
                     </div>
                     <div className='container__user'>
                         <div className='user__profile'>
                             <h1>{this.state.board.title}</h1>
                             <p>{this.state.board.pins.length} pins</p>
                         </div>
+                        <div className='description__board'>{this.state.board.description}</div>
                         <div>
                             <img src={this.state.user.img} ></img>
                         </div>

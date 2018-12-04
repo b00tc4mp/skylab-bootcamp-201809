@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const { User, Pin, CommentPin, Board, Photos } = require('../data')
 const logic = require('.')
 const { AlreadyExistsError } = require('../errors')
-
+const fs = require('fs')
 const { expect } = require('chai')
 
 // running test from CLI
@@ -15,8 +15,8 @@ describe('logic', () => {
 
     before(() => mongoose.connect('mongodb://localhost/pinclonerest-test', { useNewUrlParser: true, useCreateIndex: true }))
 
-    beforeEach(() => Promise.all([User.deleteMany(), Pin.deleteMany()]))
-    afterEach(() => Promise.all([User.deleteMany(), Pin.deleteMany()]))
+    beforeEach(() => Promise.all([User.deleteMany(), Pin.deleteMany(), Board.deleteMany()]))
+    afterEach(() => Promise.all([User.deleteMany(), Pin.deleteMany(), Board.deleteMany()]))
 
     describe('user', () => {
         describe('register', () => {
@@ -55,7 +55,7 @@ describe('logic', () => {
         describe('authenticate', () => {
             let user
 
-            beforeEach(() => (user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })).save())
+            beforeEach(() => (user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })).save())
 
             it('should authenticate on correct credentials', async () => {
                 const { email, password } = user
@@ -76,11 +76,11 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        describe('retrieve', () => {
+        describe('retrieve user', () => {
             let user, pin
 
             beforeEach( async () => {
-                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 board = new Board({ user: user.id, title: 'dinners', secret : false})
 
@@ -110,20 +110,19 @@ describe('logic', () => {
             let user
 
             beforeEach(async () => {
-                user = new User({ email: `email-1@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user = new User({ username: `email-${Math.random()}`, email: `email-1@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 await user.save()
             })
 
             it('should update on correct data and password', async () => {
-                const { id, email, password, age } = user
+                const { id } = user
  
                 const newName = `name-${Math.random()}`
                 const newSurname = `surname-${Math.random()}`
                 const newUsername = `username-${Math.random()}`
-                const newPassword = `password-${Math.random()}`
  
-                await logic.updateUser(id, newName, newSurname, newUsername, newPassword, email, age, password)
+                await logic.updateUser(id, newName, newSurname, newUsername)
  
                 const _users = await User.find()
  
@@ -133,44 +132,40 @@ describe('logic', () => {
                 expect(_user.name).to.equal(newName)
                 expect(_user.surname).to.equal(newSurname)
                 expect(_user.username).to.equal(newUsername)
-                expect(_user.password).to.equal(newPassword)
             })
 
             it('should update on correct id, name and password (other fields null)', async () => {
-                const { id, email, age, password } = user
+                const { id } = user
 
                 const newName = `name-${Math.random()}`
 
-                await logic.updateUser(id, newName, null, null, null, email, age, password)
+                await logic.updateUser(id, newName, null, null, null)
                     const _users = await User.find()
                         const [_user] = _users
 
                         expect(_user.id).to.equal(id)
 
                         expect(_user.name).to.equal(newName)
-                        expect(_user.password).to.equal(password)
             })
 
             it('should update on correct id, surname and password (other fields null)', async () => {
-                const { id, email, age, password } = user
+                const { id } = user
 
                 const newSurname = `surname-${Math.random()}`
 
-                await logic.updateUser(id, null, newSurname, null, null, email, age, password)
+                await logic.updateUser(id, null, newSurname, null, null)
                 const _users = await User.find()
                         const [_user] = _users
 
                         expect(_user.id).to.equal(id)
                         expect(_user.surname).to.equal(newSurname)
-                        expect(_user.password).to.equal(password)
             })
 
             // TODO other combinations of valid updates
 
             it('should fail on undefined id', () => {
-                const { id, email, age, password } = user
 
-                expect(() => logic.updateUser(undefined, null, null, null, null, email, age, password)).to.throw(TypeError, 'id is not a string')
+                expect(() => logic.updateUser(undefined, null, null, null, null)).to.throw(TypeError, 'id is not a string')
             })
 
             // TODO other test cases
@@ -186,12 +181,12 @@ describe('logic', () => {
                 })
 
                 it('should update on correct data and password', async () => {
-                    const { id, age, email, password } = user2
+                    const { id } = user2
 
-                    const newUsername = 'email-1@pinclonerest.com'
+                    const newUsername = 'email-1'
 
                     try{
-                        await logic.updateUser(id, null, null, newUsername, null, email, age, password)
+                        await logic.updateUser(id, null, null, newUsername, null)
                     } catch(err){
 
                         expect(err).to.be.instanceof(AlreadyExistsError)
@@ -199,10 +194,7 @@ describe('logic', () => {
                         const _user = await User.findById(id)
                         expect(_user.id).to.equal(id)
 
-                        expect(_user.email).to.equal(email)
-                        expect(_user.age).to.equal(age)
                         expect(_user.username).to.equal(username)
-                        expect(_user.password).to.equal(password)
                     }
                 })
 
@@ -216,7 +208,7 @@ describe('logic', () => {
             let user, multimedia, board
 
             beforeEach( async () => {
-                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 board = new Board({ user: user.id, title: 'dinners', secret: false})
 
@@ -229,11 +221,12 @@ describe('logic', () => {
             })
 
             it('should succeed on correct data', async () => { 
-                // const filename = 'profile.png'
+                const filename = 'avatar.png'
 
-                // const rs = fs.createReadStream(path.join(process.cwd(), `data/users/default/${filename}`))
+                const rs = fs.createReadStream(filename)
        
-                await logic.addPin( user.id, multimedia, board.id, null, title)
+                await logic.addPin( user.id, filename, rs, board.id, null, title, null)
+                
 
                     const pins = await Pin.find()
                         const [pin] = pins
@@ -249,7 +242,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        describe('list', () => {
+        false && describe('list', () => {
             let user, pin, pin2
 
             beforeEach(async () => {
@@ -297,7 +290,7 @@ describe('logic', () => {
             })
         })
 
-        describe('remove', () => {
+        false && describe('remove', () => {
             let user, pin
 
             beforeEach(async () => {
@@ -322,7 +315,7 @@ describe('logic', () => {
             })
         })
 
-        describe('modify', () => {
+        false && describe('modify', () => {
             let user, pin, board, board2, newDescription
 
             beforeEach(async () => {
@@ -358,6 +351,212 @@ describe('logic', () => {
                         
             })
         })
+    })
+
+    describe('boards', () => {
+        describe('add', () => {
+            let user, title
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                title = `title-${Math.random()}`
+
+                await  user.save()
+            })
+
+            it('should succeed on correct data', async () => { 
+
+              await logic.addBoard( user.id, title, false)
+                
+
+                    const boards = await Board.find()
+                    expect(boards.length).to.equal(1)
+                        const [board] = boards
+
+                        expect(board.title).to.equal(title)
+                        expect(board.user.toString()).to.equal(user.id)
+                        expect(board.secret).to.equal(false)
+            })
+
+            // TODO other test cases
+        })
+
+        describe('list user Boards', () => {
+            let user
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+                await logic.addBoard( user.id, 'title-2', false)
+                
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                const boards = await logic.listUserBoards(user.id)
+                
+                    expect(boards.length).to.equal(2)
+
+                    expect(boards[0].user).to.equal(user.id)
+                    expect(boards[0].title).to.equal('title-1')
+                    expect(boards[0].secret).to.equal(false)
+
+                    expect(boards[1].user).to.equal(user.id)
+                    expect(boards[1].title).to.equal('title-2')
+                    expect(boards[1].secret).to.equal(false)
+            })
+            
+        })
+        
+        describe('list other Boards', () => {
+            let user
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+                await user2.save()
+
+                await logic.addBoard( user2.id, 'title-1', false)
+                await logic.addBoard( user2.id, 'title-2', false)
+                
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                const boards = await logic.listOtherBoards(user.id, user2.username)
+                
+                    expect(boards.length).to.equal(2)
+
+                    expect(boards[0].user).to.equal(user2.id)
+                    expect(boards[0].title).to.equal('title-1')
+                    expect(boards[0].secret).to.equal(false)
+
+                    expect(boards[1].user).to.equal(user2.id)
+                    expect(boards[1].title).to.equal('title-2')
+                    expect(boards[1].secret).to.equal(false)
+            })
+            
+        })
+
+        describe('list User Board', () => {
+            let user
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+                
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                const board = await logic. retrieveBoard(user.id, 'title-1')
+
+                    expect(board.user).to.equal(user.id)
+                    expect(board.title).to.equal('title-1')
+                    expect(board.secret).to.equal(false)
+
+            })
+            
+        })
+
+        describe('list other Board', () => {
+            let user
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+                await user2.save()
+
+                await logic.addBoard( user2.id, 'title-1', false)
+                
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                const board = await logic.retrieveOtherBoard(user.id, user2.id, 'title-1')
+
+                    expect(board.user).to.equal(user2.id)
+                    expect(board.title).to.equal('title-1')
+                    expect(board.secret).to.equal(false)
+            })
+            
+        })
+
+        false && describe('list other Board', () => {
+            let user, board
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+                await user2.save()
+
+                await logic.addBoard( user2.id, 'title-1', false)
+                board = await logic.retrieveBoard(user.id, 'title-1')
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                const board = await logic.retrieveCover(user.id, user2.id, boardId)
+
+                    expect(board.user).to.equal(user2.id)
+                    expect(board.title).to.equal('title-1')
+                    expect(board.secret).to.equal(false)
+            })
+            
+        })
+
+        describe('remove board', () => {
+            let user, board
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+                board = await logic.retrieveBoard(user.id, 'title-1')
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                await logic.removeBoard(user.id, board.id)
+
+                const _user = User.findById(user.id)
+
+                expect(_user.boards.length).to.equal(0)
+
+            })  
+        })
+
+        describe('modify board', () => {
+            let user, board
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+                board = await logic.retrieveBoard(user.id, 'title-1')
+            }) 
+
+            it('should succeed on correct data', async () =>{ 
+                await logic. modifyBoard(user.id, board.id, 'title-2', null, null, true)
+
+                const _board = Board.findById(board.id).lean()
+
+                expect(_board.user).to.equal(user.id)
+
+            })  
+        })
+
     })
 
     after(() => mongoose.disconnect())
