@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 import Pin from '../Pin/Pin'
 import PinUser from './Pin/PinUser'
 import PopUp from './PopUp'

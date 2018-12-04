@@ -42,7 +42,7 @@ class Popup extends Component {
                 </div>
                 <div className='container__editPin-info'>
                     <div className='editPin__info'>
-                        {this.state.popup && <Boards key={this.props.pin.id} id={this.props.pin.id} handleSelectBoard={this.handleBoardChange} onSave={this.props.onSaveBoard}  />}
+                        {this.state.popup && <Boards key={this.state.pin.id} id={this.state.pin.id} handleSelectBoard={this.handleBoardChange} onSave={this.props.onSaveBoard}  />}
                         <div className='change__board'>
                             <p>Board</p>
                             <div className='select__board'>

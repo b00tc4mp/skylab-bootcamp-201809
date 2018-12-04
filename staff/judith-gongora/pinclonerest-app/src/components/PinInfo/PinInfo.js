@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 import './PinInfo.sass'
 import Boards from './Boards'
 import PopUp from './PopUp'
@@ -121,10 +120,10 @@ class PinInfo extends Component {
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.pin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pinInfo__container">
                 <div className='pinInfo__home'>
-                    <a onClick={this.props.onHome} >
+                    <div onClick={this.props.onHome} >
                         <svg height="20" width="20" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img"><title></title><path d="M17.28 24c-.57 0-1.14-.22-1.58-.66L4.5 12 15.7.66a2.21 2.21 0 0 1 3.15 0c.87.88.87 2.3 0 3.18L10.79 12l8.06 8.16c.87.88.87 2.3 0 3.18-.44.44-1 .66-1.57.66"></path></svg>
                         <span>Back</span>
-                    </a>
+                    </div>
                 </div>
                 <section className='info__container'>
                     <div>

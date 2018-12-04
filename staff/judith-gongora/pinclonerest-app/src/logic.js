@@ -261,6 +261,24 @@ const logic = {
             })
     },
 
+    listFollowings() {
+        let path = 'users/' + this._userId + '/followings'
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
+    listFollowers() {
+        let path = 'users/' + this._userId + '/followers'
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+                return res.data
+            })
+    },
+
     retrieveOtherUser(username) {
         let path = 'users/' + this._userId + '/user/' + username
         return this._callApi(path, 'GET', this._token, undefined)

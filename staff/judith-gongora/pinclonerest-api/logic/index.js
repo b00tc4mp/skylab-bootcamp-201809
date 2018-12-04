@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 
 const logic = {
 
-// ------------ USER -------------------- //
+    // ------------ USER -------------------- //
     /**
     * Register User
     * 
@@ -94,6 +94,86 @@ const logic = {
             user.following != null && (user.following = user.following.length)
 
             return user
+        })()
+    },
+
+    /**
+    * Retrieve followings of user
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+    retrieveFollowings(id) {
+        validate([{ key: 'id', value: id, type: String }])
+
+        return (async () => {
+            const user = await User.findById(id, {following: true}).populate('following').lean()
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const following = user.following
+
+            following.forEach(follow =>{
+                follow.id = follow._id.toString()
+                delete follow._id
+                delete follow.__v
+                delete follow.pins
+                delete follow.boards
+                delete follow.password
+                delete follow.age
+                delete follow.email
+                delete follow.tries
+                delete follow.following
+                delete follow.followers
+            })
+
+
+
+            return following
+        })()
+    },
+
+    /**
+    * Retrieve followings of user
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+    retrieveFollowers(id) {
+        validate([{ key: 'id', value: id, type: String }])
+
+        return (async () => {
+            const user = await User.findById(id, {followers: true}).populate('followers').lean()
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const followers = user.followers
+
+            followers.forEach(follower =>{
+                follower.id = follower._id.toString()
+                delete follower._id
+                delete follower.__v
+                delete follower.pins
+                delete follower.boards
+                delete follower.password
+                delete follower.age
+                delete follower.email
+                delete follower.tries
+                delete follower.following
+                delete follower.followers
+            })
+
+
+
+            return followers
         })()
     },
 
@@ -493,9 +573,9 @@ const logic = {
             if (!board) throw new NotFoundError(`board with id ${boardId} not found`)
 
             const pinned = user.pins.filter(pinned => pinned.pin.toString() === pinId)
-        
+
             if (pinned[0].board.toString() !== boardId) {
-             
+
                 const _board = await Board.findById(pinned[0].board)
 
                 if (!_board) throw new NotFoundError(`_board with id ${_boardId} not found`)

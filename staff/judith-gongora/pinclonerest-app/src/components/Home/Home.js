@@ -2,35 +2,38 @@ import React, { Component } from 'react'
 import logic from '../../logic'
 import Pin from '../Pin/Pin'
 import PopUp from './PopUp'
-import Navbar from '../Navbar/Navbar'
 import './Home.sass'
 
 class Home extends Component {
-    state = { pins: [], editPin: null, board: null, search: []}
+    state = { pins: [], editPin: null, board: null, search: [] }
 
     componentDidMount() {
-        
+
         logic.listAllPins()
             .then(pins => {
-                this.setState({ pins, search: pins }, ()=> {
+                this.setState({ pins, search: pins }, () => {
                     if (this.props.search) {
-                        const find = this.state.pins.filter(pin => pin.title.toLowerCase().includes(this.props.search.toLowerCase()))
-                        this.setState({pins: find})
-                    }
+                        if (this.props.search.trim()) {
+                            const find = this.state.pins.filter(pin => {
+                                if (pin.title && pin.title.toLowerCase().includes(this.props.search.toLowerCase())) return pin
+                            })
+                            this.setState({ search: find })
+                        } else this.setState({ search: this.state.pins })
+                    } else this.setState({ search: this.state.pins })
                 })
-                
             })
-        // TODO error handling!
-
     }
+    // TODO error handling!
 
-    componentWillReceiveProps(props){
-        if(props.search.trim()){ 
-            const find = this.state.pins.filter(pin => {
-               if (pin.title &&  pin.title.toLowerCase().includes(props.search.toLowerCase())) return pin 
-            })
-            this.setState({search: find})
-            }else this.setState({search: this.state.pins})
+    componentWillReceiveProps(props) {
+        if (props.search) {
+            if (props.search.trim()) {
+                const find = this.state.pins.filter(pin => {
+                    if (pin.title && pin.title.toLowerCase().includes(props.search.toLowerCase())) return pin
+                })
+                this.setState({ search: find })
+            } else this.setState({ search: this.state.pins })
+        } else this.setState({ search: this.state.pins })
     }
 
     handlePinInfo = pin => {
@@ -61,16 +64,16 @@ class Home extends Component {
     }
 
     handleSearch = search => {
-        if(search.trim()){ 
-        const find = this.state.pins.filter(pin => {
-           if (pin.title &&  pin.title.toLowerCase().includes(search.toLowerCase())) return pin 
-        })
-        this.setState({search: find})
-        }else this.setState({search: this.state.pins})
+        if (search.trim()) {
+            const find = this.state.pins.filter(pin => {
+                if (pin.title && pin.title.toLowerCase().includes(search.toLowerCase())) return pin
+            })
+            this.setState({ search: find })
+        } else this.setState({ search: this.state.pins })
     }
 
-    handleHome = () =>{
-        this.setState({search: this.state.pins})
+    handleHome = () => {
+        this.setState({ search: this.state.pins })
     }
 
 

@@ -7,7 +7,7 @@ class Boards extends Component {
 
     componentDidMount() {
         logic.listBoards()
-            .then(boards => this.setState({ boards }))
+            .then(boards => this.setState({ boards, search: boards }))
     }
 
     handleChangeInput = event => {

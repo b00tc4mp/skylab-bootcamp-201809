@@ -12,6 +12,7 @@ import Board from './components/Board/Board'
 import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
 import Navbar from './components/Navbar/Navbar'
+import Follow from './components/Follow/Follow'
 
 class App extends Component {
     state = { error: null, board: null, path: null, username: null, search: null}
@@ -106,6 +107,8 @@ class App extends Component {
         this.props.history.push('/home')
     }
 
+    handleFollow = () =>  this.props.history.push('/profile/follow')
+
     
     handleBack = () => {
             switch(this.state.path){
@@ -161,18 +164,23 @@ class App extends Component {
                 : <Redirect to="/home" />}
             />
 
-            <Route path="/profile" render={() => logic.loggedIn
-                ? <Profile onHome={this.handleGoHome} onLogout={this.handleLogoutClick} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} onHandleProfile={this.handleProfile} onSettings={this.handleSettings}/>
+            <Route exact path="/profile" render={() => logic.loggedIn
+                ? <Profile onGoFollow={this.handleFollow} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} />
+                : <Redirect to="/home" />}
+            />
+
+             <Route path="/profile/follow" render={() => logic.loggedIn
+                ? <Follow  onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} />
                 : <Redirect to="/home" />}
             />
 
             <Route path="/user/:username" render={props => logic.loggedIn
-                ? <OtherProfile onHome={this.handleGoHome} onLogout={this.handleLogoutClick} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} onHandleProfile={this.handleProfile} username={props.match.params.username} onSettings={this.handleSettings}/>
+                ? <OtherProfile onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} username={props.match.params.username} />
                 : <Redirect to="/home" />}
             />
 
             <Route path="/:username/board/:titleBoard" render={props => logic.loggedIn
-                ? <Board onHome={this.handleGoHome} onLogout={this.handleLogoutClick} onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} boardTitle={props.match.params.titleBoard} username={props.match.params.username} onHandleProfile={this.handleProfile} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard} onSettings={this.handleSettings}/>
+                ? <Board onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} boardTitle={props.match.params.titleBoard} username={props.match.params.username} onOpenBoard={this.handleOpenBoard}/>
                 : <Redirect to="/home" />}
             />
 

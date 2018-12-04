@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import './Settings.sass'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 
 class Settings extends Component {
     state = { user: null, name: '', surname: '', username: '', save: false, file: null, imgPreview: null }
@@ -57,7 +56,7 @@ class Settings extends Component {
                     <div className='container__photo'>
                         {!this.state.file ? <div>
                             <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} required />
-                            <label for='file-form'>
+                            <label htmlFor='file-form'>
                                 <img className='user__photo' src={this.state.user.img}></img>
                                 <i className="fas fa-camera fa-2x"></i>
                             </label>
@@ -85,7 +84,7 @@ class Settings extends Component {
                     </div>
                     <div className='group2'>
                         <label>Username</label>
-                        <input type='text' onChange={this.handleUsernameChange} defaultValue={this.state.user.username} maxLength='8' ></input>
+                        <input type='text' onChange={this.handleUsernameChange} defaultValue={this.state.user.username} ></input>
                     </div>
                     <div className='buttons__settings'>
                         <div onClick={this.props.onClose} className="themes add">

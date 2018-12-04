@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 import Boards from './Boards'
 import AddBoard from './AddBoard'
 import './AddPin.sass'
@@ -12,7 +11,6 @@ class AddPin extends Component {
         logic.retrieveUser()
             .then(user => this.setState({ user }))
         // TODO error handling!
-
     }
 
     handleSiteOn = () => this.setState({ inputSite: true })
@@ -97,7 +95,7 @@ class AddPin extends Component {
                         <div className='container__left'>
                             {!this.state.file ? <div>
                                 <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} required />
-                                <label for='file-form'>
+                                <label htmlFor='file-form'>
                                     <div className={!this.state.errorFile ? 'add__photo' : 'add__photo error'}>
                                         <i className="fas fa-camera fa-2x"></i>
                                         Drag and Drop or click to upload
@@ -127,9 +125,9 @@ class AddPin extends Component {
 
                         </div>
                         {!this.state.boardsSel && !this.state.createBoard && <div className='container__rigth'>
-                            <input className='input-title' type="text" placeholder="Add a title" onChange={this.handleTitleChange} required />
+                            <input className='input-title' type="text" placeholder="Add a title" onChange={this.handleTitleChange} required value={this.state.title}/>
                             <div className='user__info-add'>
-                                <div className='user' onClick=''>
+                                <div className='user'>
                                     <img src={this.state.user.img} ></img>
                                     <div>
                                         <p className='username'>{this.state.user.username} </p>
@@ -138,10 +136,10 @@ class AddPin extends Component {
                                 </div>
                             </div>
 
-                            <input className='description' type="textarea" maxLength='500' placeholder="Say more about this Pin" onChange={this.handleDescriptionChange} />
+                            <input className='description' type="textarea" maxLength='500' placeholder="Say more about this Pin" onChange={this.handleDescriptionChange} value={this.state.description} />
 
                             <div className='boards'>
-                                <input className={!this.state.errorUrl ? 'input-url' : 'input-url error'} type="text" placeholder="Add the url this pin links to" onChange={this.handleUrlChange} />
+                                <input className={!this.state.errorUrl ? 'input-url' : 'input-url error'} type="text" placeholder="Add the url this pin links to" onChange={this.handleUrlChange} value={this.state.url}/>
                                 <div className={!this.state.errorBoard ? 'select' : 'select error'}>{!this.state.board ? <span>Choose a board (required)</span> : <span>{this.state.board.title}</span>}
                                     <svg onClick={this.handleBoards} height="12" width="12" viewBox="0 0 24 24" aria-label="Selecciona un tablero en el que quieras guardar Pines" role="img">
                                         <title>Selecciona un tablero en el que quieras guardar Pines</title><path d="M12 19.5L.66 8.29c-.88-.86-.88-2.27 0-3.14.88-.87 2.3-.87 3.18 0L12 13.21l8.16-8.06c.88-.87 2.3-.87 3.18 0 .88.87.88 2.28 0 3.14L12 19.5z"></path>

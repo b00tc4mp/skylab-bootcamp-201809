@@ -60,6 +60,36 @@ routerUser.get('/users/:id', [bearerTokenParser, jwtVerifier], (req, res) => {
     }, res)
 })
 
+routerUser.get('/users/:id/followings', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveFollowings(id)
+            .then(followings =>
+                res.json({
+                    data: followings
+                })
+            )
+    }, res)
+})
+
+routerUser.get('/users/:id/followers', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { params: { id }, sub } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveFollowers(id)
+            .then(followers =>
+                res.json({
+                    data: followers
+                })
+            )
+    }, res)
+})
+
 routerUser.get('/users/:id/user/:username', [bearerTokenParser, jwtVerifier], (req, res) => {
     routeHandler(() => {
         const { params: { id, username }, sub } = req

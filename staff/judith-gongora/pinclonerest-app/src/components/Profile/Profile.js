@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 import Board from './Board'
 import PopUp from './PopUp'
 import Pin from './Pin/Pin'
@@ -77,7 +76,7 @@ class Profile extends Component {
             <div className='container__user'>
                 <div className='user__profile'>
                     <h2>{this.state.user.username}</h2>
-                    <p>{this.state.user.followers} followers · {this.state.user.following} following</p>
+                    <p onClick={this.props.onGoFollow} >{this.state.user.followers} followers · {this.state.user.following} following</p>
                 </div>
                 <img className='user__photo' src={this.state.user.img}></img>
             </div>

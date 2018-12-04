@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import Navbar from '../Navbar/Navbar'
 import Board from './Board'
 import Pin from '../Pin/Pin'
 import './Profile.sass'

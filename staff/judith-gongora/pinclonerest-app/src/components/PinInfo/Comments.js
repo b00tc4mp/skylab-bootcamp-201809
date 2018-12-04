@@ -8,17 +8,10 @@ class Comments extends Component {
 
     componentDidMount() {
         this.retrieveComments(this.props.pinId)
-
-        // TODO error handling!
-
     }
 
     componentWillReceiveProps(props) {
-        debugger
         this.retrieveComments(props.pinId)
-
-
-        // TODO error handling!
     }
 
     retrieveComments(pinId) {
@@ -26,6 +19,7 @@ class Comments extends Component {
             .then(comments => {
                 this.setState({ comments, comment: '', commentsLimit: this.state.commentsLimit > 2 ? this.state.commentsLimit : (this.props.comments.length < 2 ? this.props.comments.length : 2) })
             })
+        // Error handling
     }
 
     handleCommentChange = event => {
@@ -36,9 +30,8 @@ class Comments extends Component {
 
     handleKeyDown = event => {
 
-        if (event.keyCode == 13 && event.shiftKey == false) {
-            this.handleSubmit(event)
-        }
+        if (event.keyCode == 13 && event.shiftKey == false) this.handleSubmit(event)
+
     }
 
     handleSubmit = event => {

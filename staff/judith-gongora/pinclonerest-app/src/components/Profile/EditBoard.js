@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Boards from './Boards'
 import './Profile.sass'
 
 
@@ -29,8 +30,8 @@ class EditBoard extends Component {
         this.setState({ merge: true })
     }
 
-    handleMerge = board => {
-        //logic merge and close editBoard and render profile boards
+    handleMerge = ()=> {
+        this.setState({merge:true})
 
     }
 
@@ -44,6 +45,7 @@ class EditBoard extends Component {
 
     render() {
         return <section className="popup__editBoard">
+            {this.state.merge && <Boards />}
             <div className='container__editBoard'>
                 <div className='editBoard__head'>
                     <div className='editBoard__title'><h2>Edit your Board</h2></div>
@@ -58,7 +60,7 @@ class EditBoard extends Component {
                         <p>Name</p>
                         <input type='text' className='input' onChange={this.handleTitleChange} defaultValue={this.state.title}></input>
                     </div>
-                    <div className='description__board' onChange={this.handleDescriptionChange} >
+                    <div className='description__board-profile' onChange={this.handleDescriptionChange} >
                         <p>Description</p>
                         <textarea defaultValue={this.state.description} ></textarea>
                     </div>
