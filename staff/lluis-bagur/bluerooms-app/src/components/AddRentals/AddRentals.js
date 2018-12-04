@@ -89,17 +89,20 @@ class AddRentals extends Component {
   handleSubmit = event => {
     event.preventDefault()
 
-    const { title, file, city, street, category, image, bedrooms, shared, description, dailyRate } = this.state
+    const { title, file, city, street, category, bedrooms, shared, description, dailyRate } = this.state
 
     if (!file) this.setState({ errorFile: true })
 
-    if (file) this.handleAddRental(title, file, city, street, category, image, bedrooms, shared, description, dailyRate)
+    debugger
+
+    if (file) this.handleAddRental(title, file, city, street, category, bedrooms, shared, description, dailyRate)
 
   }
 
-  handleAddRental = (title, file, city, street, category, image, bedrooms, shared, description, dailyRate) => {
+  handleAddRental = (title, file, city, street, category, bedrooms, shared, description, dailyRate) => {
     try {
-      logic.addRentals(title, file, city, street, category, image, bedrooms, shared, description, dailyRate)
+      debugger
+      logic.addRentals(title, file, city, street, category, bedrooms, shared, description, dailyRate)
         .then(() => {
           this.setState({ error: null })
           this.props.onShowHideModal()
@@ -223,7 +226,7 @@ class AddRentals extends Component {
                 </label>
               </div> 
                 <div className='preview__container'>
-                <img className='photo__preview' src={this.state.imgPreview}></img>
+                <img className='photo__preview' src={this.state.imgPreview} alt="img_preview"></img>
                 <div onClick={this.handleRemovePreview} className='icon_x'>
                   <svg height="20" width="20" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
                     <path d="M15.18 12l7.16-7.16c.88-.88.88-2.3 0-3.18-.88-.88-2.3-.88-3.18 0L12 8.82 4.84 1.66c-.88-.88-2.3-.88-3.18 0-.88.88-.88 2.3 0 3.18L8.82 12l-7.16 7.16c-.88.88-.88 2.3 0 3.18.44.44 1.01.66 1.59.66.58 0 1.15-.22 1.59-.66L12 15.18l7.16 7.16c.44.44 1.01.66 1.59.66.58 0 1.15-.22 1.59-.66.88-.88.88-2.3 0-3.18L15.18 12z"></path>

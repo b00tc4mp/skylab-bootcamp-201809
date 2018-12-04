@@ -42,6 +42,12 @@
   border-bottom: 1px solid teal;
   border-radius: 100px;
 }
+.profile__page .user__background .user__profile .profile__image .img {
+  height: 100%;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
 .profile__page .user__background .user__profile .profile__info {
   display: flex;
   justify-content: center;

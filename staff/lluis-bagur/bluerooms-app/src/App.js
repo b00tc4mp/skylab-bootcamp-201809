@@ -6,7 +6,7 @@ import Navbar from './components/Navbar/Navbar'
 import Profile from './components/UserProfile/UserProfile'
 import SearchResults from './components/SearchResults/SearchResults'
 import RentalPage from './components/RentalPage/RentalPage'
-import { Route, withRouter, Redirect } from 'react-router-dom'
+import { Route, withRouter } from 'react-router-dom'
 
 logic.url = 'http://localhost:5000/api' //poner en un .ENV, con la API KEY
 

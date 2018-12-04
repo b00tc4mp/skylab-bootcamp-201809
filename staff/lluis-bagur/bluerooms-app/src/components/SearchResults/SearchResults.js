@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter, Route } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import logic from '../../logic'
 import Search from '../Search/Search'

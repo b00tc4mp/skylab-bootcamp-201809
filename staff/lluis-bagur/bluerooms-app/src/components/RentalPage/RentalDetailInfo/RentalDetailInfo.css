@@ -15,6 +15,10 @@
 }
 .details-section .row .rental-owner {
   float: right;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  display: flex;
 }
 .details-section .row .rental-owner img {
   height: 50px;

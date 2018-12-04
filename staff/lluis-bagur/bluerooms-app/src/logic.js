@@ -31,9 +31,7 @@ const logic = {
 
         return fetch(`${this.url}/users`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json; charset=utf-8'
-            },
+           
             body
         })
             .then(res => res.json())

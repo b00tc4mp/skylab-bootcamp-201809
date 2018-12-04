@@ -54,6 +54,7 @@ class Profile extends Component {
             <div className="user__background">
                 <div className="user__profile">
                     <div className="profile__image">
+                    <img className="img" src={this.state.user && this.state.user.image} alt="owner"/>
                     </div>
                     <div className="profile__info">
                         <div className="profile__title"><h2>{this.state.user.name}</h2></div>
@@ -70,8 +71,8 @@ class Profile extends Component {
                             </div>
                         </div>
                         <div class="buttons">
-                            <div class="button button-back" onClick={this.props.onGoBack}>
-                                <i class="fas fa-times-circle"></i>
+                            <div class="button button-back" onClick={() => this.handleGoBack()}>
+                            <i class="fas fa-undo-alt"></i>
                             </div>
                         </div>
 

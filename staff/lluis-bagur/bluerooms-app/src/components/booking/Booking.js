@@ -3,7 +3,6 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { BookingModal } from './BookingModal';
 import './Booking.css'
-import { Link } from 'react-router-dom';
 import logic from '../../logic'
 import * as moment from 'moment';
 import Login from '../Login/Login'
@@ -19,7 +18,7 @@ class Booking extends React.Component {
 
     this.state = {
       rental: [],
-      bookings: "",
+      bookingsNum: [],
       proposedBooking: {
         startAt: '',
         endAt: '',
@@ -49,7 +48,10 @@ class Booking extends React.Component {
 
     const rental = props.rental
     const guests = props.rental.bedrooms
-    const bookingsNum = props.rental.bookings
+    let bookingsNum = 0
+    if(props.rental.bookings) bookingsNum = props.rental.bookings.length
+      debugger
+   
 
     this.setState({
       bookingsNum, rental, proposedBooking: {
@@ -213,7 +215,7 @@ class Booking extends React.Component {
         <hr></hr>
         <p className='booking-note-title'>People are interested into this house</p>
         <p className='booking-note-text'>
-          {this.state.bookings.length} people have booked this apartment.
+          {this.state.bookingsNum} people have booked this apartment.
         </p>
         <BookingModal open={this.state.modal.open}
           closeModal={this.cancelConfirmation}

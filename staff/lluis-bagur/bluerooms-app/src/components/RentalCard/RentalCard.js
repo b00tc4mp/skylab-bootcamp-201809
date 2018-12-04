@@ -2,7 +2,7 @@ import React from 'react'
 import './list.css'
 import '.././RentalCardLanding/RentalCardLanding'
 import '.././RentalCardSearch/RentalCardSearch'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { Link } from 'react-router-dom'
 
 

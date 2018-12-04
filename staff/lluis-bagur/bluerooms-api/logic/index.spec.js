@@ -19,7 +19,7 @@ describe('logic', () => {
 
     describe('user', () => {
         describe('register', () => {
-            let name, surname, username, password, email
+            let name, surname, username, password, email, image
 
             beforeEach(() => {
                 name = `name-${Math.random()}`
@@ -27,10 +27,11 @@ describe('logic', () => {
                 username = `username-${Math.random()}`
                 password = `password-${Math.random()}`
                 email = `email-${Math.random()}`
+                image = `https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg`
             })
 
             it('should succeed on correct data', async () => {
-                const res = await logic.registerUser(name, surname, username, password, email)
+                const res = await logic.registerUser(name, surname, username, password, email, image)
 
                 expect(res).to.be.undefined
 
@@ -46,72 +47,73 @@ describe('logic', () => {
                 expect(user.username).to.equal(username)
                 expect(user.password).to.equal(password)
                 expect(user.email).to.equal(email)
+                expect(user.image).to.equal(image)
             })
 
             it('should fail on undefined name', () => {
-                expect(() => logic.registerUser(undefined, surname, username, password, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(undefined, surname, username, password, email, image)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty name', () => {
-                expect(() => logic.registerUser('', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
+                expect(() => logic.registerUser('', surname, username, password, email, image)).to.throw(ValueError, 'name is empty or blank')
             })
 
             it('should fail on blank name', () => {
-                expect(() => logic.registerUser('   \t\n', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
+                expect(() => logic.registerUser('   \t\n', surname, username, password, email, image)).to.throw(ValueError, 'name is empty or blank')
             })
 
             it('should fail on undefined surname', () => {
-                expect(() => logic.registerUser(name, undefined, username, password, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, undefined, username, password, email, image)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty surname', () => {
-                expect(() => logic.registerUser(name, '', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
+                expect(() => logic.registerUser(name, '', username, password, email, image)).to.throw(ValueError, 'surname is empty or blank')
             })
 
             it('should fail on blank surname', () => {
-                expect(() => logic.registerUser(name, '   \t\n', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
+                expect(() => logic.registerUser(name, '   \t\n', username, password, email, image)).to.throw(ValueError, 'surname is empty or blank')
             })
 
             it('should fail on undefined username', () => {
-                expect(() => logic.registerUser(name, surname, undefined, password, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, surname, undefined, password, email, image)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty username', () => {
-                expect(() => logic.registerUser(name, surname, '', password, email)).to.throw(ValueError, 'username is empty or blank')
+                expect(() => logic.registerUser(name, surname, '', password, email, image)).to.throw(ValueError, 'username is empty or blank')
             })
 
             it('should fail on blank username', () => {
-                expect(() => logic.registerUser(name, surname, '   \t\n', password, email)).to.throw(ValueError, 'username is empty or blank')
+                expect(() => logic.registerUser(name, surname, '   \t\n', password, email, image)).to.throw(ValueError, 'username is empty or blank')
             })
 
             it('should fail on undefined password', () => {
-                expect(() => logic.registerUser(name, surname, username, undefined, email)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, surname, username, undefined, email, image)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty password', () => {
-                expect(() => logic.registerUser(name, surname, username, '', email)).to.throw(ValueError, 'password is empty or blank')
+                expect(() => logic.registerUser(name, surname, username, '', email, image)).to.throw(ValueError, 'password is empty or blank')
             })
 
             it('should fail on blank password', () => {
-                expect(() => logic.registerUser(name, surname, username, '   \t\n', email)).to.throw(ValueError, 'password is empty or blank')
+                expect(() => logic.registerUser(name, surname, username, '   \t\n', email, image)).to.throw(ValueError, 'password is empty or blank')
             })
 
             it('should fail on undefined email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, undefined)).to.throw(TypeError, 'undefined is not a string')
+                expect(() => logic.registerUser(name, surname, username, password, undefined, image)).to.throw(TypeError, 'undefined is not a string')
             })
 
             it('should fail on empty email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, '')).to.throw(ValueError, 'email is empty or blank')
+                expect(() => logic.registerUser(name, surname, username, password, '', image)).to.throw(ValueError, 'email is empty or blank')
             })
 
             it('should fail on blank email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, '   \t\n')).to.throw(ValueError, 'email is empty or blank')
+                expect(() => logic.registerUser(name, surname, username, password, '   \t\n', image)).to.throw(ValueError, 'email is empty or blank')
             })
         })
 
         describe('authenticate', () => {
             let user
-            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })).save())
+            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image:"https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })).save())
 
             it('should authenticate on correct credentials', async () => {
                 const { username, password } = user
@@ -141,7 +143,7 @@ describe('logic', () => {
             let user
 
             beforeEach(async () => {
-                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image:"https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })
 
                 await user.save()
             })
@@ -151,7 +153,7 @@ describe('logic', () => {
 
                 expect(_user).not.to.be.instanceof(User)
 
-                const { id, _id, __v, name, surname, username, password, email, rentals, bookings } = _user
+                const { id, _id, __v, name, surname, username, password, email, image, rentals, bookings } = _user
 
                 expect(id).to.exist
                 expect(id).to.be.a('string')
@@ -162,6 +164,7 @@ describe('logic', () => {
                 expect(surname).to.equal(user.surname)
                 expect(username).to.equal(user.username)
                 expect(email).to.equal(user.email)
+                expect(image).to.equal(image)
                 expect(password).to.be.undefined
                 expect(rentals).to.exist
                 expect(bookings).to.exist

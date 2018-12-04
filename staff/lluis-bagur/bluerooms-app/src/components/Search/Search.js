@@ -1,9 +1,8 @@
 import React from 'react'
 import { Component } from 'react';
-import { withRouter, Route } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import './Search.css'
 import { ToastContainer, toast } from 'react-toastify';
-import logic from '../../logic'
 
 class Search extends Component {
 
@@ -19,7 +18,7 @@ class Search extends Component {
     event.preventDefault()
 
     const { query } = this.state
-    if (query == "") {
+    if (query === "") {
       toast.error('Please, write something...');
     }
     else {

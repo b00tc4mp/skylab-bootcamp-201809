@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Login from '../Login/Login'
 import Register from '../Register/Register'
+import { withRouter } from "react-router"
+
 
 import './Navbar.css'
 
@@ -32,12 +34,14 @@ class Navbar extends Component {
     toggleModalRegister(){
         this.setState({ showRegister: !this.state.showRegister })
     }
+    handleGoBack = () => this.props.history.push('/')
+
 
     render() {
         return <nav className="navbar">
             <div className="header">
                 <div className="header__logo">
-                    <div onClick={this.props.onLogoClick} className="img__logo" />
+                    <div onClick={() => this.handleGoBack()} className="img__logo" />
                 </div>
 
                 <div className="header__btns">
@@ -60,4 +64,4 @@ class Navbar extends Component {
         </nav>
     }
 }
-    export default Navbar
+export default withRouter(Navbar)
