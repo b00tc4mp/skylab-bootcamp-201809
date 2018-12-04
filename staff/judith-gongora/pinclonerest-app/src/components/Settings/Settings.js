@@ -48,7 +48,6 @@ class Settings extends Component {
 
     render() {
         return this.state.user && <section className="container__settings">
-            <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onLogout={this.props.onLogout} onHome={this.props.onHome} />
             <div className='container__head'>
                 <div className='container__user-settings'>
                     <div className='user__profile'>

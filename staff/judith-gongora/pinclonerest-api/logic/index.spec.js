@@ -241,9 +241,8 @@ describe('logic', () => {
                     const pins = await Pin.find()
                         const [pin] = pins
 
-                        expect(pin.multimedia).to.equal(multimedia)
-                        expect(pin.user.toString()).to.equal(user.id)
-                        expect(pin.board.toString()).to.equal(board)
+                        expect(pin.user.toString()).to.equal(user.id.toString())
+                        expect(pin.board.toString()).to.equal(board.id.toString())
                         expect(pin.title).to.equal(title)
 
                         
@@ -252,7 +251,7 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        false && describe('list', () => {
+        describe('list', () => {
             let user, pin, pin2
 
             beforeEach(async () => {

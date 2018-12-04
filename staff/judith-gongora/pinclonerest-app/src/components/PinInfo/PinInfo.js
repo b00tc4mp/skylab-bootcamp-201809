@@ -118,7 +118,6 @@ class PinInfo extends Component {
 
     render() {
         return this.state.pin && <div className="div__pinInfo">
-            <Navbar onSettings={this.props.onSettings} onHome={this.props.onHome} onLogout={this.props.onLogout} onHandleProfile={this.props.onHandleProfile}/>
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.pin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pinInfo__container">
                 <div className='pinInfo__home'>

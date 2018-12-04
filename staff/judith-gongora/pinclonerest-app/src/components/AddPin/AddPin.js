@@ -75,12 +75,11 @@ class AddPin extends Component {
 
     render() {
         return <div className="div__addPin">
-            <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
             <section className="addPin__container">
                 <div className='addPin__home'>
-                    <a onClick={this.props.onHome} >
+                    <a onClick={this.props.onBack} >
                         <svg height="20" width="20" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img"><title></title><path d="M17.28 24c-.57 0-1.14-.22-1.58-.66L4.5 12 15.7.66a2.21 2.21 0 0 1 3.15 0c.87.88.87 2.3 0 3.18L10.79 12l8.06 8.16c.87.88.87 2.3 0 3.18-.44.44-1 .66-1.57.66"></path></svg>
-                        <span>Home</span>
+                        <span>Back</span>
                     </a>
                 </div>
                 <section className='add__container'>

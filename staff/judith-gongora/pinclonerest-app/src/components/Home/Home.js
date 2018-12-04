@@ -24,6 +24,15 @@ class Home extends Component {
 
     }
 
+    componentWillReceiveProps(props){
+        if(props.search.trim()){ 
+            const find = this.state.pins.filter(pin => {
+               if (pin.title &&  pin.title.toLowerCase().includes(props.search.toLowerCase())) return pin 
+            })
+            this.setState({search: find})
+            }else this.setState({search: this.state.pins})
+    }
+
     handlePinInfo = pin => {
         this.props.onHandlePinInfo(pin)
     }
@@ -67,7 +76,6 @@ class Home extends Component {
 
     render() {
         return <div className="div__home">
-            <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onLogout={this.props.onLogout} onHandleEditPin={this.handleEditPin} onSearch={this.handleSearch} onHome={this.handleHome} />
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.editPin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
             <section className="pins__container">
                 {this.state.search.map(pin => <Pin key={pin.id} id={pin.id} pin={pin} onHandlePinInfo={this.handlePinInfo} onHandleEditPin={this.handleEditPin} onSavePin={this.handleSaveBoard} onChangePin={this.handleChangePin} onOpenBoard={this.props.onOpenBoard} />)}

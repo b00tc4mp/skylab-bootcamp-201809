@@ -11,6 +11,7 @@ import Error from './components/Error'
 import Board from './components/Board/Board'
 import logic from './logic'
 import { Route, withRouter, Redirect } from 'react-router-dom'
+import Navbar from './components/Navbar/Navbar'
 
 class App extends Component {
     state = { error: null, board: null, path: null, username: null, search: null}
@@ -136,10 +137,12 @@ class App extends Component {
                 : <Redirect to="/home" />}
             />
 
+            {logic.loggedIn && <Navbar onSettings={this.handleSettings} onHandleProfile={this.handleProfile} onLogout={this.handleLogoutClick} onSearch={this.handleSearch} onHome={this.handleGoHome} />}
+            
             {error && <Error onErrorClose={this.handleErrorClose} message={error} />}
 
             <Route path="/home" render={() => logic.loggedIn
-                ? <Home onLogout={this.handleLogoutClick} onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onOpenBoard={this.handleOpenBoard} onSettings={this.handleSettings}  search={this.state.search} onHome={this.handleBack}  />
+                ? <Home onHandlePinInfo={this.handlePinInfo} onHandleAddPin={this.handleAddPin} onOpenBoard={this.handleOpenBoard}  search={this.state.search} />
                 : <Redirect to="/" />}
             />
 
@@ -154,7 +157,7 @@ class App extends Component {
             />
 
             <Route path="/pin-builder" render={() => logic.loggedIn
-                ? <AddPin onHome={this.handleHome} onCreatePin={this.handleCreatePin} onHandleProfile={this.handleProfile} onSettings={this.handleSettings}/>
+                ? <AddPin onBack={this.handleBack} onCreatePin={this.handleCreatePin} />
                 : <Redirect to="/home" />}
             />
 

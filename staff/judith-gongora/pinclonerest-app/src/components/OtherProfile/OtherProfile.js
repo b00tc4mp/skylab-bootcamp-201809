@@ -69,7 +69,6 @@ class OtherProfile extends Component {
 
     render() {
         return <div className="div__profile">
-            <Navbar onSettings={this.props.onSettings} onHandleProfile={this.props.onHandleProfile} onHome={this.props.onHome} onLogout={this.props.onLogout} />
             <div className='container__user'>
                 <div className='user__profile'>
                     <h2>{this.state.user.username}</h2>
