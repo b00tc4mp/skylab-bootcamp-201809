@@ -221,11 +221,21 @@ describe('logic', () => {
             })
 
             it('should succeed on correct data', async () => { 
-                const filename = 'avatar.png'
+                const filename = './logic/avatar.png'
 
                 const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
        
-                await logic.addPin( user.id, filename, rs, board.id, null, title, null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, title, null)
                 
 
                     const pins = await Pin.find()
