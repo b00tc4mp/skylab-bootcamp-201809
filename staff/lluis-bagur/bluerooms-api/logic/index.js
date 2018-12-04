@@ -10,10 +10,26 @@ cloudinary.config({
     api_secret:'FpGiCT6wIAg3IJ9EyBZBbFyI9mc'
 })
 
-// ....................  USER LOGIC .....................//
+ // ------------ USER -------------------- //
+    /**
+    * Register User
+    * 
+    * @param {String} name The user name
+    * @param {String} surname The user surname
+    * @param {String} username The user username
+    * @param {String} password The user password
+    * @param {String} email The user email
+    * @param {string} failname The user profile pick
+    * 
+    * @throws {TypeError} On non-string user data
+    * @throws {AlreadyExistsError} if already exist the username
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
 
 const logic = {
-    registerUser(filename, fileData, name, surname, username, password, email) { //REGISTER && TESTED
+    registerUser(filename, fileData, name, surname, username, password, email) { 
         validate([{ key: 'name', value: name, type: String }, { key: 'filename', value: filename, type: String }, { key: 'surname', value: surname, type: String }, { key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }, { key: 'email', value: email, type: String }])
 
         return (async () => {
@@ -29,7 +45,19 @@ const logic = {
         })()
     },
 
-    authenticateUser(username, password) { //LOGIN - AUTHENTICATIONS && TESTED
+    /**
+    * Authenticate User
+    * 
+    * @param {String} username The user username
+    * @param {String} password The user password
+    * 
+    * @throws {TypeError} On non-string user id, non-string password 
+    * @throws {AuthError} if invalid email or password
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
+    authenticateUser(username, password) { 
         validate([{ key: 'username', value: username, type: String }, { key: 'password', value: password, type: String }])
 
         return (async () => {
@@ -41,18 +69,27 @@ const logic = {
         })()
     },
 
-    retrieveUser(id) { // RETRIEVE USER BY ID && TESTED
+    /** Retrieve User
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id
+    * @throws {NotFoundError} if user not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
+    retrieveUser(id) { 
         validate([{ key: 'id', value: id, type: String }])
 
         return (async () => {
             const user = await User.findById(id, { '_id': 0, password: 0, __v: 0 }).lean().populate('rentals').populate('bookings')
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
-            debugger
 
             user.id = id
 
-            const rentals = user.rentals
+            const rentals = user.rentals // delete mongoose info
             rentals.forEach(rental => {
                 rental.id = rental._id
                 delete rental._id
@@ -60,7 +97,7 @@ const logic = {
 
             });
 
-            const bookings = user.bookings
+            const bookings = user.bookings // delete mongoose info
             bookings.forEach(booking => {
                 delete booking._id
                 delete booking.__v
@@ -74,11 +111,9 @@ const logic = {
 
 
     uploadCloudinary(filename, data) {
-        debugger
         return new Promise((resolve, reject) => {
             cloudinary.v2.uploader.upload_stream({ resource_type: 'image' }, (error, res) => {
                 if (error) return reject(Error(`the file ${filename} could not be uploaded`));
-                debugger
                 resolve(res.secure_url)
 
             }).end(data)
@@ -87,7 +122,26 @@ const logic = {
 
     //........................... RENTAL LOGIC .......................//
 
-    // ADD RENTAL && TESTED
+    /**
+    * Create Rental
+    * 
+    * @param {String} title The rental title
+    * @param {String} city The rental city
+    * @param {String} street The rental street
+    * @param {String} category The rental category
+    * @param {String} bedrooms The rental bedrooms
+    * @param {String} shared The rental shared
+    * @param {String} description The rental description
+    * @param {String} dailyRate The rental dailyRate
+    * @param {string} failname The user profile pick Name
+    * @param {string} failData The user profile pick Data
+    * 
+    * @throws {TypeError} On non-string rental data
+    * @throws {NotFoundError} user with id not found`
+    * @throws {AlreadyExistsError} if already exist the Rental ID
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     addRental(id, filename, fileData, title, city, street, category, bedrooms, shared, description, dailyRate) {
         validate([{ key: 'id', value: id, type: String },  { key: 'filename', value: filename, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
@@ -110,7 +164,23 @@ const logic = {
         })()
     },
 
-    //UPDATE RENTAL
+     /**
+    * Update Rental
+    * 
+    * @param {String} title The rental title
+    * @param {String} city The rental city
+    * @param {String} street The rental street
+    * @param {String} category The rental category
+    * @param {String} bedrooms The rental bedrooms
+    * @param {String} shared The rental shared
+    * @param {String} description The rental description
+    * @param {String} dailyRate The rental dailyRate
+    * 
+    * @throws {TypeError} On non-string rental data, and ID's
+    * @throws {NotFoundError} user with id not found & Rental with id not found
+    *     
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     updateRental(id, rentalId, title, city, street, category, image, bedrooms, shared, description, dailyRate) { // UPDATE USERS
         validate([{ key: 'id', value: id, type: String }, { key: 'rentalId', value: rentalId, type: String }, { key: 'title', value: title, type: String }, { key: 'city', value: city, type: String }, { key: 'street', value: street, type: String }, { key: 'category', value: category, type: String }, { key: 'image', value: image, type: String }, { key: 'bedrooms', value: bedrooms, type: Number }, { key: 'shared', value: shared, type: Boolean }, { key: 'description', value: description, type: String }, { key: 'dailyRate', value: dailyRate, type: Number }])
@@ -125,7 +195,6 @@ const logic = {
 
             if (!rental) throw new NotFoundError(`Rental with id ${id} not found`)
 
-            debugger
 
             title != null && (rental.title = title)
             city != null && (rental.city = city)
@@ -137,13 +206,17 @@ const logic = {
             description != null && (rental.description = description)
             dailyRate != null && (rental.dailyRate = dailyRate)
 
-            debugger
-
             await rental.save()
         })()
     },
 
-    //LIST RENTAL BY ID'S
+    /**
+    * List all rentals
+    * 
+    * @throws {Error} On empty array of rentals 
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     retriveRentals() {
         return (async () => {
@@ -153,12 +226,22 @@ const logic = {
                 rental.id = rental._id
                 delete rental._id
                 delete rental.__v
-
             });
 
             return rentals
         })()
     },
+
+     /**
+    * List Rentals by user ID
+    * 
+    * @param {String} id The user id
+    * 
+    * @throws {TypeError} On non-string user id or user id 
+    * @throws {Error} On empty or blank user id or user id 
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     listRentalByUserId(id) {
 
@@ -185,6 +268,20 @@ const logic = {
         })()
     },
 
+     /**
+    * List rentals by rental ID
+    * 
+    * @param {String} id The user id
+    * @param {String} rentalId The rental ID 
+    * 
+    * @throws {TypeError} On non-string user id or rental id 
+    * @throws {Error} On empty or blank user id or rental id 
+    * @throws {NotFoundError} user with id not found
+    * @throws {NotFoundError} rental with id not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
     listRentalByRentalId(id, rentalId) {
 
         validate([{ key: 'id', value: id, type: String },
@@ -203,6 +300,17 @@ const logic = {
         })()
     },
 
+      /**
+    * List rentals by query(city)
+    * 
+    * @param {String} query The city
+    * 
+    * @throws {TypeError} On non-string query
+    * @throws {NotFoundError} Not rentals found in city
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
+
     listRentalByQuery(query) {
 
         validate([{ key: 'query', value: query, type: String }])
@@ -219,10 +327,19 @@ const logic = {
 
             });
             if (!rental.length>0) throw new NotFoundError(`Not rentals found in ${query}`)
-            debugger
             return rental
         })()
     },
+
+    /**
+    * Retrive one rental by ID
+    * 
+    * @param {String} rentalId The rental ID 
+    * 
+    * @throws {NotFoundError} Not rentals found with this ID
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     retriveRental(rentalId) {
 
@@ -231,20 +348,30 @@ const logic = {
         return (async () => {
             const rental = await Rental.findById(rentalId, { __v: 0 }).populate('bookings').populate('user').lean().exec()
 
-            debugger
             rental.user.id = rental.user._id
             delete rental.user._id
             delete rental.user.__v
 
             rental.id = rental._id
             delete rental._id
-            debugger
-
+            
             return rental
         })()
     },
 
-    //REMOVE
+    /**
+    * List rentals by rental ID
+    * 
+    * @param {String} id The user id
+    * @param {String} rentalId The rental ID 
+    * 
+    * @throws {TypeError} On non-string user id or rental id 
+    * @throws {Error} On empty or blank user id or rental id 
+    * @throws {NotFoundError} user with id not found
+    * @throws {NotFoundError} rental with id not found
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     removeRental(id, rentalId) {
         validate([
@@ -277,7 +404,23 @@ const logic = {
 
     //........................... BOOKING LOGIC .......................//
 
-    // ADD BOOKING
+    
+    /**
+    * Create booking
+    * 
+    * @param {String} rentalId The rental rentalId
+    * @param {String} endAt The rental endAt
+    * @param {String} startAt The rental startAt
+    * @param {String} totalPrice The rental totalPrice
+    * @param {String} days The rental days
+    * @param {String} guests The rental guests
+    * 
+    * @throws {TypeError} On non-string rental data
+    * @throws {NotFoundError} user with id not found`
+    * @throws {AlreadyExistsError} if already exist the Rental ID
+    * 
+    * @returns {Promise} Resolves on correct data, rejects on wrong data
+    */
 
     addBooking(id, rentalId, endAt, startAt, totalPrice, days, guests) {
         validate([{ key: 'id', value: id, type: String },
@@ -287,28 +430,24 @@ const logic = {
         { key: 'totalPrice', value: totalPrice, type: Number },
         { key: 'days', value: days, type: Number },
         { key: 'guests', value: guests, type: Number }])
-        debugger
+        
 
         return (async () => {
 
             const user = await User.findById(id)
             const booking = new Booking({ startAt, endAt, totalPrice, guests, days});
-            debugger
             const foundRental = await Rental.findById(rentalId).populate('bookings')
-            debugger
 
             if (foundRental.user.id === user.id) {
                 throw Error ('Cannot create booking on your Rental!' )
              }
 
-             debugger
             const valid = this.ValidBooking(booking, foundRental) 
-            debugger
+            
                 if (valid == true){
                     booking.user = user._id;
                     booking.rental = foundRental._id;
                     foundRental.bookings.push(booking._id);
-                    debugger
 
                     await User.update({ _id: user.id }, { $push: { bookings: booking } });
 
@@ -316,7 +455,6 @@ const logic = {
 
                     await foundRental.save()
 
-                    debugger
                     return booking
                 } else {
 
@@ -325,25 +463,27 @@ const logic = {
                 })()
     },
 
-    // CHECK DATES
+    /**
+    * Check Dates
+    * 
+    * @param {Date} proposedBooking The rental days
+    * @param {object} rental The rental data
+    * 
+    * @returns {Promise} Resolves true on correct data, rejects on wrong data
+    */
 
     ValidBooking(proposedBooking, rental) {
         let valid = true;
 
-        
-        debugger
         if (rental.bookings && rental.bookings.length > 0) {
-            debugger
 
             valid = rental.bookings.every(function (booking) {
-                debugger
                 const proposedStart = moment(proposedBooking.startAt)
                 const proposedEnd = moment(proposedBooking.endAt)
 
                 const actualStart = moment(booking.startAt)
                 const actualEnd = moment(booking.endAt)
                 const test = ((actualStart < proposedStart && actualEnd < proposedStart) || (proposedEnd < actualEnd && proposedEnd < actualStart))
-                debugger
                 return ((actualStart < proposedStart && actualEnd < proposedStart) || (proposedEnd < actualEnd && proposedEnd < actualStart))
             })
         }

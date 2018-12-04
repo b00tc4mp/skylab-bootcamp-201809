@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const { User, Rental, Booking } = require('../data')
 const logic = require('.')
 const { AlreadyExistsError, ValueError } = require('../errors')
+const fs = require('fs')
 
 const { expect } = require('chai')
 
@@ -27,11 +28,25 @@ describe('logic', () => {
                 username = `username-${Math.random()}`
                 password = `password-${Math.random()}`
                 email = `email-${Math.random()}`
-                image = `https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg`
             })
 
             it('should succeed on correct data', async () => {
-                const res = await logic.registerUser(name, surname, username, password, email, image)
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+
+                const res = await logic.registerUser(filename, buffer, name, surname, username, password, email, image)
 
                 expect(res).to.be.undefined
 
@@ -47,73 +62,267 @@ describe('logic', () => {
                 expect(user.username).to.equal(username)
                 expect(user.password).to.equal(password)
                 expect(user.email).to.equal(email)
-                expect(user.image).to.equal(image)
             })
 
-            it('should fail on undefined name', () => {
-                expect(() => logic.registerUser(undefined, surname, username, password, email, image)).to.throw(TypeError, 'undefined is not a string')
+            it('should fail on undefined name', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, undefined, surname, username, password, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            it('should fail on empty name', () => {
-                expect(() => logic.registerUser('', surname, username, password, email, image)).to.throw(ValueError, 'name is empty or blank')
+            it('should fail on empty name', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, '', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
             })
 
-            it('should fail on blank name', () => {
-                expect(() => logic.registerUser('   \t\n', surname, username, password, email, image)).to.throw(ValueError, 'name is empty or blank')
+            it('should fail on blank name', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, '   \t\n', surname, username, password, email)).to.throw(ValueError, 'name is empty or blank')
             })
 
-            it('should fail on undefined surname', () => {
-                expect(() => logic.registerUser(name, undefined, username, password, email, image)).to.throw(TypeError, 'undefined is not a string')
+            it('should fail on undefined surname', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, undefined, username, password, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            it('should fail on empty surname', () => {
-                expect(() => logic.registerUser(name, '', username, password, email, image)).to.throw(ValueError, 'surname is empty or blank')
+            it('should fail on empty surname', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, '', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
             })
 
-            it('should fail on blank surname', () => {
-                expect(() => logic.registerUser(name, '   \t\n', username, password, email, image)).to.throw(ValueError, 'surname is empty or blank')
+            it('should fail on blank surname', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, '   \t\n', username, password, email)).to.throw(ValueError, 'surname is empty or blank')
             })
 
-            it('should fail on undefined username', () => {
-                expect(() => logic.registerUser(name, surname, undefined, password, email, image)).to.throw(TypeError, 'undefined is not a string')
+            it('should fail on undefined username', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, undefined, password, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            it('should fail on empty username', () => {
-                expect(() => logic.registerUser(name, surname, '', password, email, image)).to.throw(ValueError, 'username is empty or blank')
+            it('should fail on empty username', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, '', password, email)).to.throw(ValueError, 'username is empty or blank')
             })
 
-            it('should fail on blank username', () => {
-                expect(() => logic.registerUser(name, surname, '   \t\n', password, email, image)).to.throw(ValueError, 'username is empty or blank')
+            it('should fail on blank username', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, '   \t\n', password, email)).to.throw(ValueError, 'username is empty or blank')
             })
 
-            it('should fail on undefined password', () => {
-                expect(() => logic.registerUser(name, surname, username, undefined, email, image)).to.throw(TypeError, 'undefined is not a string')
+            it('should fail on undefined password', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, undefined, email)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            it('should fail on empty password', () => {
-                expect(() => logic.registerUser(name, surname, username, '', email, image)).to.throw(ValueError, 'password is empty or blank')
+            it('should fail on empty password', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, '', email)).to.throw(ValueError, 'password is empty or blank')
             })
 
-            it('should fail on blank password', () => {
-                expect(() => logic.registerUser(name, surname, username, '   \t\n', email, image)).to.throw(ValueError, 'password is empty or blank')
+            it('should fail on blank password', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, '   \t\n', email)).to.throw(ValueError, 'password is empty or blank')
             })
 
-            it('should fail on undefined email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, undefined, image)).to.throw(TypeError, 'undefined is not a string')
+            it('should fail on undefined email', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, password, undefined)).to.throw(TypeError, 'undefined is not a string')
             })
 
-            it('should fail on empty email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, '', image)).to.throw(ValueError, 'email is empty or blank')
+            it('should fail on empty email', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, password, '')).to.throw(ValueError, 'email is empty or blank')
             })
 
-            it('should fail on blank email', () => {
-                expect(() => logic.registerUser(name, surname, username, password, '   \t\n', image)).to.throw(ValueError, 'email is empty or blank')
+            it('should fail on blank email', async () => {
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.registerUser(filename, buffer, name, surname, username, password, '   \t\n')).to.throw(ValueError, 'email is empty or blank')
             })
         })
 
         describe('authenticate', () => {
             let user
-            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image:"https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })).save())
+            beforeEach(() => (user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image: "https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })).save())
 
             it('should authenticate on correct credentials', async () => {
                 const { username, password } = user
@@ -143,7 +352,7 @@ describe('logic', () => {
             let user
 
             beforeEach(async () => {
-                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image:"https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image: "https://res.cloudinary.com/lluis09/image/upload/v1543841076/qavxlbgkt0hdsitosm1u.jpg" })
 
                 await user.save()
             })
@@ -172,252 +381,615 @@ describe('logic', () => {
         })
     })
 
-        describe('rentals', () => {
+    describe('rentals', () => {
+        describe('add', () => {
+            let user, title, city, street, category, image, bedrooms, shared, description, dailyRate
+
+            beforeEach(async () => {
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image: 'sdgsdfgsdgsd' })
+
+                title = `title-${Math.random()}`
+                city = `city-${Math.random()}`
+                category = `category-${Math.random()}`
+                street = `street-${Math.random()}`
+                bedrooms = 4
+                shared = false
+                description = `description-${Math.random()}`
+                dailyRate = 125
+
+                await user.save()
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+
+                const res = await logic.addRental(user.id, filename, buffer, title, city, street, category, bedrooms, shared, description, dailyRate)
+
+                expect(res).to.be.undefined
+
+                const rentals = await Rental.find()
+
+                const [rental] = rentals
+
+                expect(rental.title).to.equal(title)
+                expect(rental.city).to.equal(city)
+                expect(rental.street).to.equal(street)
+                expect(rental.category).to.equal(category)
+                expect(rental.bedrooms).to.equal(bedrooms)
+                expect(rental.shared).to.equal(shared)
+                expect(rental.description).to.equal(description)
+                expect(rental.dailyRate).to.equal(dailyRate)
+                expect(rental.bookings).to.exist
+                expect(rental.user).to.exist
+                expect(rental.user.toString()).to.equal(user.id)
+            })
+
+            it('should fail on undefined title', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, undefined, city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on undefined city', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, undefined, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on undefined street', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, city, undefined, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on undefined category', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, city, street, undefined, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+
+            it('should fail on undefined bedrooms', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, city, street, category, image, undefined, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a number')
+            })
+
+            it('should fail on undefined shared', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, city, street, category, bedrooms, undefined, description, dailyRate)).to.throw(TypeError, 'undefined is not a boolean')
+            })
+
+            it('should fail on undefined description', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, title, city, street, category, bedrooms, shared, undefined, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+            })
+
+            it('should fail on empty title or other cases', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, '', city, street, category, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
+            })
+
+            it('should fail on blank title or other cases', async () => {
+
+                const filename = './logic/avatar.png'
+
+                const rs = fs.createReadStream(filename)
+
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                expect(() => logic.addRental(user.id, filename, buffer, '   \t\n', city, street, category, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
+            })
+
+
+        })
+
+        describe('listByUserId', () => {
+            let user, rental1, rental2
+
+            beforeEach(async () => {
+
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com', image: 'fgdfqwjdhkg' })
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
+                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+
+                await rental1.save()
+                await rental2.save()
+
+                user.rentals.push(rental1.id)
+                user.rentals.push(rental2.id)
+
+                await user.save()
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const rentals = await logic.listRentalByUserId(user.id)
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+
+                rentals.forEach(rentals => {
+                    expect(rentals.title).to.be.exist
+                    expect(rentals.city).to.be.exist
+                    expect(rentals.street).to.be.exist
+                    expect(rentals.category).to.be.exist
+                    expect(rentals.bedrooms).to.be.exist
+                    expect(rentals.shared).to.be.exist
+                    expect(rentals.description).to.be.exist
+                    expect(rentals.dailyRate).to.be.exist
+                    expect(rentals.bookings).to.be.exist
+                });
+            })
+
+            it('must not return sensitive data', async () => {
+                const rentals = await logic.listRentalByUserId(user.id)
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+
+                expect(rentals._id).not.to.exist
+                expect(rentals.__v).not.to.exist
+                expect(_rentals._id).not.to.exist
+                expect(_rentals.__v).not.to.exist
+            })
+
+
+            it('should fail on undefined rental id', () => {
+                expect(() => logic.listRentalByUserId(undefined).to.throw(ValueError, 'undefined is not a string'))
+            })
+
+            it('should fail on empty rental id', () => {
+                expect(() => logic.listRentalByUserId('').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+
+            it('should fail on blank rental id', () => {
+                expect(() => logic.listRentalByUserId('   \n').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+
+        })
+
+        describe('retriveRentals', () => {
+            let rental1, rental2
+
+            beforeEach(async () => {
+
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com', image: 'fgdfqwjdhkg' })
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
+                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+
+                await rental1.save()
+                await rental2.save()
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const rentals = await logic.retriveRentals()
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+
+                rentals.forEach(rentals => {
+                    expect(rentals.title).to.be.exist
+                    expect(rentals.city).to.be.exist
+                    expect(rentals.street).to.be.exist
+                    expect(rentals.category).to.be.exist
+                    expect(rentals.bedrooms).to.be.exist
+                    expect(rentals.shared).to.be.exist
+                    expect(rentals.description).to.be.exist
+                    expect(rentals.dailyRate).to.be.exist
+                    expect(rentals.bookings).to.be.exist
+                });
+            })
+
+            it('must not return sensitive data', async () => {
+                const rentals = await logic.retriveRentals()
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+
+                expect(rentals._id).not.to.exist
+                expect(rentals.__v).not.to.exist
+                expect(_rentals._id).not.to.exist
+                expect(_rentals.__v).not.to.exist
+            })
+
+        })
+
+        describe('listRentalByRentalId', () => {
+            let user, rental1, rental2
+
+            beforeEach(async () => {
+
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com', image: 'fgdfqwjdhkg' })
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
+                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+
+                await rental1.save()
+                await rental2.save()
+
+                user.rentals.push(rental1.id)
+                user.rentals.push(rental2.id)
+
+                await user.save()
+
+            })
+
+            it('should succeed on correct data', async () => {
+
+                const rental = await logic.listRentalByRentalId(user.id, rental1.id)
+
+
+                expect(rental).not.to.be.undefined
+                expect(rental.title).to.be.exist
+                expect(rental.city).to.be.exist
+                expect(rental.street).to.be.exist
+                expect(rental.category).to.be.exist
+                expect(rental.bedrooms).to.be.exist
+                expect(rental.shared).to.be.exist
+                expect(rental.description).to.be.exist
+                expect(rental.dailyRate).to.be.exist
+                expect(rental.bookings).to.be.exist
+                expect(rental.image).to.be.exist
+            });
+
+            it('must not return sensitive data', async () => {
+                const rental = await logic.listRentalByRentalId(user.id, rental1.id)
+
+                expect(rental).not.to.be.undefined
+
+                expect(rental._id).not.to.exist
+                expect(rental.__v).not.to.exist
+            })
+
+
+            it('should fail on undefined user id', () => {
+                expect(() => logic.listRentalByRentalId(undefined, rental1.id).to.throw(ValueError, 'undefined is not a string'))
+            })
+
+            it('should fail on undefined rental id', () => {
+                expect(() => logic.listRentalByRentalId(user.id, undefined).to.throw(ValueError, 'undefined is not a string'))
+            })
+
+            it('should fail on empty user id', () => {
+                expect(() => logic.listRentalByRentalId('', rental1.id).to.throw(ValueError, 'userId is empty or blank'))
+            })
+
+            it('should fail on empty rental id', () => {
+                expect(() => logic.listRentalByRentalId(user.id, '').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+
+            it('should fail on blank user id', () => {
+                expect(() => logic.listRentalByRentalId('    \n', rental1.id).to.throw(ValueError, 'userId is empty or blank'))
+            })
+
+            it('should fail on blank rental id', () => {
+                expect(() => logic.listRentalByRentalId(user.id, '   \n').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+
+        })
+
+        describe('listByQuery', () => {
+            let rental1, rental2
+
+            beforeEach(async () => {
+
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
+                rental2 = new Rental({ title: 'title2', city: 'Capital', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+
+                await rental1.save()
+                await rental2.save()
+
+            })
+
+            it('should succeed on correct data', async () => {
+                const query = "Capital"
+
+                const rentals = await logic.listRentalByQuery(query)
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+            })
+
+            it('must not return sensitive data', async () => {
+                const query = "Capital"
+                const rentals = await logic.listRentalByQuery(query)
+
+                expect(rentals).not.to.be.undefined
+
+                expect(rentals.length).to.equal(2)
+
+                const _rentals = await Rental.find()
+
+                expect(_rentals.length).to.equal(2)
+                expect(rentals.length).to.equal(_rentals.length)
+
+                expect(rentals._id).not.to.exist
+                expect(rentals.__v).not.to.exist
+                expect(_rentals._id).not.to.exist
+                expect(_rentals.__v).not.to.exist
+            })
+
+        })
+
+        describe('remove', () => {
+            let user, rental1, rental2
+
+            beforeEach(async () => {
+                user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com', image: 'fgdfqwjdhkg' })
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
+                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+
+                await rental1.save()
+                await rental2.save()
+
+                user.rentals.push(rental1.id)
+                user.rentals.push(rental2.id)
+
+                await user.save()
+                
+            })
+
+            it('should succeed on correct data', async () => {
+                await logic.removeRental(user.id, rental1.id)
+
+                const _user = await User.findById(user.id)
+
+                expect(_user.rentals.length).to.equal(1)
+            })
+
+            it('should fail on undefined user id', () => {
+                expect(() => logic.removeRental(undefined, rental1.id).to.throw(ValueError, 'undefined is not a string'))
+            })
+
+            it('should fail on undefined rental id', () => {
+                expect(() => logic.removeRental(user.id, undefined).to.throw(ValueError, 'undefined is not a string'))
+            })
+
+            it('should fail on empty user id', () => {
+                expect(() => logic.removeRental('', rental1.id).to.throw(ValueError, 'userId is empty or blank'))
+            })
+
+            it('should fail on empty rental id', () => {
+                expect(() => logic.removeRental(user.id, '').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+
+            it('should fail on blank user id', () => {
+                expect(() => logic.removeRental('    \n', rental1.id).to.throw(ValueError, 'userId is empty or blank'))
+            })
+
+            it('should fail on blank rental id', () => {
+                expect(() => logic.removeRental(user.id, '   \n').to.throw(ValueError, 'rentalId is empty or blank'))
+            })
+        })
+        describe('bookings', () => {
             describe('add', () => {
-                let user, title, city, street, category, image, bedrooms, shared, description, dailyRate
+                let user, rental1, startAt, endAt, totalPrice, guests, days
 
                 beforeEach(async () => {
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com' })
+                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'jhon@gmail.com', image: 'sdgsdfgsdgsd' })
+                    user2 = new User({ name: 'John2', surname: 'Doe2', username: 'jd2', password: '1232', email: 'jhon@gmail2.com', image: 'sdgsdfgsdgsd2' })
+                    rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
 
-                    title = `title-${Math.random()}`
-                    city = `city-${Math.random()}`
-                    category = `category-${Math.random()}`
-                    street = `street-${Math.random()}`
-                    image = `image-${Math.random()}`
-                    bedrooms = 4
-                    shared = false
-                    description = `description-${Math.random()}`
-                    dailyRate = 125
-                    
-                    await user.save()
+
+                    startAt = `2018/12/10`
+                    endAt = `2018/12/12`
+                    totalPrice = 200
+                    guests = 4
+                    days = 2
+                
+                await user.save()
+                await user2.save()
+
+                debugger
+                rental1.user=(user2.id)
+
+                await rental1.save()
+                
                 })
 
                 it('should succeed on correct data', async () => {
-                    const res = await logic.addRental(user.id, title, city, street, category, image, bedrooms, shared, description, dailyRate)
 
-                    expect(res).to.be.undefined
+                    const booking = await logic.addBooking(user.id, rental1.id, endAt, startAt, totalPrice, days, guests)
 
-                    const rentals = await Rental.find()
+                    expect(booking).to.be.exist
 
-                    const [rental] = rentals
+                    // const rentals = await Rental.find()
 
-                    expect(rental.title).to.equal(title)
-                    expect(rental.city).to.equal(city)
-                    expect(rental.street).to.equal(street)
-                    expect(rental.category).to.equal(category)
-                    expect(rental.image).to.equal(image)
-                    expect(rental.bedrooms).to.equal(bedrooms)
-                    expect(rental.shared).to.equal(shared)
-                    expect(rental.description).to.equal(description)
-                    expect(rental.dailyRate).to.equal(dailyRate)
-                    expect(rental.bookings).to.exist
-                    expect(rental.user).to.exist
-                    expect(rental.user.toString()).to.equal(user.id)
+                    // const [rental] = rentals
+
+                    // expect(rental.title).to.equal(title)
+                    // expect(rental.city).to.equal(city)
+                    // expect(rental.street).to.equal(street)
+                    // expect(rental.category).to.equal(category)
+                    // expect(rental.bedrooms).to.equal(bedrooms)
+                    // expect(rental.shared).to.equal(shared)
+                    // expect(rental.description).to.equal(description)
+                    // expect(rental.dailyRate).to.equal(dailyRate)
+                    // expect(rental.bookings).to.exist
+                    // expect(rental.user).to.exist
+                    // expect(rental.user.toString()).to.equal(user.id)
                 })
-
-                it('should fail on undefined title', () => {
-                    expect(() => logic.addRental(user.id, undefined, city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+                it('should fail on undefined user id', () => {
+                    expect(() => logic.addBooking(undefined, rental1.id, endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'undefined is not a string'))
                 })
-
-                it('should fail on undefined city', () => {
-                    expect(() => logic.addRental(user.id, title, undefined, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+    
+                it('should fail on undefined rental id', () => {
+                    expect(() => logic.addBooking(user.id, undefined, endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'undefined is not a string'))
                 })
-
-                it('should fail on undefined street', () => {
-                    expect(() => logic.addRental(user.id, title, city, undefined, category, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+    
+                it('should fail on empty user id', () => {
+                    expect(() => logic.addBooking('', rental1.id, endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'userId is empty or blank'))
                 })
-
-                it('should fail on undefined category', () => {
-                    expect(() => logic.addRental(user.id, title, city, street, undefined, image, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+    
+                it('should fail on empty rental id', () => {
+                    expect(() => logic.addBooking(user.id, '', endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'rentalId is empty or blank'))
                 })
-
-                it('should fail on undefined image', () => {
-                    expect(() => logic.addRental(user.id, title, city, street, category, undefined, bedrooms, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a string')
+    
+                it('should fail on blank user id', () => {
+                    expect(() => logic.addBooking('    \n', rental1.id, endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'userId is empty or blank'))
                 })
-
-                it('should fail on undefined bedrooms', () => {
-                    expect(() => logic.addRental(user.id, title, city, street, category, image, undefined, shared, description, dailyRate)).to.throw(TypeError, 'undefined is not a number')
-                })
-
-                it('should fail on undefined shared', () => {
-                    expect(() => logic.addRental(user.id, title, city, street, category, image, bedrooms, undefined, description, dailyRate)).to.throw(TypeError, 'undefined is not a boolean')
-                })
-
-                it('should fail on undefined description', () => {
-                    expect(() => logic.addRental(user.id, title, city, street, category, image, bedrooms, shared, undefined, dailyRate)).to.throw(TypeError, 'undefined is not a string')
-                })
-
-                it('should fail on empty title or other cases', () => {
-                    expect(() => logic.addRental(user.id, '', city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
-                })
-
-                it('should fail on blank title or other cases', () => {
-                    expect(() => logic.addRental(user.id, '   \t\n', city, street, category, image, bedrooms, shared, description, dailyRate)).to.throw(ValueError, 'title is empty or blank')
-                })
-
-
-            })
-
-            describe('listByUserId', () => {
-                let user, rental1, rental2
-
-                beforeEach(async () => {
-
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com' })
-
-                    await user.save()
-
-                    rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image:'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123})
-                    rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image:'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
-                  
-                    await rental1.save()
-                    await rental2.save()
-                })
-
-                it('should succeed on correct data', async () => {
-                    
-                    
-                    const rentals = await logic.listRentalByUserId(user.id)
-
-                    console.log(rentals)
-
-                    const _rentals = await Rental.find()
-
-                    expect(_rentals.length).to.equal(2)
-                    expect(rentals.length).to.equal(_rentals.length)
-
-                    expect(rentals._id).not.to.exist
-                    expect(rentals.__v).not.to.exist
-                    expect(_rentals._id).not.to.exist
-                    expect(_rentals.__v).not.to.exist
-
-                    rentals.forEach(rentals => {
-                        expect(rentals.title).to.equal(_rentals.title)
-                        expect(rentals.city).to.equal(_rentals.city)
-                        expect(rentals.street).to.equal(_rentals.street)
-                        expect(rentals.category).to.equal(_rentals.category)
-                        expect(rentals.image).to.equal(_rentals.image)
-                        expect(rentals.bedrooms).to.equal(_rentals.bedrooms)
-                        expect(rentals.shared).to.equal(_rentals.shared)
-                        expect(rentals.description).to.equal(_rentals.description)
-                        expect(rentals.dailyRate).to.equal(_rentals.dailyRate)
-                        expect(rentals.bookings).to.exist
-                        expect(rentals.user).to.exist
-                        expect(rentals.user.toString()).to.equal(user.id)
-                    });
-                    
-                    
-
-
+    
+                it('should fail on blank rental id', () => {
+                    expect(() => logic.addBooking(user.id, '   \n', endAt, startAt, totalPrice, days, guests).to.throw(ValueError, 'rentalId is empty or blank'))
                 })
             })
-
-            describe('remove', () => {
-                let user, rentals
-
-                beforeEach(async () => {
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-                    rentals = new rentals({ text: 'hello text', user: user.id })
-
-                    await Promise.all([user.save(), rentals.save()])
-                })
-
-                it('should succeed on correct data', async () => {
-                    const res = await logic.removerentals(user.id, rentals.id)
-
-                    expect(res).to.be.undefined
-
-                    const rentals = await rentals.find()
-
-                    expect(rentals.length).to.equal(0)
-                })
-            })
-
-            describe('modify', () => {
-                let user, rentals, newText
-
-                beforeEach(async () => {
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-                    rentals = new rentals({ text: 'hello text', user: user.id })
-
-                    newText = `new-text-${Math.random()}`
-
-                    await Promise.all([user.save(), rentals.save()])
-                })
-
-                it('should succeed on correct data', async () => {
-                    const res = await logic.modifyrentals(user.id, rentals.id, newText)
-
-                    expect(res).to.be.undefined
-
-                    const rentals = await rentals.find()
-
-                    expect(rentals.length).to.equal(1)
-
-                    const [_rental] = rentals
-
-                    expect(_rental.text).to.equal(newText)
-                })
-            })
-
-            describe('move', () => {
-                let user, rentals, newStatus
-
-                beforeEach(async () => {
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-                    rentals = new rentals({ text: 'hello text', user: user.id })
-
-                    newStatus = 'DOING'
-
-                    await Promise.all([user.save(), rentals.save()])
-                })
-
-                it('should succeed on correct data', async () => {
-                    const res = await logic.moverentals(user.id, rentals.id, newStatus)
-
-                    expect(res).to.be.undefined
-
-                    const rentals = await rentals.find()
-
-                    expect(rentals.length).to.equal(1)
-
-                    const [_rental] = rentals
-
-                    expect(_rental.status).to.equal(newStatus)
-                })
-            })
-
-            describe('assign', () => {
-                let user, rentals, user2
-
-                beforeEach(async () => {
-                    user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123' })
-                    rentals = new rentals({ text: 'hello text', user: user.id })
-                    user2 = new User({ name: 'Pepito', surname: 'Grillo', username: 'pg', password: '123' })
-
-                    await Promise.all([user.save(), rentals.save(), user2.save()])
-                })
-
-                it('should succeed on correct data', async () => {
-                    const res = await logic.assignrentals(user.id, rentals.id, user2.id)
-
-                    expect(res).to.be.undefined
-
-                    const rentals = await rentals.find()
-
-                    expect(rentals.length).to.equal(1)
-
-                    const [_rental] = rentals
-
-                    expect(_rental.id).to.equal(rentals.id)
-                    expect(_rental.user.toString()).to.equal(user.id)
-                    expect(_rental.text).to.equal(rentals.text)
-                    expect(_rental.assignedTo.toString()).to.equal(user2.id)
         })
     })
-})
 
-afterEach(() => Promise.all([User.deleteMany(), Rental.deleteMany(), Booking.deleteMany()]))
 
-after(() => mongoose.disconnect())
+    afterEach(() => Promise.all([User.deleteMany(), Rental.deleteMany(), Booking.deleteMany()]))
+
+    after(() => mongoose.disconnect())
 })
