@@ -177,7 +177,7 @@ const User = new Schema({
     },
     boards: [{
         type: ObjectId,
-        ref: 'Boards'
+        ref: 'Board'
     }],
     age: {
         type: Number,

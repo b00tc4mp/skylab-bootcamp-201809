@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import logo from '../../pinterest.svg'
+import logo from '../../logo.png'
 import './Login.sass'
 
 class Login extends Component {

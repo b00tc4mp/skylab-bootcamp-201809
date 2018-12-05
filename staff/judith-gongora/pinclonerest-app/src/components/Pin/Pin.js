@@ -7,7 +7,7 @@ import Boards from './Boards'
 
 
 class Pin extends Component {
-    state = { themes: false, addBoard: false }
+    state = { themes: false, addBoard: false, error: null }
 
     handlePinClick = () => this.props.onHandlePinInfo(this.props.pin)
 
@@ -34,16 +34,21 @@ class Pin extends Component {
     handleCloseEdit = () => this.setState({ addBoard: false, themes: false})
 
     handleCreateBoard = (title, secret) => {
-        logic.addBoard(title, secret)
+        try {
+            logic.addBoard(title, secret)
             .then(board => this.props.onSavePin(this.props.id, board.id))
             .then(()=>this.setState({ themes: false, addBoard: false }))
+            .catch(err => this.setState({ error: err.message }))
+
+        }catch(err){this.setState({ error: err.message })}
+        
     }
 
     handleOpenBoard = board => this.props.onOpenBoard(board)
 
     render() {
         return <article className="pin__container" onClick={this.handlePinClick}>
-            {this.state.addBoard && <AddBoard key={this.props.id} pin={this.props.pin} onCloseEditPin={this.handleCloseEdit} onCreateBoard={this.handleCreateBoard} />}
+            {this.state.addBoard && <AddBoard key={this.props.id} pin={this.props.pin} onCloseEditPin={this.handleCloseEdit} onCreateBoard={this.handleCreateBoard} error={this.state.error} />}
             <div className="pin">
                 <div className="content">
                     <div className="img__container">

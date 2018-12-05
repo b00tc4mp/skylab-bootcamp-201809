@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import logic from '../../logic'
-import logo from '../../pinterest.svg'
+import logo from '../../logo.png'
 import './Navbar.sass'
 
 class Navbar extends Component {
@@ -23,6 +23,7 @@ class Navbar extends Component {
 
     handleSubmit = () => {
         this.props.onSearch(this.state.search)
+
     }
     
     render() {
@@ -36,7 +37,7 @@ class Navbar extends Component {
         <img src={this.state.user.img} ></img> <span> {this.state.user.username}</span>
         </div>
         <div className="icon-hover"> <i onClick={this.props.onSettings} className="fas fa-cog"></i></div>
-        <div className="icon-hover"><svg onClick={this.props.onLogout} className ="nav__icon" height="22" width="22" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img"><title></title><path d="M12 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3M3 9c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm18 0c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"></path></svg></div>
+        <div className="icon-hover"><i onClick={this.props.onLogout} className="fas fa-sign-out-alt"></i></div>
     </div>
     </nav>
     }

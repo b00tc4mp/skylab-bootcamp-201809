@@ -196,6 +196,19 @@ routerUser.patch('/users/:id/pin/:pinId/:boardId', [bearerTokenParser, jwtVerifi
     }, res)
 })
 
+routerUser.get('/users/:id/pin/:pinId/description', [bearerTokenParser, jwtVerifier], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, pinId } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.retrieveDescriptionPinned(id, pinId)
+            .then(description => res.json({
+                data: description
+            }))
+    }, res)
+})
+
 routerUser.patch('/users/:id/pinned/:pinId/board/:boardId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
        

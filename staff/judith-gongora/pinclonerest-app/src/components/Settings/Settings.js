@@ -3,7 +3,7 @@ import './Settings.sass'
 import logic from '../../logic'
 
 class Settings extends Component {
-    state = { user: null, name: '', surname: '', username: '', save: false, file: null, imgPreview: null }
+    state = { user: null, name: '', surname: '', username: '', save: false, file: null, imgPreview: null, error: null }
 
     componentDidMount() {
         logic.retrieveUser()
@@ -13,7 +13,7 @@ class Settings extends Component {
     }
 
     handleChangeFile = event => {
-        this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], save: true})
+        this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], save: true })
     }
 
     handleRemovePreview = () => this.setState({ file: null, imgPreview: null, save: false })
@@ -33,16 +33,26 @@ class Settings extends Component {
     handleUsernameChange = event => {
         const username = event.target.value
 
-        this.setState({ username, save: true })
+        this.setState({ username, save: true, error: null })
     }
 
     handleSaveSettings = () => {
-        if(this.state.file) Promise.all([logic.updateUserPhoto(this.state.file), logic.updateUser(this.state.name, this.state.surname, this.state.username)])
-        .then(() =>  logic.retrieveUser()
-        .then(user => this.setState({ user, save : false, file: null, imgPreview: null })))
-        else logic.updateUser(this.state.name, this.state.surname, this.state.username)
-            .then(() =>  logic.retrieveUser()
-            .then(user => this.setState({ user, save : false })))
+
+        if (this.state.file) try {
+            Promise.all([logic.updateUserPhoto(this.state.file), logic.updateUser(this.state.name, this.state.surname, this.state.username)])
+                .then(() => logic.retrieveUser()
+                    .then(user => this.setState({ user, save: false, file: null, imgPreview: null })))
+                    .catch(err => this.setState({ error: err.message }))
+        } catch (err) { this.setState({ error: err.message }) }
+        else try {
+            logic.updateUser(this.state.name, this.state.surname, this.state.username)
+            .then(() => logic.retrieveUser()
+                .then(user => this.setState({ user, save: false })))
+            .then(() => this.props.onChange())
+            .catch(err => this.setState({ error: err.message }))
+        } catch (err) { this.setState({ error: err.message }) }
+
+
     }
 
     render() {
@@ -86,6 +96,7 @@ class Settings extends Component {
                         <label>Username</label>
                         <input type='text' onChange={this.handleUsernameChange} defaultValue={this.state.user.username} ></input>
                     </div>
+                    {this.state.error && <span className='error-settings'>{this.state.error}</span>}
                     <div className='buttons__settings'>
                         <div onClick={this.props.onClose} className="themes add">
                             <span>Cancel</span>

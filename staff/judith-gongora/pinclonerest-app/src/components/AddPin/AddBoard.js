@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './AddPin.sass'
 
 class AddBoard extends Component {
-    state = { boards: [], search: '', name: '', secret: false }
+    state = { boards: [], search: '', name: '', secret: false, error: this.props.error }
 
     handleInput = event => {
         const search = event.target.value
@@ -39,6 +39,7 @@ class AddBoard extends Component {
             <div className="container__name">
                 <span>Name</span>
                 <input className="name__input" type="text" placeholder='Like "Places to Go" or "Recipes to Make"' onChange={this.handleNameChange} maxlength="15"></input>
+                {this.state.error && <span className='error-add'>{this.state.error}</span>}
             </div>
             <hr className='hr' />
             <div className='container__check'>

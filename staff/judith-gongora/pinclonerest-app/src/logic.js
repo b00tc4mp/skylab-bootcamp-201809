@@ -323,6 +323,19 @@ const logic = {
             })
     },
 
+    mergeBoards(boardIdFrom, boardIdTo){
+        
+        if (typeof boardIdFrom !== 'string') throw TypeError(`${boardIdFrom} is not a string`)
+        if (typeof boardIdTo !== 'string') throw TypeError(`${boardIdTo} is not a string`)
+
+        let path = 'users/' + this._userId + '/boards/' + boardIdFrom + '/merge/' + boardIdTo
+
+        return this._callApi(path, 'PATCH', this._token, undefined)
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+    },
+
 
     /**
      * 
@@ -524,6 +537,7 @@ const logic = {
     },
 
     isMine(userId) {
+
         if (typeof userId !== 'string') throw TypeError(`${userId} is not a string`)
         if (userId === this._userId) return true
         else return false
@@ -650,6 +664,18 @@ const logic = {
         if (typeof boardTitle !== 'string') throw TypeError(`${boardTitle} is not a string`)
 
         let path = 'users/' + this._userId + '/user/' + userId + '/board/' + boardTitle
+
+        return this._callApi(path, 'GET', this._token, undefined)
+            .then(res => {
+                return res.data
+            })
+
+    },
+
+    retrieveDescriptionPinned(pinId){
+        if (typeof pinId !== 'string') throw TypeError(`${pinId} is not a string`)
+
+        let path = 'users/' + this._userId + '/pin/' + pinId + '/description'
 
         return this._callApi(path, 'GET', this._token, undefined)
             .then(res => {

@@ -27,6 +27,12 @@ class Profile extends Component {
 
     handleCloseEditBoard = () => this.setState ({editBoard : null})
 
+    handleCloseMerge = () => {
+        logic.listBoards()
+        .then(boards => this.setState ({editBoard : null, boards}))
+        
+    }
+
     handleEditBoard = board => this.setState({editBoard : board})
     
     handleModifyBoard = (boardId, title, secret, description, category) => {
@@ -72,7 +78,7 @@ class Profile extends Component {
     render() {
         return <div className="div__profile">
             {this.state.editPin && <PopUp key={this.state.editPin} id={this.state.editPin} pin={this.state.editPin} board={this.state.board} onCloseEditPin={this.handleCloseEditPin} onChangePin={this.handleChangePin} onEditPin={this.handleModifyPin} />}
-            {this.state.editBoard && <EditBoard onCloseEditBoard={this.handleCloseEditBoard} board={this.state.editBoard} onEditBoard={this.handleModifyBoard} onDeleteBoard={this.handleRemoveBoard} />}
+            {this.state.editBoard && <EditBoard onHandleCloseMerge={this.handleCloseMerge} onCloseEditBoard={this.handleCloseEditBoard} board={this.state.editBoard} onEditBoard={this.handleModifyBoard} onDeleteBoard={this.handleRemoveBoard} />}
             <div className='container__user'>
                 <div className='user__profile'>
                     <h2>{this.state.user.username}</h2>

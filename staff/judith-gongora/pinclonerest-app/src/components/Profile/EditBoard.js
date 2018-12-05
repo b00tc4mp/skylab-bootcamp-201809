@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Boards from './Boards'
+import Merge from './Merge'
+import logic from '../../logic'
 import './Profile.sass'
 
 
@@ -30,9 +31,19 @@ class EditBoard extends Component {
         this.setState({ merge: true })
     }
 
-    handleMerge = ()=> {
-        this.setState({merge:true})
+    handleMerge = () => {
+        this.setState({ merge: true })
 
+    }
+
+    handleCloseMerge = () => {
+        this.setState({ merge: false })
+
+    }
+
+    handleMergeBoards = board => {
+        logic.mergeBoards(this.props.board.id, board)
+            .then(() => this.props.onHandleCloseMerge())
     }
 
     handleDelete = () => {
@@ -45,7 +56,7 @@ class EditBoard extends Component {
 
     render() {
         return <section className="popup__editBoard">
-            {this.state.merge && <Boards />}
+            {this.state.merge && <Merge onCloseMerge={this.handleCloseMerge} onHandleMergeBoards={this.handleMergeBoards} boardId={this.props.board.id} />}
             <div className='container__editBoard'>
                 <div className='editBoard__head'>
                     <div className='editBoard__title'><h2>Edit your Board</h2></div>

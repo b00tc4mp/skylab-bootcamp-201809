@@ -12,7 +12,10 @@ class Popup extends Component {
         this.setState({ description })
     }
 
-    handlePopUpBoards = () => this.setState({ popup: true })
+    handlePopUpBoards = () => {
+         if (this.state.popup) this.setState({ popup: false })
+        else this.setState({ popup: true })
+    }
 
     handleBoardChange = board => this.setState({ board, popup: false })
 

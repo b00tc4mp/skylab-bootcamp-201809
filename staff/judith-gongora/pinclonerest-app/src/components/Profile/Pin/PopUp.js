@@ -4,7 +4,7 @@ import logic from '../../../logic'
 
 
 class Popup extends Component {
-    state = { text: '', board: '' }
+    state = { text: '', board: null }
 
     componentDidMount() {
         logic.isPinned(this.props.id)

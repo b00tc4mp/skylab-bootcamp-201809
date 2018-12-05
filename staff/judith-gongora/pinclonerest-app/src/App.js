@@ -15,27 +15,27 @@ import Navbar from './components/Navbar/Navbar'
 import Follow from './components/Follow/Follow'
 
 class App extends Component {
-    state = { error: null, board: null, path: null, username: null, search: null}
+    state = { errorLogin: null, errorRegister: null, board: null, path: null, username: null, search: null, change: 0, errorPhoto: null}
 
     handleLoginClick = () => this.props.history.push('/login')
 
     handleRegister = (email, password, age) => {
         try {
             logic.registerUser(email, password, age)
-                .then(() => this.setState({ error: null }, () => this.props.history.push('/login')))
-                .catch(err => this.setState({ error: err.message }))
+                .then(() => this.setState({ errorRegister: null }, () => this.props.history.push('/login')))
+                .catch(err => this.setState({ errorRegister: err.message }))
         } catch (err) {
-            this.setState({ error: err.message })
+            this.setState({ errorRegister: err.message })
         }
     }
 
     handleLogin = (username, password) => {
         try {
             logic.login(username, password)
-                .then(() => this.setState({ error: null }, () => this.props.history.push('/home')))
-                .catch(err => this.setState({ error: err.message }))
+                .then(() => this.setState({ errorLogin: null }, () => this.props.history.push('/home')))
+                .catch(err => this.setState({ errorLogin: err.message }))
         } catch (err) {
-            this.setState({ error: err.message })
+            this.setState({ errorLogin: err.message })
         }
     }
 
@@ -67,8 +67,14 @@ class App extends Component {
 
 
     handleCreatePin = (file, board, url, title, description) => {
-        logic.createPin(file, board, url, title, description)
-        .then(() => this.props.history.push('/home'))
+        try{
+            logic.createPin(file, board, url, title, description)
+            .then(() => {
+                this.setState({errorPhoto: null}) 
+                this.props.history.push('/home')
+            })
+            .catch(err => this.setState({ errorPhoto: err.message }))
+        }catch(err){this.setState({ errorPhoto: err.message })}
     }
 
     handleProfile = () => {
@@ -109,6 +115,7 @@ class App extends Component {
 
     handleFollow = () =>  this.props.history.push('/profile/follow')
 
+    handleChangeSettings = () => this.setState({change: this.state.change + 1})
     
     handleBack = () => {
             switch(this.state.path){
@@ -131,16 +138,16 @@ class App extends Component {
         return <div>
 
             <Route exact path="/" render={() => !logic.loggedIn
-                ? <Register onRegister={this.handleRegister} onGoBack={this.handleLoginClick} error={this.state.error}/>
+                ? <Register onRegister={this.handleRegister} onGoBack={this.handleLoginClick} error={this.state.errorRegister}/>
                 : <Redirect to="/home" />}
             />
 
             <Route path="/login" render={() => !logic.loggedIn
-                ? <Login onLogin={this.handleLogin} onGoBack={this.handleGoBack} error={this.state.error}/>
+                ? <Login onLogin={this.handleLogin} onGoBack={this.handleGoBack} error={this.state.errorLogin}/>
                 : <Redirect to="/home" />}
             />
 
-            {logic.loggedIn && <Navbar onSettings={this.handleSettings} onHandleProfile={this.handleProfile} onLogout={this.handleLogoutClick} onSearch={this.handleSearch} onHome={this.handleGoHome} />}
+            {logic.loggedIn && <Navbar onSettings={this.handleSettings} onHandleProfile={this.handleProfile} onLogout={this.handleLogoutClick} onSearch={this.handleSearch} onHome={this.handleGoHome} onChange={this.state.change} />}
             
             {error && <Error onErrorClose={this.handleErrorClose} message={error} />}
 
@@ -150,7 +157,7 @@ class App extends Component {
             />
 
             <Route path="/settings" render={() => logic.loggedIn
-                ? <Settings onLogout={this.handleLogoutClick} onHome={this.handleBack} onHandleAddPin={this.handleAddPin} onHandleProfile={this.handleProfile} onSettings={this.handleSettings} />
+                ? <Settings onLogout={this.handleLogoutClick} onHome={this.handleBack} onHandleProfile={this.handleProfile} onSettings={this.handleSettings} onChange={this.handleChangeSettings} />
                 : <Redirect to="/home" />}
             />
 
@@ -160,7 +167,7 @@ class App extends Component {
             />
 
             <Route path="/pin-builder" render={() => logic.loggedIn
-                ? <AddPin onBack={this.handleBack} onCreatePin={this.handleCreatePin} />
+                ? <AddPin onBack={this.handleBack} onCreatePin={this.handleCreatePin} errorPhoto={this.state.errorPhoto}/>
                 : <Redirect to="/home" />}
             />
 
@@ -170,7 +177,7 @@ class App extends Component {
             />
 
              <Route path="/profile/follow" render={() => logic.loggedIn
-                ? <Follow  onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} />
+                ? <Follow  onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} onOpenBoard={this.handleOpenBoard} onHandleOtherProfile={this.handleOtherProfile}/>
                 : <Redirect to="/home" />}
             />
 
@@ -180,7 +187,7 @@ class App extends Component {
             />
 
             <Route path="/:username/board/:titleBoard" render={props => logic.loggedIn
-                ? <Board onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} boardTitle={props.match.params.titleBoard} username={props.match.params.username} onOpenBoard={this.handleOpenBoard}/>
+                ? <Board onHandleAddPin={this.handleAddPin} onHandlePinInfo={this.handlePinInfo} boardTitle={props.match.params.titleBoard} username={props.match.params.username} onOpenBoard={this.handleOpenBoard} onHandleProfile={this.handleProfile}/>
                 : <Redirect to="/home" />}
             />
 

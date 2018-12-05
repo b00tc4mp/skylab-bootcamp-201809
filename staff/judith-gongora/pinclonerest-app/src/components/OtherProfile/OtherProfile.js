@@ -69,7 +69,7 @@ class OtherProfile extends Component {
     render() {
         return <div className="div__profile">
             <div className='container__user'>
-                <div className='user__profile'>
+                <div className='other__profile'>
                     <h2>{this.state.user.username}</h2>
                     <p>{this.state.user.followers} followers · {this.state.user.following} following</p>
                 </div>

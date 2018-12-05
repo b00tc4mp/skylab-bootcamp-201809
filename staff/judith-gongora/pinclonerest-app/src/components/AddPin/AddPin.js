@@ -5,12 +5,16 @@ import AddBoard from './AddBoard'
 import './AddPin.sass'
 
 class AddPin extends Component {
-    state = { user: {}, title: '', url: '', board: null, boardId: '', file: null, imgPreview: null, description: '', inputSite: false, boardsSel: false, createBoard: false, errorFile: false, errorBoard: false, errorUrl: false }
+    state = { user: {}, title: '', url: '', board: null, boardId: '', file: null, imgPreview: null, description: '', inputSite: false, boardsSel: false, createBoard: false, errorFile: false, errorBoard: false, errorUrl: false, error: null }
 
     componentDidMount() {
         logic.retrieveUser()
             .then(user => this.setState({ user }))
         // TODO error handling!
+    }
+
+    componentWillReceiveProps(props){
+        this.setState({error: props.errorPhoto})
     }
 
     handleSiteOn = () => this.setState({ inputSite: true })
@@ -51,8 +55,12 @@ class AddPin extends Component {
     handleClose = () => this.setState({ boardsSel: true, createBoard: false })
 
     handleCreateBoard = (title, secret) => {
-        logic.addBoard(title, secret)
+        try{
+            logic.addBoard(title, secret)
             .then(board => this.setState({ board, createBoard: false, boardId: board.id }))
+            .catch(err => this.setState({ error: err.message }))
+        }catch(err){this.setState({ error: err.message })}
+        
     }
 
     handleSubmit = event => {
@@ -98,7 +106,7 @@ class AddPin extends Component {
                                 <label htmlFor='file-form'>
                                     <div className={!this.state.errorFile ? 'add__photo' : 'add__photo error'}>
                                         <i className="fas fa-camera fa-2x"></i>
-                                        Drag and Drop or click to upload
+                                        Click to upload
                                     </div>
                                 </label>
                             </div> :
@@ -110,18 +118,7 @@ class AddPin extends Component {
                                         </svg>
                                     </div>
                                 </div>}
-
-
-                            {!this.state.inputSite && !this.state.file && <div className='button__site' onClick={this.handleSiteOn} >Save from site</div>}
-                            {this.state.inputSite && !this.state.file && <div className='input__site'>
-                                <input className='input-site' type="text" placeholder="Enter Website" onChange={this.handleSiteChange} onBlur={this.handleSiteOff} autoFocus />
-                                <div className='arrow__site'>
-                                    <svg height="20" width="20" viewBox="0 0 24 24" aria-label="Submit" role="img">
-                                        <title>Submit</title>
-                                        <path d="M6.72 24c.57 0 1.14-.22 1.57-.66L19.5 12 8.29.66c-.86-.88-2.27-.88-3.14 0-.87.88-.87 2.3 0 3.18L13.21 12l-8.06 8.16c-.87.88-.87 2.3 0 3.18.43.44 1 .66 1.57.66"></path>
-                                    </svg>
-                                </div>
-                            </div>}
+                                {this.state.errorPhoto && <span>{this.state.errorPhoto}</span>}
 
                         </div>
                         {!this.state.boardsSel && !this.state.createBoard && <div className='container__rigth'>
@@ -150,7 +147,7 @@ class AddPin extends Component {
                         </div>}
 
                         {this.state.boardsSel && !this.state.createBoard && <div className='container__rigth-boards'> <Boards handleSelectBoard={this.handleBoardChange} onCreateBoard={this.handleClickCreateBoard} /> </div>}
-                        {this.state.createBoard && !this.state.boardsSel && <div className='container__rigth-boards'> <AddBoard handleSelectBoard={this.handleBoardChange} onCreateBoard={this.handleCreateBoard} onClose={this.handleClose} /> </div>}
+                        {this.state.createBoard && !this.state.boardsSel && <div className='container__rigth-boards'> <AddBoard handleSelectBoard={this.handleBoardChange} onCreateBoard={this.handleCreateBoard} onClose={this.handleClose} error={this.state.error}/> </div>}
 
                     </div>
                 </section>

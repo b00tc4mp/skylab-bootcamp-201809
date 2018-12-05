@@ -106,7 +106,7 @@ class Board extends Component {
                         {this.state.send && <Send id={this.state.board.id} username={this.props.username} boardTitle={this.props.boardTitle} onBlur={this.handleSend} />}
                     </div>
                     <div className='container__user'>
-                        <div className='user__profile'>
+                        <div className='board__profile'>
                             <h1>{this.state.board.title}</h1>
                             <p>{this.state.board.pins.length} pins</p>
                         </div>

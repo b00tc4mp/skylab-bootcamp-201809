@@ -60,7 +60,7 @@ class Comments extends Component {
             {!this.state.comments && <p>Share feedback, ask a question or give a high five</p>}
             {this.getComments()}
             {this.state.comments.length > 2 && this.state.comments.length - this.state.commentsLimit > 0 && <div>
-                <p onClick={this.showMoreComments} >{this.state.comments.length - this.state.commentsLimit} comments</p>
+                <p onClick={this.showMoreComments} >{this.state.comments.length - this.state.commentsLimit} {(this.state.comments.length - this.state.commentsLimit)<2 ? 'comment' : 'comments'}</p>
             </div>}
             <form>
                 <textarea placeholder="Add coment" onChange={this.handleCommentChange} onKeyDown={this.handleKeyDown} value={this.state.comment} />

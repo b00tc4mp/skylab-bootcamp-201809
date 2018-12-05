@@ -7,6 +7,11 @@ import logic from '../../logic'
 class Popup extends Component {
     state = { description: '', board: this.props.board, pin: this.props.pin, popup: false }
 
+    componentDidMount (){
+        logic.retrieveDescriptionPinned(this.props.pin.id)
+            .then(description => this.setState({description}))
+    }
+
     handleInput = event => {
         const description = event.target.value
         this.setState({ description })
@@ -54,7 +59,7 @@ class Popup extends Component {
                         </div>
                         <div className='description__pin' onChange={this.handleInput} >
                             <p>Description</p>
-                            <textarea></textarea>
+                            <textarea value={this.state.description}></textarea>
                         </div>
                     </div>
                     <div className='pin__multimedia'>

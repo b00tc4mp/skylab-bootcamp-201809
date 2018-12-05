@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import logo from '../../pinterest.svg'
+import logo from '../../logo.png'
 import './Register.sass'
 
 class Register extends Component {
@@ -12,7 +12,7 @@ class Register extends Component {
     handleEmailChange = event => {
         const email = event.target.value
 
-        this.setState({ email, errorEmail: false })
+        this.setState({ email, errorEmail: false, error: null })
     }
 
     handleAgeChange = event => {
@@ -53,6 +53,7 @@ class Register extends Component {
                         <div><p className="info">Access the best ideas with a free account</p> </div>      
                         <form className="register__form" onSubmit={this.handleSubmit}>
                             <input className={this.state.error || this.state.errorEmail ? 'error-red' : 'input-login'} type="text" placeholder="email" onChange={this.handleEmailChange} />
+                            {this.state.error && <span className='errorRegister'>{this.state.error}</span>}
                             
                             <input className={this.state.error ? 'error-red' : 'input-login'} type="password" placeholder="Password" onChange={this.handlePasswordChange} required/>
                             <input className={this.state.error ? 'error-red' : 'input-login'} type='number' placeholder="age" onChange={this.handleAgeChange} required />

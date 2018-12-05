@@ -5,7 +5,7 @@ import logic from '../../logic'
 
 
 class Popup extends Component {
-    state = { description: '', board: this.props.board, pin: this.props.pin, popup: false }
+    state = { description: this.props.onDescription, board: this.props.board, pin: this.props.pin, popup: false }
 
     handleInput = event => {
         const description = event.target.value
@@ -13,7 +13,8 @@ class Popup extends Component {
     }
 
     handlePopUpBoards = () => {
-        this.setState({ popup: true })
+        if (this.state.popup) this.setState({ popup: false })
+        else this.setState({ popup: true })
     }
 
     handleBoardChange = board => {
@@ -54,7 +55,7 @@ class Popup extends Component {
                         </div>
                         <div className='description__pin' onChange={this.handleInput} >
                             <p>Description</p>
-                            <textarea></textarea>
+                            <textarea value={this.state.description}></textarea>
                         </div>
                     </div>
                     <div className='pin__multimedia'>

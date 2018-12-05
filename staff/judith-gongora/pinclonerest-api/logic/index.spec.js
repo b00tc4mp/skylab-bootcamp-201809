@@ -201,11 +201,39 @@ describe('logic', () => {
                 
             })
         })
+
+        describe('follow User', () => {
+            let user, user2
+
+            beforeEach( async () => {
+                
+                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+                
+                user2 = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+               
+                await user.save()
+                await user2.save()
+
+            })
+
+            it('should succeed on valid ids', async () =>{ 
+                logic.followUser(user.id.toString(), user2.id.toString())
+                const user = await User.findById(user.id)
+                const user2 = await User.findById(user2.id)
+                        
+                expect(user.following.length).to.equal(1)
+                expect(user2.followers.length).to.equal(1)
+                expect(user.following[0]).to.equal(user.id)
+                expect(user.followers[0]).to.equal(user2.id)
+            })
+        })
+
+
     })
 
     describe('pins', () => {
         describe('add', () => {
-            let user, multimedia, board
+            let user, board
 
             beforeEach( async () => {
                 user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
@@ -214,7 +242,6 @@ describe('logic', () => {
 
                 await board.save()
                 
-                multimedia = `${Math.random()}.jpg`
                 title = 'primer pin'
 
                 await  user.save()
@@ -257,17 +284,28 @@ describe('logic', () => {
             beforeEach(async () => {
                 user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
+                await user.save()
+
                 board = new Board({ user: user.id, title: 'dinners', secret: false})
 
                 await board.save()
+                
+                const filename = './logic/avatar.png'
 
-                pin = new Pin({ multimedia: 'photo.jpg', board: board.id, user: user.id})
+                const rs = fs.createReadStream(filename)
 
-                pin2 = new Pin({ multimedia: 'photo2.jpg', board: board.id, user: user.id})
+                const buffer = await new Promise((resolve, reject) => {
+                    const data = []
 
-                await user.save()
-                await pin.save()
-                await pin2.save()
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
             })
 
             it('should succeed on correct data', async () =>{ 
