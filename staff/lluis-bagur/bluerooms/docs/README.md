@@ -15,7 +15,7 @@ The user has a profile where they can also create their apartments to be rented,
 
 ## Use Cases
 
-![](images/use_cases.png)
+![](images/use-cases.png)
 
 ## Technical description
 
