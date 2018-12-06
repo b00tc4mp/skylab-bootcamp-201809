@@ -67,7 +67,7 @@ class Login extends Component {
 
     render() {
         return <div className="login__form">
-            <ToastContainer />
+            <ToastContainer position="top-center" />
             <Modal isOpen={this.state.modal} toggle={this.toggle} className="login-form">
                 <ModalHeader toggle={this.toggle}>Login</ModalHeader>
                 <ModalBody className="modal__body">
@@ -83,7 +83,7 @@ class Login extends Component {
                     </form>
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={this.toggle}>Close</button>
+                    <button className="close__btn" onClick={this.toggle}>Close</button>
                 </ModalFooter>
             </Modal>
         </div >

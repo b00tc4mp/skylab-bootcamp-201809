@@ -609,8 +609,8 @@ describe('logic', () => {
             beforeEach(async () => {
 
                 user = new User({ name: 'John', surname: 'Doe', username: 'jd', password: '123', email: 'pepe@pwp.com', image: 'fgdfqwjdhkg' })
-                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123 })
-                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231 })
+                rental1 = new Rental({ title: 'title', city: 'Capital', street: 'Main Street', category: 'couples', image: 'images', bedrooms: 3, shared: false, description: 'lorem ipsum...', dailyRate: 123, view: true })
+                rental2 = new Rental({ title: 'title2', city: 'Capital2', street: 'Main Street2', category: 'couples2', image: 'images2', bedrooms: 31, shared: false, description: 'lorem ipsum...', dailyRate: 1231, view: true })
 
                 await rental1.save()
                 await rental2.save()
@@ -635,16 +635,17 @@ describe('logic', () => {
                 expect(_rentals.length).to.equal(2)
                 expect(rentals.length).to.equal(_rentals.length)
 
-                rentals.forEach(rentals => {
-                    expect(rentals.title).to.be.exist
-                    expect(rentals.city).to.be.exist
-                    expect(rentals.street).to.be.exist
-                    expect(rentals.category).to.be.exist
-                    expect(rentals.bedrooms).to.be.exist
-                    expect(rentals.shared).to.be.exist
-                    expect(rentals.description).to.be.exist
-                    expect(rentals.dailyRate).to.be.exist
-                    expect(rentals.bookings).to.be.exist
+                rentals.forEach(rental => {
+                    expect(rental.title).to.be.exist
+                    expect(rental.city).to.be.exist
+                    expect(rental.street).to.be.exist
+                    expect(rental.category).to.be.exist
+                    expect(rental.bedrooms).to.be.exist
+                    expect(rental.shared).to.be.exist
+                    expect(rental.description).to.be.exist
+                    expect(rental.dailyRate).to.be.exist
+                    expect(rental.bookings).to.be.exist
+                    expect(rental.view).to.be.true
                 });
             })
 
@@ -885,8 +886,10 @@ describe('logic', () => {
                 await logic.removeRental(user.id, rental1.id)
 
                 const _user = await User.findById(user.id)
+                const _rentals = await Rental.findById(rental1.id)
 
-                expect(_user.rentals.length).to.equal(1)
+                expect(_rentals.view).to.be.false
+                expect(_user.rentals.length).to.equal(2)
             })
 
             it('should fail on undefined user id', () => {

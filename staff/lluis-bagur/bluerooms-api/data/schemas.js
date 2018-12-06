@@ -72,6 +72,10 @@ const Rental = new Schema({
         type: Date,
         default: Date.now
     },
+    view: {
+        type: Boolean,
+        default: true
+    },
     user: {
         type: ObjectId,
         ref: 'User'

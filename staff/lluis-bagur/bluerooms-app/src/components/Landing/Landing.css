@@ -48,7 +48,7 @@
 .home .result__container .container {
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: center;
   flex-wrap: wrap;
   align-items: start;
   width: 100vw;

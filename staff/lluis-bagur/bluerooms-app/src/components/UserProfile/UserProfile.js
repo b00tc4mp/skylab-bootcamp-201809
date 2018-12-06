@@ -39,6 +39,14 @@ class Profile extends Component {
 
     }
 
+    handleEnableRental= id => {
+        return logic.enableRental(id)
+            .then(() => this.handleRentalList())
+            .then(() => logic.retriveUser())
+            .then(user => { this.setState({ user }) })
+
+    }
+
     handleEditRental = (id) => {
         this.setState({ showEditRentals: !this.state.showEditRentals, rentalId: id })
         logic.retriveUser()
@@ -82,7 +90,7 @@ class Profile extends Component {
             <div className="user__menu">
 
                 {this.state.showRentals && <div className="user__rentals">
-                    {this.state.user.rentals.map((rental) => { return <RentalCard rental={rental} onDeleteRental={this.handleRemoveRental} onEditRental={this.handleEditRental} onRentalCardClick={this.handleRentalCardClick} /> })}
+                    {this.state.user.rentals.map((rental) => { return <RentalCard rental={rental} onEnableRental={this.handleEnableRental} onDeleteRental={this.handleRemoveRental} onEditRental={this.handleEditRental} onRentalCardClick={this.handleRentalCardClick} /> })}
                     <div class="buttons">
                         <div class="button button-add" onClick={() => this.toggleModalAddRental()}>
                         <i class="fas fa-plus"></i>

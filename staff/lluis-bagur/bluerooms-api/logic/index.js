@@ -190,10 +190,12 @@ const logic = {
             const user = await User.findById(id)
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
+            debugger
 
             const rental = await Rental.findById(rentalId)
+            debugger
 
-            if (!rental) throw new NotFoundError(`Rental with id ${id} not found`)
+            if (!rental) throw new NotFoundError(`Rental with id ${rentalId} not found`)
 
 
             title != null && (rental.title = title)
@@ -220,7 +222,9 @@ const logic = {
 
     retriveRentals() {
         return (async () => {
-            const rentals = await Rental.find({}).lean()
+            const _rentals = await Rental.find({}).lean()
+
+            const rentals = _rentals.filter(_rental => _rental.view == true)
 
             rentals.forEach(rental => {
                 rental.id = rental._id
@@ -250,8 +254,10 @@ const logic = {
         return (async () => {
             const user = await User.findById(id, { '_id': 0, __v: 0 }).populate('rentals').populate('bookings').lean().exec()
 
-            const rentals = user.rentals
-            rentals.forEach(rental => {
+            const rentals = user.rentals.filter(_rental => _rental.view == true)
+
+            const _rentals = user.rentals
+            _rentals.forEach(rental => {
                 delete rental._id
                 delete rental.__v
 
@@ -289,6 +295,7 @@ const logic = {
         ])
 
         return (async () => {
+            debugger
             const user = await User.findById(id).populate('rentals').lean().exec()
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -319,7 +326,10 @@ const logic = {
         const _query = city ? { city: city.toLowerCase() } : {};
 
         return (async () => {
-            const rental = await Rental.find(_query, { __v: 0 }).lean()
+            const _rentals = await Rental.find(_query, { __v: 0 }).lean()
+
+            const rental = _rentals.filter(_rental => _rental.view == true)
+
 
             rental.forEach(rental => {
                 rental.id = rental._id
@@ -380,23 +390,42 @@ const logic = {
         ])
 
         return (async () => {
+            debugger
             const user = await User.findById(id)
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
-
-            const rentals = user.rentals
-
-            const _rent = rentals.filter(_rental => _rental.toString() !== rentalId)
-
-            user.rentals = _rent
-
-            await user.save() // delete Rental ID form User.rentals
 
             const rental = await Rental.findById(rentalId)
 
             if (!rental) throw new NotFoundError(`rental with id ${rentalId} not found`)
 
-            await rental.remove()
+            rental.view = false
+
+            debugger
+
+            await rental.save()
+
+        })()
+    },
+
+    enableRental(id, rentalId) {
+        validate([
+            { key: 'id', value: id, type: String },
+            { key: 'rentalId', value: rentalId, type: String }
+        ])
+
+        return (async () => {
+            const user = await User.findById(id)
+
+            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+
+            const rental = await Rental.findById(rentalId)
+
+            if (!rental) throw new NotFoundError(`rental with id ${rentalId} not found`)
+
+            rental.view = true
+
+            await rental.save()
 
         })()
     },
@@ -441,7 +470,6 @@ const logic = {
             if (foundRental.user.id === user.id) {
                 throw Error ('Cannot create booking on your Rental!' )
              }
-
             const valid = this.ValidBooking(booking, foundRental) 
             
                 if (valid == true){

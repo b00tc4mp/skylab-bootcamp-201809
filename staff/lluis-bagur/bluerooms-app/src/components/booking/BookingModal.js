@@ -4,6 +4,7 @@ import Modal from 'react-responsive-modal';
 
 export function BookingModal(props) {
   const { open, closeModal, booking, confirmModal, rentalPrice } = props;
+  debugger
 
   return (
     <Modal open={open} onClose={closeModal} little classNames={{ modal: 'booking-modal' }}>

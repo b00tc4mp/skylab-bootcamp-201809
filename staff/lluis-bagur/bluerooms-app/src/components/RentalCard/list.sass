@@ -165,7 +165,18 @@ $hover_button_width: 130px
       width: $hover_button_width
       i:after 
         margin-left: 10px
-        content: "remove"
+        content: "disable"
+        font-size: 16px
+        font-family: 'Poiret One', cursive
+        letter-spacing: 1px
+    .button-enable 
+      @include circle(#00d5ff)
+    
+    .button-enable:hover 
+      width: $hover_button_width
+      i:after 
+        margin-left: 10px
+        content: "enable"
         font-size: 16px
         font-family: 'Poiret One', cursive
         letter-spacing: 1px

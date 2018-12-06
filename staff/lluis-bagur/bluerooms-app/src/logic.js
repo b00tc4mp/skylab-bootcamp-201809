@@ -58,6 +58,7 @@ const logic = {
             .then(res => res.json())
             .then(res => {
                 if (res.error) throw Error(res.error)
+                debugger
                 
 
                 const { id, token } = res.data
@@ -163,6 +164,7 @@ const logic = {
     },
 
     retriveRental(idRental) {
+        debugger
         return fetch(`${this.url}/rentals/${idRental}`, {
             method: 'GET',
             headers: {
@@ -171,15 +173,18 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
+                debugger
                 if (res.error) throw Error(res.error)
                 return res.data
             })
     },
 
     listRentalByRentalId(id) {
+        debugger
         if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
         if (!id.trim().length) throw Error('id is empty or blank')
 
+        debugger
         return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
             method: 'GET',
             headers: {
@@ -188,7 +193,9 @@ const logic = {
         })
             .then(res => res.json())
             .then(res => {
+                debugger
                 if (res.error) throw Error(res.error)
+                debugger
                 return res.data
             })
     },
@@ -212,6 +219,22 @@ const logic = {
             })
     },
 
+    enableRental(id) {
+        if (typeof id !== 'string') throw new TypeError(`${id} is not a string`)
+
+        if (!id.trim().length) throw Error('id is empty or blank')
+
+        return fetch(`${this.url}/users/${this._userId}/rentals/${id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this._token}`
+            }
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.error) throw Error(res.error)
+            })
+    },
 
     editRental(id, title, city, street, category, image, bedrooms, shared, description, dailyRate) {
 
@@ -290,7 +313,7 @@ const logic = {
         if (!endAt.trim()) throw Error('endAt is empty or blank')
 
 
-        return fetch(`${this.url}/users/${this._userId}/rentals/${rentalId}`, {
+        return fetch(`${this.url}/users/${this._userId}/rentals/${rentalId}/bookings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',

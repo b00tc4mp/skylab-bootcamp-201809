@@ -168,7 +168,31 @@
 }
 * .buttons .button-remove:hover i:after {
   margin-left: 10px;
-  content: "remove";
+  content: "disable";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+* .buttons .button-enable {
+  background-color: #00d5ff;
+  color: #ffffff;
+  width: 35px;
+  height: 35px;
+  border-radius: 17.5px;
+  margin-bottom: 17.5px;
+  text-align: center;
+  font-size: 120%;
+  line-height: 35px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-enable:hover {
+  width: 130px;
+}
+* .buttons .button-enable:hover i:after {
+  margin-left: 10px;
+  content: "enable";
   font-size: 16px;
   font-family: "Poiret One", cursive;
   letter-spacing: 1px;

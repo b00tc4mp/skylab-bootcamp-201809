@@ -16,6 +16,7 @@ class BookingList extends Component {
         logic.retriveRental(this.props.booking.rental)//...RETRIVE BY RENTAL ID
               .then(rental => {  
               this.setState({rental})
+              debugger
             })
     }
     

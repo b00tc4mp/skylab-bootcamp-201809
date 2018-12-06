@@ -69,9 +69,10 @@ class Register extends Component {
 
             logic.registerUser(name, file, surname, username, password, email)
                 .then(() => {
-                    this.setState({ error: null })
+                    this.setState({ error: null, imgPreview: null })
                     toast.info('Now you can login!')
-                    this.props.toggle()
+                    this.props.onShowHideModal()
+                    
                 })
                 .catch(err => {
                     this.setState({ error: err.message })
@@ -86,7 +87,7 @@ class Register extends Component {
 
     render() {
         return <div className="login__form">
-            <ToastContainer />
+            <ToastContainer position="top-center" />
 
             <Modal isOpen={this.state.modal} toggle={this.toggle} className="login-form">
                 <ModalHeader toggle={this.toggle}>Register</ModalHeader>
@@ -120,10 +121,11 @@ class Register extends Component {
                             </div>
                         </div>
                         <button className="form__btn" type="submit">Register</button>
+                        <button className="form__btn" type="submit" onClick={this.props.onShowLogin} >Or Login</button>
                     </form>
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={this.toggle}>Close</button>
+                    <button className="close__btn" onClick={this.toggle}>Close</button>
                 </ModalFooter>
             </Modal>
         </div>

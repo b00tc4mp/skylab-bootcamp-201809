@@ -29,7 +29,7 @@ class SearchResults extends Component {
                     this.setState({ rentals })
                 })
                 .catch(err =>{ 
-                this.setState({ error: err.message })
+                this.setState({ error: err.message, rentals: null })
                 toast.warn(this.state.error)
                 })
             }
@@ -46,19 +46,19 @@ class SearchResults extends Component {
 
     render() {
         return <div className="contain__search">
-                 <ToastContainer />
+                 <ToastContainer position="top-center" />
 
             <div className="contain__search__form">
                     <Search query={this.props.query} />
             </div>
-            <div className="contain__search__title">
+            {this.state.rentals && <div className="contain__search__title">
                 <h4>Your apartments in {this.props.query}:</h4>
-            </div>
-            <div className="contain__search__results">
+            </div>}
+            {this.state.rentals && <div className="contain__search__results">
                 {this.state.rentals.map((rental) => {
                     return <RentalCardSearch id={rental.id} title={rental.title} city={rental.city} street={rental.street} category={rental.category} category={rental.category} bedrooms={rental.bedrooms} description={rental.description} image={rental.image} dailyRate={rental.dailyRate} bookings={rental.bookings} key={rental.id} onBookRental={this.handleRentalCardClick} />
                 })}
-            </div>
+            </div>}
         </div>
     }
 }

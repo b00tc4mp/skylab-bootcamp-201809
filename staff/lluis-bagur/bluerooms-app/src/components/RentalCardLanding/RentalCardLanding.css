@@ -68,14 +68,15 @@
   max-height: 100px;
 }
 .landingCard__rental .info__landingCard2 {
-  margin-top: 30px;
-  justify-content: start;
-  flex-direction: column;
+  margin-top: 50px;
+  justify-content: space-between;
+  flex-direction: row;
   width: 100%;
   height: 100%;
-  align-items: start;
+  align-items: center;
   display: flex;
-  padding-left: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .landingCard__rental .info__landingCard2 .landingCard__text {
   display: flex;
@@ -105,8 +106,25 @@
   align-items: start;
   flex-direction: row;
 }
+.landingCard__rental .landingCard_line .confirm__btn {
+  color: #fff;
+  background-color: #00d3ff;
+  font-weight: 400;
+  height: 40px;
+  font-size: 12px;
+  border: none;
+  width: 125px;
+  border-radius: 40px;
+  text-transform: uppercase;
+  transition: 0.2s all;
+  outline: 0;
+}
+.landingCard__rental .landingCard_line .confirm__btn:hover {
+  opacity: 0.6;
+  color: black;
+}
 .landingCard__rental .landingCard_line .landingCard__text {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0px;
 }
 .landingCard__rental .landingCard_line .landingCard__title--text {
   font-size: 1.5em;

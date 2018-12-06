@@ -8,7 +8,7 @@ import SearchResults from './components/SearchResults/SearchResults'
 import RentalPage from './components/RentalPage/RentalPage'
 import { Route, withRouter } from 'react-router-dom'
 
-logic.url = 'http://localhost:5000/api' //poner en un .ENV, con la API KEY
+logic.url = 'http://192.168.0.44:5000/api' //poner en un .ENV, con la API KEY
 
 class App extends Component {
     state = {

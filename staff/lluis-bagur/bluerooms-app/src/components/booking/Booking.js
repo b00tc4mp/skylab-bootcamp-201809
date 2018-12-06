@@ -5,7 +5,7 @@ import { BookingModal } from './BookingModal';
 import './Booking.css'
 import logic from '../../logic'
 import * as moment from 'moment';
-import Login from '../Login/Login'
+import Register from '../Register/Register'
 
 
 class Booking extends React.Component {
@@ -28,7 +28,7 @@ class Booking extends React.Component {
         open: false
       },
       errors: [],
-      showLogin:false
+      showRegister:false
     }
 
     this.checkInvalidDates = this.checkInvalidDates.bind(this);
@@ -62,6 +62,7 @@ class Booking extends React.Component {
   }
 
   getBookedOutDates() {
+    debugger
     const bookings = this.state.rental.bookings;
     if (bookings && bookings.length > 0) {
       bookings.forEach(booking => {
@@ -124,6 +125,7 @@ class Booking extends React.Component {
   }
 
   addNewBookedOutDates(booking) {
+    debugger
     const dateRange = this.getRangeOfDates(booking.startAt, booking.endAt);
     this.bookedOutDates.push(...dateRange);
   }
@@ -135,6 +137,7 @@ class Booking extends React.Component {
   }
 
   confirmProposedData() {
+    debugger
     const { startAt, endAt } = this.state.proposedBooking;
     const days = this.getRangeOfDates(startAt, endAt).length - 1;
     const { rental } = this.props;
@@ -153,6 +156,7 @@ class Booking extends React.Component {
   }
 
   reserveRental() {
+    debugger
     logic.createBooking(this.state.proposedBooking).then(
       (booking) => {
 
@@ -167,9 +171,8 @@ class Booking extends React.Component {
   }
 
 
-  toggleModalLogin(){
-    this.setState({ showLogin: !this.state.showLogin })
-    
+  toggleModalRegister(){
+    this.setState({ showRegister: !this.state.showRegister })
 }
 
   render() {
@@ -177,14 +180,14 @@ class Booking extends React.Component {
 
     return (
       <div className='booking'>
-      <ToastContainer/>
+      <ToastContainer position="top-center"/>
         <h3 className='booking-price'>$ {this.state.rental.dailyRate} <span className='booking-per-night'>per night</span></h3>
         <hr></hr>
 
-       {!this.props.isLoggedIn &&  <div className='btn btn-bwm btn-confirm btn-block' onClick={() => this.toggleModalLogin()}>
+       {!this.props.isLoggedIn &&  <div className='btn btn-bwm btn-confirm btn-block' onClick={() => this.toggleModalRegister()}>
           Login to book place.
     </div> }
-    <Login showModal={this.state.showLogin} onShowHideModal={() => this.toggleModalLogin()} handleLoggedIn={this.props.handleLoggedIn} onGoBack={this.handleGoBack}/>
+    <Register showModal={this.state.showRegister} onShowHideModal={() => this.toggleModalRegister()} handleLoggedIn={this.props.handleLoggedIn} onGoBack={this.handleGoBack}/>
 
 
 
@@ -200,7 +203,7 @@ class Booking extends React.Component {
           </div>
           <div className='form-group'>
             <label htmlFor='guests'>Guests</label>
-            <input onChange={(event) => { this.selectGuests(event) }}
+            <input 
               value={guests}
               type='number'
               className='form-control'
@@ -209,7 +212,9 @@ class Booking extends React.Component {
               placeholder=''>
             </input>
           </div>
-          {!!this.props.isLoggedIn && <button disabled={!startAt || !endAt} onClick={() => this.confirmProposedData()} className='btn btn-bwm btn-confirm btn-block'>Reserve place now</button>}
+          {!!this.props.isLoggedIn && this.state.rental.view && <button disabled={!startAt || !endAt} onClick={() => this.confirmProposedData()} className='btn btn-bwm btn-confirm btn-block'>Reserve place now</button>}
+          {!this.state.rental.view && <button disabled={!startAt || !endAt} className='btn btn-bwm btn-confirm btn-block'>this place are disabled</button>}
+
         </React.Fragment>
 
         <hr></hr>

@@ -171,9 +171,9 @@ try {
               <input className="input__form" type="text" defaultValue={this.state.rental.title} onC onChange={this.handleTitleChange} />
               <input className="input__form" type="text" defaultValue={this.state.rental.city} onChange={this.handleCityChange} />
               <input className="input__form" type="text" defaultValue={this.state.rental.street} onChange={this.handleStreetChange} />
-              <button onClick={this.geocodeAddress}>Search</button>
+              <button className="btn_form" onClick={this.geocodeAddress}>Search adress</button>
              
-              <textarea  className="input__form"  onChange={this.handleDescribeChange} >{this.state.rental.description}</textarea>
+              <textarea  className="input__form"  onChange={this.handleDescribeChange} value={this.state.rental.description}></textarea>
               <select className="input__form" onChange={this.handleCategoryChange}>
                 <option type='button' selected="selected" value={this.state.rental.category} onClick={this.handleCategoryChange}>{this.state.rental.category}</option>
                 <option type='button' value="Couples" onClick={this.handleCategoryChange}>Couples</option>
@@ -207,9 +207,6 @@ try {
                 <option type='button' value={false} onClick={this.handleSharedChange}>no</option>
               </select>
               <input className="input__form" type="text" defaultValue={this.state.rental.dailyRate} onChange={this.handleDailyRateChange} />
-
-
-              UPLOAD AN IMAGE
 
               <button className="btn_form" type="submit">Send</button>
             </div>

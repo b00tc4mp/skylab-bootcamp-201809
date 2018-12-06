@@ -139,12 +139,14 @@ router.get('/users/:id/rentals', [jsonBodyParser], (req, res) => {
 
 router.get('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
+        debugger
         const { sub, params: { id, rentalId } } = req
 
         if (id !== sub) throw Error('token sub does not match user id')
 
         return logic.listRentalByRentalId(id, rentalId)
             .then(rentals => {
+                debugger
                 return res.json({
                     data: rentals
                 })
@@ -193,11 +195,25 @@ router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, j
 
         return logic.removeRental(id, rentalId)
             .then(() => res.json({
-                message: 'Rental removed'
+                message: 'Rental disabled'
             }))
     }, res)
 })
 
+// ENABLE RENTAL
+
+router.post('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+    routeHandler(() => {
+        const { sub, params: { id, rentalId } } = req
+
+        if (id !== sub) throw Error('token sub does not match user id')
+
+        return logic.enableRental(id, rentalId)
+            .then(() => res.json({
+                message: 'Rental enabled'
+            }))
+    }, res)
+})
 //
 
 // ....................  BOOKING ROUTES .....................//
@@ -205,7 +221,7 @@ router.delete('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, j
 
 //ADD BOOKING
 
-router.post('/users/:id/rentals/:rentalId', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
+router.post('/users/:id/rentals/:rentalId/bookings', [bearerTokenParser, jwtVerifier, jsonBodyParser], (req, res) => {
     routeHandler(() => {
         const { params: { id, rentalId }, sub, body: { endAt, startAt, totalPrice, days, guests } } = req
 

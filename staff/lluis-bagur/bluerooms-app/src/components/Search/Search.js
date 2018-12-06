@@ -31,7 +31,7 @@ class Search extends Component {
 
   render() {
     return <div id="booking" className="section">
-      <ToastContainer />
+      <ToastContainer position="top-center" />
 
       <div className="container">
         <div className="row">

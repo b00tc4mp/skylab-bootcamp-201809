@@ -10,10 +10,10 @@ import { Link } from 'react-router-dom'
 
 
 export function RentalCard(props) {
-
+debugger
     return (
         <div className='landingCard__rental'>
-            <ToastContainer />
+            <ToastContainer position="top-center" />
             <div className='img__landingCard'>
                 <Link className='link' to={`/rental/${props.rental.id}`}><img className='card-img-top' src={props.rental.image} alt=''></img></Link>
             </div>
@@ -37,11 +37,16 @@ export function RentalCard(props) {
                             <i class="fas fa-edit"></i>
                         </div>
                     </div>
-                    <div class="buttons">
-                        <div class="button button-remove" onClick={() => props.onDeleteRental(props.rental.id)}>
-                            <i class="fas fa-trash-alt"></i>
+                    {!props.rental.view && <div class="buttons">
+                        <div class="button button-enable" onClick={() => props.onEnableRental(props.rental.id)}>
+                        <i class="fas fa-eye"></i>
                         </div>
-                    </div>
+                    </div>}
+                    {props.rental.view  &&<div class="buttons">
+                        <div class="button button-remove" onClick={() => props.onDeleteRental(props.rental.id)}>
+                        <i class="fas fa-eye-slash"></i>
+                        </div>
+                    </div>}
                 </div>
             </div>
 
