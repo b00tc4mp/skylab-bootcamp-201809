@@ -45,7 +45,7 @@ class AddBoard extends Component {
             <div className='container__check'>
                 <span>Secret</span>
                 <div className={!this.state.secret ? 'container__secret' : 'container__secret-checked'}>
-                    <input className='secret' type='checkbox' onChange={this.handleCheckChange}></input>
+                    <input className='secret' type='checkbox' onChange={this.handleCheckChange} maxLength='25'></input>
                     <div className={!this.state.secret ? 'checkbox' : 'checkbox-checked'}></div>
                 </div>
             </div>

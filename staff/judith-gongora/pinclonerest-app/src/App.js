@@ -33,14 +33,14 @@ class App extends Component {
         try {
             logic.login(username, password)
                 .then(() => this.setState({ errorLogin: null }, () => this.props.history.push('/home')))
-                .catch(err => this.setState({ errorLogin: err.message }))
+                .catch(err => this.setState({ errorLogin: err.message, search: null }))
         } catch (err) {
-            this.setState({ errorLogin: err.message })
+            this.setState({ errorLogin: err.message, search: '' })
         }
     }
 
     handleHome = () => {
-        this.setState({ pin: null, search: null }, ()=> this.props.history.push('/home'))
+        this.setState({ pin: null, search: '' }, ()=> this.props.history.push('/home'))
         
     }
 
@@ -51,8 +51,8 @@ class App extends Component {
 
     handleLogoutClick = () => {
         logic.logout()
-
-        this.props.history.push('/login')
+        this.setState({search: ''}, ()=>this.props.history.push('/login'))
+        
     }
 
     handleGoBack = () => this.props.history.push('/')
@@ -61,16 +61,22 @@ class App extends Component {
         this.setState({ error: null })
     }
 
-    handleAddPin = () => this.props.history.push('/pin-builder')
+    handleAddPin = () => {
+        this.setState({search: ''})
+        this.props.history.push('/pin-builder')
+    }
 
-    handleSettings = () => this.props.history.push('/settings')
+    handleSettings = () => {
+        this.setState({search: ''})
+        this.props.history.push('/settings')
+    }
 
 
     handleCreatePin = (file, board, url, title, description) => {
         try{
             logic.createPin(file, board, url, title, description)
             .then(() => {
-                this.setState({errorPhoto: null}) 
+                this.setState({errorPhoto: null, search: ''}) 
                 this.props.history.push('/home')
             })
             .catch(err => this.setState({ errorPhoto: err.message }))
@@ -78,7 +84,7 @@ class App extends Component {
     }
 
     handleProfile = () => {
-        this.setState({path: 'profile'})
+        this.setState({path: 'profile', search: ''})
         this.props.history.push('/profile')
     }
 
@@ -88,23 +94,23 @@ class App extends Component {
             logic.retrieveUser()
             .then(user => {
                 this.props.history.push(`/${user.username}/board/${board.title}`)
-                this.setState({board, path: 'board', username: user.username})
+                this.setState({board, path: 'board', username: user.username, search: ''})
             })
         }
         else {
             this.props.history.push(`/${username}/board/${board.title}`)
-            this.setState({board, path: 'board', username})
+            this.setState({board, path: 'board', username, search: ''})
         }
 
     }
 
     handleGoHome = () => {
-        this.setState({path: 'home'})
+        this.setState({path: 'home', search: ''})
         this.props.history.push('/home')
     }
 
     handleOtherProfile = username => {
-        this.setState({path: username})
+        this.setState({path: username, search: ''})
         this.props.history.push(`/user/${username}`)
     }
 
@@ -113,19 +119,25 @@ class App extends Component {
         this.props.history.push('/home')
     }
 
-    handleFollow = () =>  this.props.history.push('/profile/follow')
+    handleFollow = () =>  {
+        this.setState({search: ''})
+        this.props.history.push('/profile/follow')
+    }
 
     handleChangeSettings = () => this.setState({change: this.state.change + 1})
     
     handleBack = () => {
             switch(this.state.path){
                 case 'board':
+                    this.setState({search: ''})
                     this.props.history.push(`/${this.state.username}/board/${this.state.board.title}`)
                     break;
                 case 'profile':
+                this.setState({search: ''})
                     this.props.history.push('/profile')
                     break;
                 default: 
+                    this.setState({search: ''})
                     this.props.history.push('/home')
                     break;   
             }

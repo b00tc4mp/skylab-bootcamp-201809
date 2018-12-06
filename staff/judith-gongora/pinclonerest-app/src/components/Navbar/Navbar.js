@@ -22,7 +22,8 @@ class Navbar extends Component {
     }
 
     handleSubmit = () => {
-        this.props.onSearch(this.state.search)
+        const s = this.state.search
+        this.setState({search: ''}, this.props.onSearch(s))
 
     }
     
@@ -30,7 +31,7 @@ class Navbar extends Component {
     return this.state.user && <nav className="nav"><div className="logo" onClick={this.props.onHome}><img className ="logo__img" src={logo}/></div>
     <div className="search__group">
         <div className="search__icon"><i className="fas fa-search nav__icon"></i></div>
-        <div className="search__container"><form onSubmit={this.handleSubmit} ><input className="search__input" type="text" placeholder="Search" onChange={this.handleSearchCahnge} ></input></form></div>
+        <div className="search__container"><form onSubmit={this.handleSubmit} ><input className="search__input" type="text" placeholder="Search" onChange={this.handleSearchCahnge} value={this.state.search}></input></form></div>
     </div>
     <div className="icons__container">
         <div className="icon-hover-img" onClick={this.props.onHandleProfile} >

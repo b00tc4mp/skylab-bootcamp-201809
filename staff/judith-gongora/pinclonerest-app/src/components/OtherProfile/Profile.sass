@@ -123,6 +123,16 @@
     border-radius: 8px
     margin-top: 100px
     position: relative
+    @media only screen and (max-width: 630px)
+        width: 95%
+        
+        
+.container__editBoard-info 
+    @media only screen and (max-width: 630px)
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
 
 .editBoard__head
     display: flex
@@ -137,6 +147,10 @@
     align-items: center
     h2 
         margin: 0
+    @media only screen and (max-width: 630px)
+        width: 90%
+        input
+            width: 95%
 
 .editBoard__close 
     width: 40px
@@ -156,6 +170,7 @@
 .title__board
     display: flex
     justify-content: center
+
     input 
         height: 22px
         padding: 8px 14px 8px 14px
@@ -163,8 +178,24 @@
         border-radius: 8px
         border: 1px solid #8e8e8e
         font-size: 14px
+    
     p 
         width: 15%
+
+    @media only screen and (min-width: 456px) and (max-width: 630px)
+        display: block  
+        width: 95%
+    
+        input
+            width: 95%
+
+    @media only screen and (max-width: 455px)
+        display: block  
+        width: 95%
+    
+        input
+            width: 85%
+
 
 .category__board
     display: flex
@@ -177,6 +208,11 @@
         border: 1px solid #8e8e8e
     p 
         width: 15%
+    @media only screen and (max-width: 630px)
+        display: block
+        width: 95%
+        select
+            width: 100%
 
 .container__check-editBoard
     display: flex
@@ -184,9 +220,11 @@
     width: 90%
     span 
         margin-left: 3%
-        margin-right: 8%
-    
-      
+        margin-right: 8% 
+    @media only screen and (max-width: 630px)
+        width: 95%
+        margin-top: 16px
+        margin-bottom: 16px
 
 
 .footer__editBoard

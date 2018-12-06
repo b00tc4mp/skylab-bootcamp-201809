@@ -54,7 +54,7 @@ class AddBoard extends Component {
                     <div>
                         <img src={this.props.pin.multimedia}></img>
                     </div>
-                    <div className='new__board-inf'>
+                    <div className='new__board__inf'>
                         <div className="container__name">
                             <span>Name</span>
                             <input className="name__input" type="text" placeholder='Like "Places to Go" or "Recipes to Make"' onChange={this.handleNameChange} maxlength="15" onClick={event => event.stopPropagation()}></input>

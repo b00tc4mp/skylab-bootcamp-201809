@@ -217,17 +217,259 @@ describe('logic', () => {
             })
 
             it('should succeed on valid ids', async () =>{ 
-                logic.followUser(user.id.toString(), user2.id.toString())
-                const user = await User.findById(user.id)
-                const user2 = await User.findById(user2.id)
-                        
-                expect(user.following.length).to.equal(1)
-                expect(user2.followers.length).to.equal(1)
-                expect(user.following[0]).to.equal(user.id)
-                expect(user.followers[0]).to.equal(user2.id)
+                await logic.followUser(user.id, user2.id)
+                const _user = await User.findById(user.id).lean()
+                const _user2 = await User.findById(user2.id).lean()
+             
+               
+                expect(_user.following.length).to.equal(1)
+                expect(_user2.followers.length).to.equal(1)
+                // expect(_user.following[0].toString()).to.equal(user2.id)
+                // expect(_user.followers[0].toString()).to.equal(user.id)
             })
         })
 
+        describe('unfollow User', () => {
+            let user, user2
+
+            beforeEach( async () => {
+                
+                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+                
+                user2 = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+               
+                await user.save()
+                await user2.save()
+
+                await logic.followUser(user.id.toString(), user2.id.toString())
+            })
+
+            it('should succeed on valid ids', async () =>{ 
+                await logic.unfollowUser(user.id.toString(), user2.id.toString())
+                const _user = await User.findById(user.id)
+                const _user2 = await User.findById(user2.id)
+                        
+                expect(_user.following.length).to.equal(0)
+                expect(_user2.followers.length).to.equal(0)
+            })
+        })
+
+        describe('is follow?', () => {
+            let user, user2
+
+            beforeEach( async () => {
+                
+                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+                
+                user2 = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18, username: `username-${Math.random()}` })
+               
+                await user.save()
+                await user2.save()
+                await logic.followUser(user.id, user2.id)
+            })
+
+            it('should succeed on valid ids', async () =>{ 
+                const follow = await logic.isFollowing(user.id, user2.id)
+
+                expect(follow).to.equal(true)
+            })
+        })
+
+        describe('add Pinned', () => {
+            let user, user2, board, filename, rs, buffer, data
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                board = new Board({ user: user.id, title: 'dinners', secret: false})
+
+                await board.save()
+                
+                title = 'primer pin'
+
+                await  user.save()
+                await  user2.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user2.id, filename, buffer, board.id, null, title, null)
+                _pin = await Pin.find().lean()
+            })
+
+            it('should succeed on correct data', async () => { 
+             
+                await logic.savePin(user.id, _pin[0]._id.toString(), board.id)
+                
+                const _user = await User.findById(user.id).populate('pins')
+                const [pin] = _user.pins
+
+                expect(pin.pin.toString()).to.equal(_pin[0]._id.toString())
+                expect(pin.board.toString()).to.equal(board.id.toString())
+
+                        
+            })
+
+            it('should error if pinned exists', async () => { 
+                expect(() => logic.savePin(user2.id, _pin[0]._id.toString(), board.id).to.throw(TypeError, `pin ${_pin[0]._id.toString()} already pinned`))
+       
+            })
+        })
+
+        describe('modify Pinned', () => {
+            let user, user2, board, filename, rs, buffer, data
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                board = new Board({ user: user.id, title: 'dinners', secret: false})
+
+                await board.save()
+                
+                title = 'primer pin'
+
+                await  user.save()
+                await  user2.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user2.id, filename, buffer, board.id, null, title, null)
+                _pin = await Pin.find().lean()
+
+                await logic.savePin(user.id, _pin[0]._id.toString(), board.id)
+            })
+
+            it('should succeed on correct data', async () => { 
+                await logic.modifyPinned(user.id, _pin[0]._id.toString(), board.id, 'description')
+                      
+                const _user = await User.findById(user.id).populate('pins')
+                const [pin] = _user.pins
+
+                expect(pin.pin.toString()).to.equal(_pin[0]._id.toString())
+                expect(pin.board.toString()).to.equal(board.id.toString())
+                expect(pin.description).to.equal('description')
+
+                        
+            })
+
+        })
+
+        describe('retieve description of Pinned', () => {
+            let user, user2, board, filename, rs, buffer, data
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                board = new Board({ user: user.id, title: 'dinners', secret: false})
+
+                await board.save()
+                
+                title = 'primer pin'
+
+                await  user.save()
+                await  user2.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user2.id, filename, buffer, board.id, null, title, null)
+                _pin = await Pin.find().lean()
+                await logic.savePin(user.id, _pin[0]._id.toString(), board.id)
+                await logic.modifyPinned(user.id, _pin[0]._id.toString(), board.id, 'description')
+            })
+
+            it('should succeed on correct data', async () => { 
+                const result = await logic.retrieveDescriptionPinned(user.id, _pin[0]._id.toString())
+
+                expect(result).to.equal('description')
+
+            })
+
+        })
+
+        describe('modify Pinned', () => {
+            let user, user2, board, filename, rs, buffer, data
+
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                board = new Board({ user: user.id, title: 'dinners', secret: false})
+
+                await board.save()
+                
+                title = 'primer pin'
+
+                await  user.save()
+                await  user2.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user2.id, filename, buffer, board.id, null, title, null)
+                _pin = await Pin.find().lean()
+
+                await logic.savePin(user.id, _pin[0]._id.toString(), board.id)
+            })
+
+            it('should succeed on correct data', async () => { 
+                await logic.removePinned(user.id, _pin[0]._id.toString())
+                 
+                const _user = await User.findById(user.id)
+
+                expect(_user.pins.length).to.equal(0)
+                        
+            })
+
+        })
 
     })
 
@@ -278,24 +520,74 @@ describe('logic', () => {
             // TODO other test cases
         })
 
-        describe('list', () => {
-            let user, pin, pin2
+        describe('retrieve Pin', () => {
+            let user, board, filename, rs, buffer, data
 
-            beforeEach(async () => {
-                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
-
-                await user.save()
+            beforeEach( async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 board = new Board({ user: user.id, title: 'dinners', secret: false})
 
                 await board.save()
                 
-                const filename = './logic/avatar.png'
+                title = 'primer pin'
 
-                const rs = fs.createReadStream(filename)
+                await  user.save()
 
-                const buffer = await new Promise((resolve, reject) => {
-                    const data = []
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+       
+                await logic.addPin( user.id, filename, buffer, board.id, null, title, null)
+               
+                _pin = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () => { 
+                const pin = await logic.retrievePin(user.id, _pin[0]._id.toString())
+             
+                expect(pin.id).to.equal(_pin[0]._id.toString())
+                expect(pin.user).to.equal(user.id)
+                expect(pin.board).to.equal(board.id)
+                expect(pin.title).to.equal(title)
+                       
+            })
+
+            // TODO other test cases
+        })
+
+
+        describe('list', () => {
+            let user, board, filename, rs, buffer, data
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                board = new Board({ user: user.id, title: 'dinners', secret: false})
+
+                await board.save()
+                
+                title = 'primer pin'
+
+                await  user.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
 
                     rs.on('data', chunk => data.push(chunk))
 
@@ -306,101 +598,379 @@ describe('logic', () => {
        
                 await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
                 await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+                
             })
 
             it('should succeed on correct data', async () =>{ 
                 const pins = await logic.listPins(user.id)
-                const _pins = await Pin.find()
                 
-                    expect(_pins.length).to.equal(2)
+                    expect(pins.length).to.equal(2)
 
-                    expect(pins.length).to.equal(_pins.length)
+                    expect(pins.length).to.equal(pins.length)
 
-                    const [_pin, _pin2] = _pins
+                    const [pin, pin2] = pins
 
-                    expect(_pin.id).to.equal(pin.id)
-                    expect(_pin.text).to.equal(pin.text)
+                    expect(pin.title).to.equal('title-1')
 
-                    expect(_pin2.id).to.equal(pin2.id)
-                    expect(_pin2.text).to.equal(pin2.text)
+                    expect(pin2.title).to.equal('title-2')
 
-                    const [__pin, __pin2] = pins
-
-                    expect(__pin).not.to.be.instanceof(Pin)
-                    expect(__pin2).not.to.be.instanceof(Pin)
-
-                    expect(_pin.id).to.equal(__pin.id)
-                    expect(_pin.text).to.equal(__pin.text)
-
-                    expect(_pin2.id).to.equal(__pin2.id)
-                    expect(_pin2.text).to.equal(__pin2.text)     
             })
         })
 
-        false && describe('remove', () => {
-            let user, pin
+        describe('list Pins of other user', () => {
+            let user, user2, filename, rs, buffer, data
 
             beforeEach(async () => {
-                
-                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 await user.save()
 
-                board = new Board({ user: user.id, title: 'dinners', secret:false})
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                await user2.save()
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const [board] = await Board.find()
                 
-                await board.save()
-
-                pin = new Pin({ multimedia: 'photo.jpg', board: board.id, user: user.id})
-
-                await pin.save()
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+                
             })
 
-            it('should succeed on correct data', async() => { 
-                await logic.removePin(user.id, pin.id)
-                    const pins = await Pin.find()
-                        expect(pins.length).to.equal(0)               
+            it('should succeed on correct data', async () =>{ 
+                const pins = await logic.listOtherPins(user2.id, user.username)
+
+                expect(pins.length).to.equal(2)
+                
+                expect(pins.length).to.equal(pins.length)
+
+                const [pin, pin2] = pins
+
+                expect(pin.title).to.equal('title-1')
+
+                expect(pin2.title).to.equal('title-2') 
             })
         })
 
-        false && describe('modify', () => {
-            let user, pin, board, board2, newDescription
+        describe('retrieve pins of board', () => {
+            let user, filename, board, rs, buffer, data
 
             beforeEach(async () => {
-                user = new User({ email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
 
                 await user.save()
 
-                board = new Board({ user: user.id, title: 'dinners',secret:false})
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
                 
-                await board.save()
-
-                board2 = new Board({ user: user.id, title: 'breakfast', secret:false})
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
                 
-                await board2.save()
-
-                pin = new Pin({ multimedia: 'photo.jpg', board: board.id, user: user.id})
-
-                await pin.save()
-
-                newDescription = `description-${Math.random()}`
             })
 
-            it('should succeed on correct data', async() =>{ 
-                await logic.modifyPin(user.id, pin.id, board2.id, newDescription )
-                const pins = await Pin.find()
-                        expect(pins.length).to.equal(1)
+            it('should succeed on correct data', async () =>{ 
+                const pins = await logic.retrieveBoardPins(user.id, board.id)
 
-                        const [_pin] = pins
+                expect(pins.length).to.equal(2)
 
-                        expect(_pin.id).to.equal(pin.id)
-                        expect(_pin.board.toString()).to.equal(board2.id)
-                        expect(_pin.description).to.equal(newDescription)
-                        
             })
         })
+
+        describe('retrieve pins of board of other user', () => {
+            let user, user2, filename, board, rs, buffer, data
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user2.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+                
+            })
+
+            it('should succeed on correct data', async () =>{ 
+                const pins = await logic.retrieveOtherBoardPins(user2.id, user.id, board.id)
+                
+                expect(pins.length).to.equal(2)
+
+            })
+        })
+
+        describe('is Pinned?', () => {
+            let user, filename, board, rs, buffer, data
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+                
+            })
+
+            it('should succeed on correct data', async () =>{ 
+                const pins = await logic.retrieveBoardPins(user.id, board.id)
+                const _board = await logic.isPinned(user.id, pins[0].id.toString())
+
+                expect(_board.title).to.equal('title-1')
+
+            })
+        })
+
+        describe('list all pins', () => {
+            let user, filename, board, rs, buffer, data
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+                
+            })
+
+            it('should succeed on correct data', async () =>{ 
+                const pins = await logic.listAllPins(user.id)
+
+                expect(pins.length).to.equal(2)
+
+            })
+        })
+
+        describe('list user of pin', () => {
+            let user, user2, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                user2 = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user2.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                const _user = await logic.retrievePinUser(user2.id, user.id)
+
+                expect(_user.id).to.equal(user.id)
+
+            })
+        })
+
+        describe('remove pin', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                await logic. removePin(user.id, _pins[0]._id.toString())
+
+                __pins = await Pin.find().lean()
+
+                expect(__pins.length).to.equal(1)
+
+            })
+        })
+
+        describe('modify pin', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                await logic.modifyPin(user.id, _pins[0]._id.toString(), board.id, 'description')
+                debugger
+                __pins = await Pin.find().lean()
+
+                expect(__pins[0].description).to.equal('description')
+
+            })
+        })
+    
     })
 
-    describe('boards', () => {
+     describe('boards', () => {
         describe('add', () => {
             let user, title
 
@@ -415,7 +985,6 @@ describe('logic', () => {
             it('should succeed on correct data', async () => { 
 
               await logic.addBoard( user.id, title, false)
-                
 
                     const boards = await Board.find()
                     expect(boards.length).to.equal(1)
@@ -489,7 +1058,7 @@ describe('logic', () => {
             
         })
 
-        describe('list User Board', () => {
+        describe('retrieve Board', () => {
             let user
 
             beforeEach( async () => {
@@ -512,7 +1081,7 @@ describe('logic', () => {
             
         })
 
-        describe('list other Board', () => {
+        describe('retrieve Board of other user', () => {
             let user
 
             beforeEach( async () => {
@@ -536,7 +1105,7 @@ describe('logic', () => {
             
         })
 
-        false && describe('list other Board', () => {
+        describe('retrieve cover of Board', () => {
             let user, board
 
             beforeEach( async () => {
@@ -547,15 +1116,13 @@ describe('logic', () => {
                 await user2.save()
 
                 await logic.addBoard( user2.id, 'title-1', false)
-                board = await logic.retrieveBoard(user.id, 'title-1')
+                board = await Board.find().lean()
             }) 
 
             it('should succeed on correct data', async () =>{ 
-                const board = await logic.retrieveCover(user.id, user2.id, boardId)
+                const cover = await logic.retrieveCover(user.id, user2.id, board[0]._id.toString())
 
-                    expect(board.user).to.equal(user2.id)
-                    expect(board.title).to.equal('title-1')
-                    expect(board.secret).to.equal(false)
+                    expect(cover.length).to.equal(0)
             })
             
         })
@@ -570,14 +1137,15 @@ describe('logic', () => {
 
                 await logic.addBoard( user.id, 'title-1', false)
                 board = await logic.retrieveBoard(user.id, 'title-1')
+                 
             }) 
 
             it('should succeed on correct data', async () =>{ 
                 await logic.removeBoard(user.id, board.id)
 
-                const _user = User.findById(user.id)
+                const _board = await Board.findById(board.id).countDocuments()
 
-                expect(_user.boards.length).to.equal(0)
+                expect(_board).to.equal(0)
 
             })  
         })
@@ -597,13 +1165,205 @@ describe('logic', () => {
             it('should succeed on correct data', async () =>{ 
                 await logic. modifyBoard(user.id, board.id, 'title-2', null, null, true)
 
-                const _board = Board.findById(board.id).lean()
+                const _board = await Board.findById(board.id).lean()
 
-                expect(_board.user).to.equal(user.id)
+                expect(_board.user.toString()).to.equal(user.id)
 
             })  
         })
 
+    })
+
+    describe('comments', () => {
+
+        describe('add comments', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                await logic.addComment(user.id, _pins[0]._id.toString(), 'post')
+
+                __pins = await Pin.find().lean()
+
+                expect(__pins[0].comments.length).to.equal(1)
+
+            })
+        })
+
+        describe('retrieve user of comment', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+                await logic.addComment(user.id, _pins[0]._id.toString(), 'post')
+
+                __pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                const _user = await logic.retrieveUserComment(user.id, __pins[0]._id.toString(), __pins[0].comments[0]._id.toString())
+
+                expect(_user.id).to.equal(user.id)
+
+            })
+        })
+
+        describe('retrieve user of comment', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+                await logic.addComment(user.id, _pins[0]._id.toString(), 'post')
+
+                __pins = await Pin.find().lean()
+
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                await logic.likeComment(user.id, __pins[0]._id.toString(), __pins[0].comments[0]._id.toString())
+
+                ___pins = await Pin.find().lean()
+
+                expect(___pins[0].comments[0].likes.length).to.equal(1)
+
+            })
+        })
+
+        describe('retrieve user of comment', () => {
+            let user, filename, board, rs, buffer, data, _pins
+
+            beforeEach(async () => {
+                user = new User({ username: `email-${Math.random()}`, email: `email-${Math.random()}@pinclonerest.com` ,  password: `password-${Math.random()}`, age : 18 })
+
+                await user.save()
+
+                await logic.addBoard( user.id, 'title-1', false)
+
+                filename = './logic/avatar.png'
+
+                rs = fs.createReadStream(filename)
+
+                buffer = await new Promise((resolve, reject) => {
+                    data = []
+
+                    rs.on('data', chunk => data.push(chunk))
+
+                    rs.on('end', () => resolve(Buffer.concat(data)))
+
+                    rs.on('error', err => reject(err))
+                })
+                const _board = await Board.find()
+
+                board = _board[0]
+                
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-1', null)
+                await logic.addPin( user.id, filename, buffer, board.id, null, 'title-2', null)
+
+                _pins = await Pin.find().lean()
+
+                await logic.addComment(user.id, _pins[0]._id.toString(), 'post')
+
+                __pins = await Pin.find().lean()
+                
+            })
+
+            it('should succeed on correct data', async () =>{ 
+
+                const comments = await logic.retrieveComments(user.id, __pins[0]._id.toString())
+           
+                expect(comments.length).to.equal(1)
+
+            })
+        })
+    
     })
 
     after(() => mongoose.disconnect())

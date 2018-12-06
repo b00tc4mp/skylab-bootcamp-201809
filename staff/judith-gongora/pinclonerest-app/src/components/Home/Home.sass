@@ -68,6 +68,13 @@
     border-radius: 8px
     margin-top: 100px
     position: relative
+    @media screen and (max-width: 803px) 
+        overflow-y: scroll
+        width: 95%
+
+.editPin__info
+    @media screen and (max-width: 803px) 
+        width: 100%
 
 .editPin__head
     display: flex
@@ -82,6 +89,8 @@
     align-items: center
     h2 
         margin: 0
+    @media screen and (max-width: 803px) 
+        width: 95%
 
 .editPin__close 
     width: 40px
@@ -99,12 +108,19 @@
 
 .container__editPin-info
     display: flex
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        justify-content: center
+        align-items: center
     
 .change__board
     display: flex
     width: 571px
     justify-content: space-between
     padding: 12px 16px 12px 16px
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        width: 95%
 
 .select__board 
     padding: 12px 16px 12px 16px
@@ -117,13 +133,19 @@
     &:hover
         background-color: rgb(216, 216, 216) 
     svg 
-        cursor: pointer     
+        cursor: pointer  
+    @media screen and (max-width: 803px) 
+        width: 95%  
+        padding: 12px 5px 12px 5px 
 
 .description__pin
     display: flex
     justify-content: space-between
     width: 571px
     padding: 12px 16px 12px 16px
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        width: 95%
     textarea 
         width: 350px
         height: 72px
@@ -131,6 +153,9 @@
         border-radius: 4px
         padding: 10px 14px 10px 14px
         font-size: 14px
+        @media screen and (max-width: 803px) 
+            width: 95%
+            padding: 10px 5px 10px 5px
 
 .pin__multimedia
     display: flex

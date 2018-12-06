@@ -15,7 +15,7 @@ class Home extends Component {
                     if (this.props.search) {
                         if (this.props.search.trim()) {
                             const find = this.state.pins.filter(pin => {
-                                if (pin.title && pin.title.toLowerCase().includes(this.props.search.toLowerCase()) || pin.description && pin.description.toLowerCase().includes(this.props.search.toLowerCase())) return pin
+                                if ((pin.title && pin.title.toLowerCase().includes(this.props.search.toLowerCase())) || (pin.description && pin.description.toLowerCase().includes(this.props.search.toLowerCase()))) return pin
                             })
                             this.setState({ search: find })
                         } else this.setState({ search: this.state.pins })
@@ -29,7 +29,7 @@ class Home extends Component {
         if (props.search) {
             if (props.search.trim()) {
                 const find = this.state.pins.filter(pin => {
-                    if (pin.title && pin.title.toLowerCase().includes(props.search.toLowerCase())) return pin
+                    if (pin.title && pin.title.toLowerCase().includes(props.search.toLowerCase()) || (pin.description && pin.description.toLowerCase().includes(props.search.toLowerCase()))) return pin
                 })
                 this.setState({ search: find })
             } else this.setState({ search: this.state.pins })

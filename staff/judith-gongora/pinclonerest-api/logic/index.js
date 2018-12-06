@@ -519,9 +519,8 @@ const logic = {
 
             const pinned = user.pins.filter(pinned => pinned.pin.toString() === pinId)
 
-            debugger
-
             if(pinned[0].description) return pinned[0].description
+
             else return ''
 
         })()
@@ -762,7 +761,9 @@ const logic = {
 
             if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            pin.id = pin._id
+            pin.id = pin._id.toString()
+            pin.user = pin.user.toString()
+            pin.board = pin.board.toString()
 
             delete pin._id
             delete pin.__v
@@ -808,7 +809,7 @@ const logic = {
             //     { path: 'pins.pin'}
             //   ]).exec()
 
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -878,7 +879,7 @@ const logic = {
 
         return (async () => {
 
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -927,7 +928,7 @@ const logic = {
 
         return (async () => {
 
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -969,11 +970,11 @@ const logic = {
 
         return (async () => {
 
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
-            const _exists = !!await User.findById(userId).count()
+            const _exists = !!await User.findById(userId).countDocuments()
 
             if (!_exists) throw new NotFoundError(`user with id ${userId} not found`)
 
@@ -1217,7 +1218,7 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const exists = await Board.findOne({title: title}).count()
+            const exists = await Board.findOne({title: title}).countDocuments()
 
             if(exists) throw new AlreadyExistsError(`board with name ${title} already registered`)
 
@@ -1300,7 +1301,7 @@ const logic = {
 
         return (async () => {
 
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -1353,7 +1354,7 @@ const logic = {
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
             const board = await Board.findOne({ user: user._id, title: boardTitle }).lean()
-
+            
             board.id = board._id.toString()
 
             delete board._id
@@ -1391,7 +1392,7 @@ const logic = {
         ])
 
         return (async () => {
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
@@ -1438,11 +1439,11 @@ const logic = {
         ])
 
         return (async () => {
-            const exists = !!await User.findById(id).count()
+            const exists = !!await User.findById(id).countDocuments()
 
             if (!exists) throw new NotFoundError(`user with id ${id} not found`)
 
-            const user = await User.findById(userId).count()
+            const user = await User.findById(userId).countDocuments()
 
             if (!user) throw new NotFoundError(`user with id ${userId} not found`)
 

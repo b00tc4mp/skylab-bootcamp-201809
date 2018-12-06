@@ -122,7 +122,7 @@ class AddPin extends Component {
 
                         </div>
                         {!this.state.boardsSel && !this.state.createBoard && <div className='container__rigth'>
-                            <input className='input-title' type="text" placeholder="Add a title" onChange={this.handleTitleChange} required value={this.state.title}/>
+                            <input className='input-title' type="text" placeholder="Add a title" onChange={this.handleTitleChange} required value={this.state.title} maxLength='25'/>
                             <div className='user__info-add'>
                                 <div className='user'>
                                     <img src={this.state.user.img} ></img>
@@ -133,7 +133,7 @@ class AddPin extends Component {
                                 </div>
                             </div>
 
-                            <input className='description' type="textarea" maxLength='500' placeholder="Say more about this Pin" onChange={this.handleDescriptionChange} value={this.state.description} />
+                            <input className='description' type="textarea" maxLength='500' placeholder="Say more about this Pin" onChange={this.handleDescriptionChange} value={this.state.description} maxLength='50'/>
 
                             <div className='boards'>
                                 <input className={!this.state.errorUrl ? 'input-url' : 'input-url error'} type="text" placeholder="Add the url this pin links to" onChange={this.handleUrlChange} value={this.state.url}/>
