@@ -23,7 +23,7 @@ class Follow extends Component {
                 <img className='user__photo' src={this.state.user.img}></img>
             </div>
             <div className='container__follow' >
-                <div>
+                <div className='followers-profile'>
                     <ul>
                         {this.state.followings.map(user => <li onClick={()=>this.props.onHandleOtherProfile(user.username)} ><img src={user.img} ></img>{user.username}</li>)}
                     </ul>

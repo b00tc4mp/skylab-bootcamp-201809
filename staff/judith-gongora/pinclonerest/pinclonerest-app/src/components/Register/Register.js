@@ -50,7 +50,7 @@ class Register extends Component {
                     <div className="register__center">  
                         <div className="logo-l"><img className="logo__img-l" src={logo}></img> </div> 
                         <div><p className="welcome">Register to see more</p> </div>  
-                        <div><p className="info">Access the best ideas with a free account</p> </div>      
+                        <div><p className="info__register">Access the best ideas with a free account</p> </div>      
                         <form className="register__form" onSubmit={this.handleSubmit}>
                             <input className={this.state.error || this.state.errorEmail ? 'error-red' : 'input-login'} type="text" placeholder="email" onChange={this.handleEmailChange} />
                             {this.state.error && <span className='errorRegister'>{this.state.error}</span>}

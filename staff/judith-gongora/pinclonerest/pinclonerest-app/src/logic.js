@@ -2,7 +2,6 @@
 const logic = {
     _userId: sessionStorage.getItem('userId') || null,
     _token: sessionStorage.getItem('token') || null,
-    _photoUser: '',
 
 
     /**
@@ -35,7 +34,7 @@ const logic = {
             init.body = JSON.stringify(data)
         }
 
-        return fetch(`http://192.168.0.48:5000/api/${path}`, init)
+        return fetch(`http://localhost:5000/api/${path}`, init)
             .then(res => res.json())
     },
 
@@ -104,7 +103,7 @@ const logic = {
             })
     },
 
-
+    
     updateUser(name, surname, username) {
 
         let path = 'users/' + this._userId 
@@ -116,10 +115,25 @@ const logic = {
     },
 
     updateUserPhoto(file) {
+        const acceptedTypes = [
+            'image/jpg',
+            'image/jpeg',
+            'image/gif',
+            'image/png'
+          ]
+        const maxSize = 200000
+      
         const body = new FormData()
-        body.append('photo', file)
 
-        let path = 'http:///192.168.0.48:5000/api/users/' + this._userId + '/photo'
+        if (typeof file === 'object') {
+            if (!acceptedTypes.includes(file.type)) throw Error('Only images are allowed')
+            if (file.size > maxSize) throw Error('Image should be 2mb maximum')
+      
+            body.append('photo', file)
+          }
+        
+
+        let path = 'http:///localhost:5000/api/users/' + this._userId + '/photo'
 
         return fetch(path, {
             method: 'POST',
@@ -289,14 +303,29 @@ const logic = {
     },
 
     createPin(file, board, url, title, description) {
+        const acceptedTypes = [
+            'image/jpg',
+            'image/jpeg',
+            'image/gif',
+            'image/png'
+          ]
+        const maxSize = 200000
+      
         const body = new FormData()
-        body.append('photo', file)
+
+        if (typeof file === 'object') {
+            if (!acceptedTypes.includes(file.type)) throw Error('Only images are allowed')
+            if (file.size > maxSize) throw Error('Image should be 2mb maximum')
+      
+            body.append('photo', file)
+        }
+
         body.append('board', board)
         if (title) body.append('title', title)
         if (url) body.append('url', url)
         if (description) body.append('description', description)
 
-        let path = 'http:///192.168.0.48:5000/api/users/' + this._userId + '/pins'
+        let path = 'http:///localhost:5000/api/users/' + this._userId + '/pins'
 
         return fetch(path, {
             method: 'POST',
@@ -441,11 +470,25 @@ const logic = {
 
 
     addPhoto(pinId, file, content) {
+        const acceptedTypes = [
+            'image/jpg',
+            'image/jpeg',
+            'image/gif',
+            'image/png'
+          ]
+        const maxSize = 200000
+      
         const body = new FormData()
-        body.append('photo', file)
+
+        if (typeof file === 'object') {
+            if (!acceptedTypes.includes(file.type)) throw Error('Only images are allowed')
+            if (file.size > maxSize) throw Error('Image should be 2mb maximum')
+      
+            body.append('photo', file)
+        }
         if (content) body.append('content', content)
 
-        let path = 'http:///192.168.0.48:5000/api/users/' + this._userId + '/pins/' + pinId + '/photo'
+        let path = 'http:///localhost:5000/api/users/' + this._userId + '/pins/' + pinId + '/photo'
 
         return fetch(path, {
             method: 'POST',

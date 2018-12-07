@@ -24,7 +24,7 @@ class AddPin extends Component {
         this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], errorFile: false })
     }
 
-    handleRemovePreview = () => this.setState({ file: null, imgPreview: null })
+    handleRemovePreview = () => this.setState({ file: null, imgPreview: null, error: null })
 
     handleTitleChange = event => {
         const title = event.target.value
@@ -118,7 +118,7 @@ class AddPin extends Component {
                                         </svg>
                                     </div>
                                 </div>}
-                                {this.state.errorPhoto && <span>{this.state.errorPhoto}</span>}
+                                {this.state.error && <span>{this.state.error}</span>}
 
                         </div>
                         {!this.state.boardsSel && !this.state.createBoard && <div className='container__rigth'>

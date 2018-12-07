@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './PinInfo.sass'
 
 class Send extends Component {
-    state = { link: false, url:`http://localhost:3000/#/pin/${this.props.id}` }
+    state = { link: false, url:`https://pinclonerest.surge.sh/pin/${this.props.id}` }
 
     handleLink = () => {
         if(!this.state.link) this.setState({ link: true })

@@ -16,7 +16,7 @@ class Settings extends Component {
         this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], save: true })
     }
 
-    handleRemovePreview = () => this.setState({ file: null, imgPreview: null, save: false })
+    handleRemovePreview = () => this.setState({ file: null, imgPreview: null, save: false, error: null })
 
     handleNameChange = event => {
         const name = event.target.value

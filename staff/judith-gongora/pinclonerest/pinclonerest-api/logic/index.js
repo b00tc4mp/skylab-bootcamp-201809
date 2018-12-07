@@ -1769,35 +1769,35 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
     */
 
-    addPhoto(id, pinId, filename, fileData, content) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String },
-            { key: 'filename', value: filename, type: String },
-            { key: 'content', value: content, type: String }
-        ])
+    // addPhoto(id, pinId, filename, fileData, content) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String },
+    //         { key: 'filename', value: filename, type: String },
+    //         { key: 'content', value: content, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const multimedia = await this.uploadCloudinary(filename, fileData)
+    //         const multimedia = await this.uploadCloudinary(filename, fileData)
 
-            const pin = await Pin.findById(pinId)
+    //         const pin = await Pin.findById(pinId)
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const photo = new Photo({ multimedia, user: user.id, content })
+    //         const photo = new Photo({ multimedia, user: user.id, content })
 
-            if (!pin.photos) {
-                pin.photos = [photo]
-            } else pin.photos.push(photo)
+    //         if (!pin.photos) {
+    //             pin.photos = [photo]
+    //         } else pin.photos.push(photo)
 
-            await pin.save()
+    //         await pin.save()
 
-        })()
-    },
+    //     })()
+    // },
 
     /**
     * 
@@ -1812,35 +1812,35 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
     */
 
-    addCommentPhoto(id, pinId, photoId, content) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String },
-            { key: 'photoId', value: photoId, type: String },
-            { key: 'content', value: content, type: String }
-        ])
+    // addCommentPhoto(id, pinId, photoId, content) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String },
+    //         { key: 'photoId', value: photoId, type: String },
+    //         { key: 'content', value: content, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const pin = await Pin.findById(pinId)
+    //         const pin = await Pin.findById(pinId)
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const photo = pin.photos.id(photoId)
+    //         const photo = pin.photos.id(photoId)
 
-            if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
+    //         if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
 
-            const comment = new Comment({ user: user.id, content })
+    //         const comment = new Comment({ user: user.id, content })
 
-            photo.comments.push(comment)
+    //         photo.comments.push(comment)
 
-            await pin.save()
+    //         await pin.save()
 
-        })()
-    },
+    //     })()
+    // },
 
     /**
     * 
@@ -1856,39 +1856,39 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
     */
 
-    addCommentPhotoReply(id, pinId, photoId, commentId, content) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String },
-            { key: 'commentId', value: commentId, type: String },
-            { key: 'content', value: content, type: String }
-        ])
+    // addCommentPhotoReply(id, pinId, photoId, commentId, content) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String },
+    //         { key: 'commentId', value: commentId, type: String },
+    //         { key: 'content', value: content, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const pin = await Pin.findById(pinId)
+    //         const pin = await Pin.findById(pinId)
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const photo = pin.photos.id(photoId)
+    //         const photo = pin.photos.id(photoId)
 
-            if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
+    //         if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
 
-            const comment = photo.comments.id(commentId)
+    //         const comment = photo.comments.id(commentId)
 
-            if (!comment) throw new NotFoundError(`comment with id ${commentId} not found`)
+    //         if (!comment) throw new NotFoundError(`comment with id ${commentId} not found`)
 
-            const _comment = new Comment({ user: user.id, content, replyTo: commentId })
+    //         const _comment = new Comment({ user: user.id, content, replyTo: commentId })
 
-            photo.comments.push(_comment)
+    //         photo.comments.push(_comment)
 
-            await pin.save()
+    //         await pin.save()
 
-        })()
-    },
+    //     })()
+    // },
 
     /**
     * Add like to pin comment 
@@ -1943,32 +1943,32 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, photoId or pin id
     */
 
-    addLikePhoto(id, pinId, photoId) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String },
-            { key: 'photoId', value: photoId, type: String }
-        ])
+    // addLikePhoto(id, pinId, photoId) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String },
+    //         { key: 'photoId', value: photoId, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const pin = await Pin.findById(pinId)
+    //         const pin = await Pin.findById(pinId)
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const photo = pin.photos.id(photoId)
+    //         const photo = pin.photos.id(photoId)
 
-            if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
+    //         if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
 
-            photo.likes.push(user._id)
+    //         photo.likes.push(user._id)
 
-            await pin.save()
+    //         await pin.save()
 
-        })()
-    },
+    //     })()
+    // },
 
     /**
     * Add like to photo comment 
@@ -1983,36 +1983,36 @@ const logic = {
     * @returns {Promise} Resolves on correct data, rejects on wrong user id, content or pin id
     */
 
-    addLikeCommentPhoto(id, pinId, photoId, commentId) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String },
-            { key: 'commentId', value: commentId, type: String }
-        ])
+    // addLikeCommentPhoto(id, pinId, photoId, commentId) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String },
+    //         { key: 'commentId', value: commentId, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const pin = await Pin.findById(pinId)
+    //         const pin = await Pin.findById(pinId)
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            const photo = pin.photos.id(photoId)
+    //         const photo = pin.photos.id(photoId)
 
-            if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
+    //         if (!photo) throw new NotFoundError(`photo with id ${photoId} not found`)
 
-            const comment = photo.comments.id(commentId)
+    //         const comment = photo.comments.id(commentId)
 
-            if (!comment) throw new NotFoundError(`comment with id ${commentId} not found`)
+    //         if (!comment) throw new NotFoundError(`comment with id ${commentId} not found`)
 
-            comment.likes.push(user._id)
+    //         comment.likes.push(user._id)
 
-            await pin.save()
+    //         await pin.save()
 
-        })()
-    },
+    //     })()
+    // },
 
     /**
     * 
@@ -2062,26 +2062,26 @@ const logic = {
     * 
     * @returns {Promise} Resolves on correct data, rejects on wrong user id or pin id
     */
-    retrievePhotos(id, pinId) {
-        validate([
-            { key: 'id', value: id, type: String },
-            { key: 'pinId', value: pinId, type: String }
-        ])
+    // retrievePhotos(id, pinId) {
+    //     validate([
+    //         { key: 'id', value: id, type: String },
+    //         { key: 'pinId', value: pinId, type: String }
+    //     ])
 
-        return (async () => {
-            const user = await User.findById(id)
+    //     return (async () => {
+    //         const user = await User.findById(id)
 
-            if (!user) throw new NotFoundError(`user with id ${id} not found`)
+    //         if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const pin = await Pin.findById(pinId).populate('photos')
+    //         const pin = await Pin.findById(pinId).populate('photos')
 
-            if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
+    //         if (!pin) throw new NotFoundError(`pin with id ${pinId} not found`)
 
-            return pin.photos
+    //         return pin.photos
 
-        })()
+    //     })()
 
-    }
+    // }
 }
 
 module.exports = logic
