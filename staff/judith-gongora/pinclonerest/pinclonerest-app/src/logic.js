@@ -121,7 +121,7 @@ const logic = {
             'image/gif',
             'image/png'
           ]
-        const maxSize = 200000
+        const maxSize = 20000000
       
         const body = new FormData()
 
@@ -309,7 +309,7 @@ const logic = {
             'image/gif',
             'image/png'
           ]
-        const maxSize = 200000
+        const maxSize = 20000000
       
         const body = new FormData()
 
@@ -476,7 +476,7 @@ const logic = {
             'image/gif',
             'image/png'
           ]
-        const maxSize = 200000
+        const maxSize = 5000000
       
         const body = new FormData()
 

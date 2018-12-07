@@ -1218,7 +1218,7 @@ const logic = {
 
             if (!user) throw new NotFoundError(`user with id ${id} not found`)
 
-            const exists = await Board.findOne({title: title}).countDocuments()
+            const exists = await Board.findOne({title: title, user: user.id}).countDocuments()
 
             if(exists) throw new AlreadyExistsError(`board with name ${title} already registered`)
 

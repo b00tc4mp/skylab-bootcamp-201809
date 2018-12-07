@@ -42,6 +42,7 @@ class Settings extends Component {
             Promise.all([logic.updateUserPhoto(this.state.file), logic.updateUser(this.state.name, this.state.surname, this.state.username)])
                 .then(() => logic.retrieveUser()
                     .then(user => this.setState({ user, save: false, file: null, imgPreview: null })))
+                .then(() => this.props.onChange())
                     .catch(err => this.setState({ error: err.message }))
         } catch (err) { this.setState({ error: err.message }) }
         else try {
