@@ -56,7 +56,7 @@ class Register extends Component {
                             {this.state.error && <span className='errorRegister'>{this.state.error}</span>}
                             
                             <input className={this.state.error ? 'error-red' : 'input-login'} type="password" placeholder="Password" onChange={this.handlePasswordChange} required/>
-                            <input className={this.state.error ? 'error-red' : 'input-login'} type='number' placeholder="age" onChange={this.handleAgeChange} required />
+                            <input className={this.state.error ? 'error-red' : 'input-login'} type='number' placeholder="age" onChange={this.handleAgeChange} min='1' required />
                             <button className="register__button" type="submit">Continue</button> 
                         </form>
                         <p className="register__conditions">By continuing, you agree to Pinclonerest's Terms of Service, Privacy Policy and use of cookies.</p>

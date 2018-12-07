@@ -11,7 +11,8 @@ class Board extends Component {
     }
 
     componentWillReceiveProps(props){
-        this.setState({board: props.board})
+        this.setState({board: props.board}, ()=> logic.retrieveCover(this.props.userId, this.props.board.id)
+        .then(collage => this.setState({ collage })))
     }
 
     handleOpenEditBoard = () => {

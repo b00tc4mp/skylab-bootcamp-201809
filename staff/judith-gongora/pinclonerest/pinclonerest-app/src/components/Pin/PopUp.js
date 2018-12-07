@@ -36,8 +36,8 @@ class Popup extends Component {
     render() {
         return <section className="popup">
             {!this.state.board ? <form className='form-top' >
-                <div className="themes"><span>Boards</span><svg onClick={this.handleBoards} height="12" width="12" viewBox="0 0 24 24" aria-label="Selecciona un tablero en el que quieras guardar Pines" role="img"><title>Selecciona un tablero en el que quieras guardar Pines</title><path d="M12 19.5L.66 8.29c-.88-.86-.88-2.27 0-3.14.88-.87 2.3-.87 3.18 0L12 13.21l8.16-8.06c.88-.87 2.3-.87 3.18 0 .88.87.88 2.28 0 3.14L12 19.5z"></path></svg></div>
-                <button className="button" type="submit">Save</button>
+                <div className="themes-pin" onClick={this.handleBoards} ><span>Boards</span><svg height="12" width="12" viewBox="0 0 24 24" aria-label="Selecciona un tablero en el que quieras guardar Pines" role="img"><title>Selecciona un tablero en el que quieras guardar Pines</title><path d="M12 19.5L.66 8.29c-.88-.86-.88-2.27 0-3.14.88-.87 2.3-.87 3.18 0L12 13.21l8.16-8.06c.88-.87 2.3-.87 3.18 0 .88.87.88 2.28 0 3.14L12 19.5z"></path></svg></div>
+                {/* <button className="button" type="submit">Save</button> */}
             </form> :
                 <div className='container__pinned-popup' onClick={event => {event.stopPropagation(); this.handleOpenBoard()}} >
                     <p>Saved to <span className='bold'>{this.state.board.title}</span> </p>

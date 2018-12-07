@@ -8,12 +8,12 @@ class Navbar extends Component {
         
     componentDidMount() {
        logic.retrieveUser()
-       .then(user=> this.setState({user}))
+       .then(user => this.setState({user}))
     }
 
     componentWillReceiveProps(props){
         logic.retrieveUser()
-       .then(user=> this.setState({user}))
+       .then(user => this.setState({user}))
     }
 
     handleSearchCahnge = event =>{
