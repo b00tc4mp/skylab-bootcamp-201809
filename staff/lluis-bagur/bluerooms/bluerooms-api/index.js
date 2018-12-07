@@ -12,7 +12,6 @@ const { env: { PORT, MONGO_URL } } = process
 mongoose.connect(MONGO_URL, { useNewUrlParser: true, useCreateIndex: true })
     .then(() => {
         console.log(`db server running at ${MONGO_URL}`)
-        debugger
         const { argv: [, , port = PORT || 8080] } = process
 
         const app = express()

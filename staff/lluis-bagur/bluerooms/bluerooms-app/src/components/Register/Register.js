@@ -52,16 +52,20 @@ class Register extends Component {
     handleChangeFile = event => {
         this.setState({ imgPreview: URL.createObjectURL(event.target.files[0]), file: event.target.files[0], errorFile: false })
     }
-    
-      handleRemovePreview = () => this.setState({ file: null, imgPreview: null })
-    
+
+    handleRemovePreview = () => this.setState({ file: null, imgPreview: null })
+
 
     handleSubmit = event => {
         event.preventDefault()
         const { name, file, surname, username, password, email } = this.state
 
-        if (!file) this.setState({ errorFile: true })
-        if (file) this.handleRegister(name, file,  surname, username, password, email)
+        if (!file) {
+            this.setState({ errorFile: true })
+            toast.warn('You need to upload a picture')
+        }
+
+        if (file) this.handleRegister(name, file, surname, username, password, email)
     }
 
     handleRegister = (name, file, surname, username, password, email) => {
@@ -70,18 +74,15 @@ class Register extends Component {
             logic.registerUser(name, file, surname, username, password, email)
                 .then(() => {
                     this.setState({ error: null, imgPreview: null })
+                    // this.props.onShowHideModal()
                     toast.info('Now you can login!')
-                    this.props.onShowHideModal()
-                    
+                    this.props.onShowLogin()
                 })
                 .catch(err => {
-                    this.setState({ error: err.message })
-                    toast.warn(this.state.error)
-
+                    this.setState({ error: err.message }, () => toast.warn(err.message))
                 })
         } catch (err) {
-            this.setState({ error: err.message })
-            toast.error(this.state.error)
+            this.setState({ error: err.message }, () => toast.warn(err.message))
         }
     }
 
@@ -92,7 +93,7 @@ class Register extends Component {
             <Modal isOpen={this.state.modal} toggle={this.toggle} className="login-form">
                 <ModalHeader toggle={this.toggle}>Register</ModalHeader>
                 <ModalBody className="modal__body">
-                    <form className="form__container" onSubmit={this.handleSubmit}>
+                    <form novalidate className="form__container" onSubmit={this.handleSubmit}>
                         <div className="header__logo">
                             <div className="img__logo" />
                         </div>
@@ -102,15 +103,16 @@ class Register extends Component {
                         <input className="input__form" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
                         <input className="input__form" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
                         <div className="image__form">
-                            <div>
-                                <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} required />
+                            {!this.state.imgPreview && <div>
+                                <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} />
                                 <label for='file-form'>
                                     <div className={!this.state.errorFile ? 'add__photo' : 'add__photo error'}>
                                         <i className="fas fa-camera fa-2x"></i>
                                         Click to upload profile image
-                  </div>
+                                    </div>
                                 </label>
-                            </div>
+                            </div>}
+
                             <div className='preview__container'>
                                 <img className='photo__preview' src={this.state.imgPreview} ></img>
                                 <div onClick={this.handleRemovePreview} className='icon_x'>
@@ -121,7 +123,7 @@ class Register extends Component {
                             </div>
                         </div>
                         <button className="form__btn" type="submit">Register</button>
-                        <button className="form__btn" type="submit" onClick={this.props.onShowLogin} >Or Login</button>
+                        <button className="form__btn" type="button" onClick={this.props.onShowLogin} >Or Login</button>
                     </form>
                 </ModalBody>
                 <ModalFooter>

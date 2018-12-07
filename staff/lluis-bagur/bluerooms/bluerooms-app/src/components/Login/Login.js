@@ -51,15 +51,12 @@ class Login extends Component {
                 })
 
                 .catch(err => {
-                    this.setState({ error: err.message })
-                    toast.warn(this.state.error)
+                    this.setState({ error: err.message }, () => toast.error(this.state.error))
                 })
 
-        } catch (err) {
-            this.setState({ error: err.message })
-            toast.error(this.state.error)
-            this.setState({ error: null })
-        }
+            } catch (err) {
+                this.setState({ error: err.message }, () => toast.warn(this.state.error))
+            }
     }
 
 

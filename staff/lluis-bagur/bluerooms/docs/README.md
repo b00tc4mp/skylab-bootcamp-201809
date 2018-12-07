@@ -12,6 +12,9 @@ Once registered and logged in, the user can search apartments by "city". By clic
 
 The user has a profile where they can also create their apartments to be rented, or consult their booking history. The user do not have the option to delete the apartment, but to hide it, to avoid future bookings.
 
+## Landing screenshot
+
+![](images/screenshot.png)
 
 ## Use Cases
 

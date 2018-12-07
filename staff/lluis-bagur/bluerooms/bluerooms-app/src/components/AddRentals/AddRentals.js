@@ -3,6 +3,7 @@ import './AddRentals.css'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import logic from '../../logic'
 import { withRouter } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
 import GoogleMapReact from 'google-map-react';
 
 class AddRentals extends Component {
@@ -107,9 +108,11 @@ class AddRentals extends Component {
           this.setState({ error: null })
           this.props.onShowHideModal()
         })
-        .catch(err => this.setState({ error: err.message }))
-    } catch (err) {
-      this.setState({ error: err.message })
+        .catch(err => {
+          this.setState({ error: err.message }, () => toast.warn(this.state.error))
+      })
+    }catch (err) {
+      this.setState({ error: err.message }, () => toast.warn(this.state.error))
     }
   }
 
@@ -118,9 +121,7 @@ class AddRentals extends Component {
     this.map = map
     this.mapsApi = maps
     this.map.markers = []
-    // if (this.state.form_data)
-    //     this.handleMapClick({ x: 0, y: 0, lat: this.state.form_data.latitude, lng: this.state.form_data.longitude, event: null })
-  }
+    }
 
   handleMapClick = ({ x, y, lat, lng, event }) => {
 
@@ -160,6 +161,7 @@ class AddRentals extends Component {
 
   render() {
     return <div>
+        <ToastContainer position="top-center" />
       <Modal isOpen={this.state.modal} toggle={this.toggle} className="register-Rental">
         <ModalHeader toggle={this.toggle}>Add a new rental</ModalHeader>
         <ModalBody>
@@ -216,7 +218,7 @@ class AddRentals extends Component {
 
 
             <div className="image__form">
-              <div>
+            {!this.state.imgPreview &&<div>
                 <input id='file-form' className='input__file' type='file' onChange={this.handleChangeFile} required />
                 <label for='file-form'>
                   <div className={!this.state.errorFile ? 'add__photo' : 'add__photo error'}>
@@ -224,7 +226,7 @@ class AddRentals extends Component {
                    Click to upload
                   </div>
                 </label>
-              </div>
+              </div>}
 
                 {this.state.imgPreview && <div className='preview__container'>
                 <img className='photo__preview' src={this.state.imgPreview}></img>
@@ -242,7 +244,7 @@ class AddRentals extends Component {
 
         </ModalBody>
         <ModalFooter>
-          <button onClick={this.toggle}>Close</button>
+          <button className="close__btn" onClick={this.toggle}>Close</button>
         </ModalFooter>
       </Modal>
     </div>

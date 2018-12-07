@@ -167,7 +167,6 @@ try {
           </section>
           <form className="form__addRentals" onSubmit={this.handleSubmit}>
             <div className="form__dates">
-              <label>{this.state.rental.id}</label>
               <input className="input__form" type="text" defaultValue={this.state.rental.title} onC onChange={this.handleTitleChange} />
               <input className="input__form" type="text" defaultValue={this.state.rental.city} onChange={this.handleCityChange} />
               <input className="input__form" type="text" defaultValue={this.state.rental.street} onChange={this.handleStreetChange} />

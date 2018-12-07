@@ -20,8 +20,24 @@ const logic = {
         if (!password.trim()) throw Error('password is empty or blank')
         if (!email.trim()) throw Error('email is empty or blank')
 
+
+        const acceptedTypes = [
+            'image/jpg',
+            'image/jpeg',
+            'image/gif',
+            'image/png'
+          ]
+        const maxSize = 200000
+      
         const body = new FormData()
-        body.append('photo', file)
+
+        if (typeof file === 'object') {
+            if (!acceptedTypes.includes(file.type)) throw Error('Only images are allowed')
+            if (file.size > maxSize) throw Error('Image should be 2mb maximum')
+      
+            body.append('photo', file)
+          }
+
         body.append('name', name)
         body.append('surname', surname)
         body.append('username', username)
@@ -117,8 +133,23 @@ const logic = {
         if (!category.trim()) throw Error('category is empty or blank')
         if (!description.trim()) throw Error('text is empty or blank')
 
+       const acceptedTypes = [
+            'image/jpg',
+            'image/jpeg',
+            'image/gif',
+            'image/png'
+          ]
+        const maxSize = 200000
+      
         const body = new FormData()
-        body.append('photo', file)
+
+        if (typeof file === 'object') {
+            if (!acceptedTypes.includes(file.type)) throw Error('Only images are allowed')
+            if (file.size > maxSize) throw Error('Image should be 2mb maximum')
+      
+            body.append('photo', file)
+          }
+
         body.append('title', title)
         body.append('city', city)
         body.append('street', street)
