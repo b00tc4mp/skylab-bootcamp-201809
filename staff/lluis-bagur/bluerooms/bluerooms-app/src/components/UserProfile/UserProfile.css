@@ -1,0 +1,205 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,900);
+.profile__page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 10px;
+  width: 100vw;
+  height: 100%;
+}
+.profile__page .user__background {
+  background: url("./media/profile.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0px 9px 12px 0px rgba(0, 0, 0, 0.5);
+}
+.profile__page .user__background .user__profile {
+  margin-bottom: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 60%;
+  max-width: 400px;
+  min-width: 320px;
+  height: 100%;
+  max-height: 450px;
+}
+.profile__page .user__background .user__profile .profile__image {
+  margin: 20px;
+  width: 50%;
+  height: 50%;
+  min-height: 200px;
+  border-right: 1px solid teal;
+  border-bottom: 1px solid teal;
+  border-radius: 100px;
+}
+.profile__page .user__background .user__profile .profile__image .img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
+.profile__page .user__background .user__profile .profile__info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 90%;
+  height: 10%;
+  font-family: "Poiret One", cursive;
+  margin: 10px;
+}
+.profile__page .user__background .user__profile .profile__info .profile__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.profile__page .user__background .user__profile .profile__buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+.profile__page .user__menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin-top: 20px;
+}
+.profile__page .user__rentals {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: start;
+  width: 100vw;
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+* .buttons {
+  margin-top: 30px;
+  margin: 10px;
+}
+* .buttons .button {
+  margin: 25px auto;
+  transition: all 0.3s;
+  overflow: hidden;
+  cursor: pointer;
+}
+* .buttons .button-add {
+  background-color: #00d5ff;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 130%;
+  line-height: 50px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-add:hover {
+  width: 150px;
+}
+* .buttons .button-add:hover i:after {
+  margin-left: 10px;
+  content: "Add rental";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+* .buttons .button-back {
+  background-color: #f44336;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 130%;
+  line-height: 50px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-back:hover {
+  width: 150px;
+}
+* .buttons .button-back:hover i:after {
+  margin-left: 10px;
+  content: "Back";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+* .buttons .button-booking {
+  background-color: #00d5ff;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 130%;
+  line-height: 50px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-booking:hover {
+  width: 150px;
+}
+* .buttons .button-booking:hover i:after {
+  margin-left: 10px;
+  content: "My bookings";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+* .buttons .button-rent {
+  background-color: #00d5ff;
+  color: #ffffff;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 130%;
+  line-height: 50px;
+  box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -webkit-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+  -moz-box-shadow: rgba(16, 25, 36, 0.65098) 3px 3px 8px 0px;
+}
+* .buttons .button-rent:hover {
+  width: 150px;
+}
+* .buttons .button-rent:hover i:after {
+  margin-left: 10px;
+  content: "My rentals";
+  font-size: 16px;
+  font-family: "Poiret One", cursive;
+  letter-spacing: 1px;
+}
+
+/*# sourceMappingURL=UserProfile.css.map */

@@ -1,0 +1,58 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
+}
+.home .search__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 87vh;
+  background: url("./media/landing.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.home .search__container .search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 300px;
+  max-width: 700px;
+  background: #ffffffc9;
+  border-radius: 50px;
+}
+.home .result__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
+  margin-top: 50px;
+}
+.home .result__container .title-h2 {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 30px;
+  border-bottom: 1px solid black;
+}
+.home .result__container .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: start;
+  width: 100vw;
+  height: 100%;
+}
+
+/*# sourceMappingURL=Landing.css.map */

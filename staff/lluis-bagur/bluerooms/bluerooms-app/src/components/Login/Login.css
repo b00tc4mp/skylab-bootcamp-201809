@@ -1,0 +1,117 @@
+.addRental__form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, .4);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+}
+.form__container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px;
+    width: 300px;
+    height: 70%;
+    background: #fff;
+    box-shadow: 0 0 3px 1px rgb(255, 255, 255)
+}
+
+.header__logo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 30%;
+    width: 90%;
+  }
+.img__logo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background: url("./media/logo.png");
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    max-width: 370px;
+  }
+
+  .form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    height: 70%;
+    width: 90%;
+    margin-top: 30px;
+  }
+
+  .form__btn {
+    margin: 10px;
+    border-radius: 50px;
+    width: 50%;
+    max-width: 200px;
+    height: 30px;
+    background: white;
+    border: 1px solid teal;
+    align-content: center;
+    outline: 0;
+    
+  }
+  .form__btn:hover,
+  .form__btn:focus{
+      opacity: 0.6;
+      color: black;
+}
+
+  .input__form{
+    font-size: 16px;
+    line-height: 1.5;
+    border: none;
+    background: #FFFFFF;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    width: 70%;
+    padding: .5em 1em .5em 2.5em;
+    margin-top: 10px;
+    } 
+    
+    .input__form::placeholder{
+      color: #838D99;
+    }
+    
+    .input__form:focus {
+      outline: none;
+      box-shadow: 0 4px 10px 0 rgba(31, 152, 182, 0.26);
+    }
+
+    .modal__body{
+      display: flex;
+      justify-content: center;
+    }
+
+     
+    .close__btn{
+      color: #fff;
+      background-color: #00d3ff;
+      font-weight: 400;
+      height: 40px;
+      font-size: 14px;
+      border: none;
+      width: 100px;
+      border-radius: 40px;
+      text-transform: uppercase;
+      transition: 0.2s all;
+      outline: 0;
+    }
+    .close__btn:hover,
+    .close__btn:focus {
+      opacity: 0.6;
+      color: black;
+}
