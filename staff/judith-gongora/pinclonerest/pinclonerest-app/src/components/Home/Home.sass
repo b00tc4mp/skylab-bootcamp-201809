@@ -1,0 +1,269 @@
+.div__home
+    display: flex
+    flex-direction: column
+    margin-top: 60px
+.pins__container
+    column-count: 1
+    column-gap: 0
+    
+    @media screen and (min-width: 481px) 
+        column-count: 2
+    
+    @media screen and (min-width: 641px) 
+        column-count: 2
+    
+    @media screen and (min-width: 961px) 
+        column-count: 3
+    
+    @media screen and (min-width: 1025px) 
+        column-count: 4
+
+    @media screen and (min-width: 1281px) 
+        column-count: 5
+
+    // width: 980px 
+    margin: 20px 50px
+    // -webkit-column-count: 3  //* Chrome, Safari, Opera */
+    // -moz-column-count: 3  //* Firefox */
+    // column-count: 3 
+    // -webkit-column-gap: 20px  //* Chrome, Safari, Opera */
+    // -moz-column-gap: 20px  //* Firefox */
+    // column-gap: 20px 
+
+.add_pin
+    position: fixed
+    right: 20px
+    bottom: 40px
+    border-radius: 50%
+    padding: 12.5px
+    width: 14px
+    height: 14px
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04)
+    cursor: pointer
+    &:hover
+        background-color: #efefef
+
+
+// -------------- POPUP EDIT PIN ----------------------//
+
+.popup__editPin
+    position: fixed
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: rgba(51,51,50,0.9)
+    z-index: 1000
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-direction: column
+    border-radius: 4px
+
+.container__editPin 
+    background-color: white
+    border-radius: 8px
+    margin-top: 100px
+    position: relative
+    @media screen and (max-width: 803px) 
+        overflow-y: scroll
+        width: 95%
+
+.editPin__info
+    @media screen and (max-width: 803px) 
+        width: 100%
+
+.editPin__head
+    display: flex
+    align-items: center 
+
+.editPin__title
+    width: 704px
+    height: 28px
+    padding: 20px 0 20px 50px
+    display: flex
+    justify-content: center
+    align-items: center
+    h2 
+        margin: 0
+    @media screen and (max-width: 803px) 
+        width: 95%
+
+.editPin__close 
+    width: 40px
+    height: 40px
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-right: 10px
+    border-radius: 50%
+    svg 
+        color: #8e8e8e
+        fill: currentColor
+    &:hover
+        background-color: #efefef
+
+.container__editPin-info
+    display: flex
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        justify-content: center
+        align-items: center
+    
+.change__board
+    display: flex
+    width: 571px
+    justify-content: space-between
+    padding: 12px 16px 12px 16px
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        width: 95%
+
+.select__board 
+    padding: 12px 16px 12px 16px
+    width: 348.5px
+    display: flex
+    justify-content: space-between
+    background-color: #efefef
+    border-radius: 8px
+    align-items: center
+    &:hover
+        background-color: rgb(216, 216, 216) 
+    svg 
+        cursor: pointer  
+    @media screen and (max-width: 803px) 
+        width: 95%  
+        padding: 12px 5px 12px 5px 
+
+.description__pin
+    display: flex
+    justify-content: space-between
+    width: 571px
+    padding: 12px 16px 12px 16px
+    @media screen and (max-width: 803px) 
+        flex-direction: column
+        width: 95%
+    textarea 
+        width: 350px
+        height: 72px
+        resize: none
+        border-radius: 4px
+        padding: 10px 14px 10px 14px
+        font-size: 14px
+        @media screen and (max-width: 803px) 
+            width: 95%
+            padding: 10px 5px 10px 5px
+
+.pin__multimedia
+    display: flex
+    justify-content: center
+    align-items: center
+    max-height: 192px
+    img
+        width: 163px
+        max-height: 192px
+        object-fit: cover
+    
+.footer__editPin
+    display: flex
+    justify-content: space-between
+    padding: 12px 16px 12px 16px
+
+.container__buttons
+    display: flex
+
+.button-bottom__editPin 
+    padding: 10px 14px 10px 14px
+    background-color: #efefef
+    border-radius: 8px
+    align-items: center
+    cursor: pointer
+    &:hover
+        back-ground-color: rgb(216, 216, 216) 
+
+.red 
+    color: white
+    background-color: #bd081c
+    margin-left: 15px
+    &:hover 
+        background-color: #ad081b
+
+// ---------------- BOARDS LIST ------------------//
+
+.container__boards-editPin
+    position: absolute
+    width: 380px
+    height: 130px
+    top: 70px
+    right: 217px
+    margin: auto
+    background-color: white
+    z-index: 500
+    display: flex
+    align-items: center
+    flex-direction: column
+    border-radius: 8px
+    margin-top: 60px
+    border: 1px solid #efefef
+    form
+        display: flex
+        justify-content: center
+        padding: 8px
+        margin-top: 10px
+        margin-bottom: 10px
+        width: 95%
+
+.search__group-boards
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 100%
+.search__container-boards
+    width: 100%
+.search__icon-boards
+    background-color: #efefef
+    border-radius: 4px 0 0 4px 
+    height: 35px
+    width: 29px
+    display: flex
+    justify-content: flex-end
+    align-items: center
+.search__input-boards
+    padding: 8.5px 10px
+    margin: 8px 0
+    display: inline-block
+    border-radius: 0 4px 4px 0
+    box-sizing: border-box
+    width: 100%
+    background-color: #efefef
+    outline: none
+    border: none
+    font-size: 16px
+.search__input-boards::placeholder
+    font-weight: bold
+    letter-spacing: 0.3px
+
+.list__board
+    overflow-y: auto
+    width: 100%
+    padding: 0 
+    margin: 0 auto
+        
+.list__boards-item
+    height: 30px
+    cursor: pointer
+    display: flex
+    font-weight: bold
+    justify-content: space-between
+    align-items: center
+    width: 100%
+    &:hover
+        background-color: #efefef
+    span 
+        margin-left: 10px
+
+
+

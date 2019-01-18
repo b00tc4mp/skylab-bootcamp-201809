@@ -1,0 +1,502 @@
+.pin__container:first-child  
+    margin-top: 0px 
+ 
+.pin__container  
+    font-size: 14px 
+    font-weight: normal 
+    background: #fff 
+    line-height: 22px 
+    padding: 8px 
+    transition: linear 0.4s 
+    break-inside: avoid-column 
+    margin-top: 10px 
+    border-radius: 4px
+    cursor: zoom-in
+    position: relative
+    &:hover
+        background-color: rgba(0,0,0,0.06)
+    &:hover .popup
+        z-index: 500
+        opacity: 1
+        visibility: visible
+ 
+@media screen and (max-width: 767px)  
+    .pins-container  
+        width: 100% 
+        -webkit-column-count: 2  //* Chrome, Safari, Opera */
+        -moz-column-count: 2  //* Firefox */
+        column-count: 2 
+        -webkit-column-gap: 20px  //* Chrome, Safari, Opera */
+        -moz-column-gap: 20px  //* Firefox */
+        column-gap: 20px 
+        padding: 20px 
+        box-sizing: border-box 
+
+@media screen and (max-width: 480px)  
+    .pins-container  
+        width: 100% 
+        -webkit-column-count: 1  //* Chrome, Safari, Opera */
+        -moz-column-count: 1  //* Firefox */
+        column-count: 1 
+        -webkit-column-gap: 20px  //* Chrome, Safari, Opera */
+        -moz-column-gap: 20px  //* Firefox */
+        column-gap: 20px 
+        padding: 20px 
+        box-sizing: border-box 
+.img__container
+    position: relative
+.pin img  
+    width: 100% 
+    height: 100% 
+    
+.pin__title
+  max-width: 100%
+  margin-left: 5px
+  font-weight: bold
+  margin-top: 5px
+  margin-bottom: 0
+  color: rgb(48,48,48)
+
+.color
+  color: #0075a2
+  cursor: pointer
+  &:hover
+    color: #55D6BE
+
+.pin__img
+  max-width: 100%
+  border-radius: 8px
+
+.icon
+  margin: 10px
+  cursor: pointer
+
+.pin__icon
+  max-width: 100%
+  max-height: 400px
+
+.popup
+    position: absolute
+    width: 100%
+    height: 100%
+    visibility: hidden
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: rgba(51,51,50,0.4)
+    z-index: 500
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-direction: column
+    border-radius: 4px
+    form 
+        width: 90%
+        height: 40px
+        border-radius: 5px
+        display: flex
+        justify-content: center
+        align-items: center
+        .button
+            width: 35%
+            background-color: rgb(189, 8, 28)
+            color: white
+            border-radius: 0 5px 5px 0
+            height: 35px
+            border: none
+            font-size: 15px
+            &:hover
+                background-color: #ad081b
+        .themes-pin
+            width: 55%
+            background-color: #efefef
+            border: none
+            height: 35px
+            appearance: none
+            outline: none
+            border-radius: 3px
+            display: flex
+            justify-content: space-between
+            align-items: center
+            cursor: pointer
+            svg 
+                margin-right: 10px
+                z-index: 1000
+            span 
+                margin-left: 10px
+.form-top
+    margin-top: 5px
+
+.container__pinned-popup
+    width: 100%
+    padding-right: 10px
+    display: flex
+    align-items: center
+    position: relative
+    justify-content: space-between
+    margin-top: 5px
+    p
+        color: white
+        margin: 0 0px 0 20px
+        &:hover
+            text-decoration: underline
+            cursor: pointer
+
+.icon-hover-pin
+    width: 40px
+    height: 40px
+    border-radius: 50% 
+    display: flex
+    justify-content: center
+    align-items: center
+    background-color: white
+    cursor: pointer
+    svg 
+        fill: currentColor
+    &:hover
+        background-color: rgba(0,0,0,0.06)
+
+.popup__links
+    display: flex
+    justify-content: space-between
+    align-items: flex-end
+    width: 100%
+    height: 50px
+    div 
+        background-color: rgba(51,51,50, 0.8)
+        margin-right: 10px
+        margin-bottom: 10px
+        height: 30px
+        color: white
+
+.popup__link
+    display: flex
+    justify-content: flex-end
+    align-items: flex-end
+    width: 100%
+    height: 50px
+    div 
+        background-color: rgba(51,51,50, 0.8)
+        margin-right: 10px
+        margin-bottom: 10px
+        height: 30px
+        color: white
+
+.link__outside-pin
+    border-radius: 14px
+    display: flex
+    justify-content: space-around
+    align-items: center
+    width: 160px
+    margin-left: 10px
+    cursor: pointer
+    a 
+        white-space: nowrap
+        overflow: hidden
+        text-overflow: ellipsis
+        margin-right: 5px 
+        font-size: 14px
+    svg 
+        margin-right: 5px
+        margin-left: 5px
+        fill: currentColor
+.link__share
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 30px
+    border-radius: 50%
+    margin-right: 10px
+    cursor: pointer
+    svg 
+      fill: currentColor
+
+
+// ------------- BOARDS -----------------//
+
+.container__boards-pin
+    position: absolute
+    width: 110%
+    height: 230px
+    top: -15px
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: white
+    z-index: 500
+    display: flex
+    align-items: center
+    flex-direction: column
+    border-radius: 8px
+    margin-top: 60px
+    border: 1px solid #efefef
+    form
+        display: flex
+        justify-content: center
+        padding: 8px
+        margin-top: 10px
+        margin-bottom: 10px
+
+.search__group-boards-pin
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 100%
+    
+.search__container-boards
+    width: 100%
+.search__icon-boards
+    background-color: #efefef
+    border-radius: 4px 0 0 4px 
+    height: 35px
+    width: 29px
+    display: flex
+    justify-content: flex-end
+    align-items: center
+.search__input-boards
+    padding: 8.5px 10px
+    margin: 8px 0
+    display: inline-block
+    border-radius: 0 4px 4px 0
+    box-sizing: border-box
+    width: 100%
+    background-color: #efefef
+    outline: none
+    border: none
+    font-size: 16px
+.search__input-boards::placeholder
+    font-weight: bold
+    letter-spacing: 0.3px
+
+.list__boards
+    overflow-y: auto
+    width: 90%
+    padding: 0 
+    margin: 0 auto
+    height: 170px
+        
+.list__boards__item-pin
+    height: 30px
+    cursor: pointer
+    display: flex
+    font-weight: bold
+    justify-content: space-between
+    align-items: center
+    &:hover
+        background-color: #efefef
+
+.list__boards__item-pin 
+    &:hover > .button-list-pin
+        visibility: visible
+        cursor: pointer
+
+.button-list-pin
+    width: 25%
+    background-color: #ad081b
+    color: white
+    height: 30px
+    border: none
+    font-size: 15px
+    visibility: hidden
+
+.new__board-pin
+    display: flex
+    width: 100%
+    align-items: center
+    height: 45px
+    font-weight: bold
+    border-top: 1px solid #efefef
+    cursor: pointer
+    svg
+        color: rgb(189, 8, 28)
+        fill: currentColor
+        margin-left: 5px
+        margin-right: 5px
+
+
+// ------------- ADD BOARD ------------------//
+
+.container__addboard-pin
+    position: fixed
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: rgba(51,51,50,0.9)
+    z-index: 1000
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-direction: column
+    border-radius: 4px
+    h3 
+        margin-left: 20px
+
+.container__div
+    background-color: white
+    border-radius: 8px
+    margin-top: 100px
+    position: relative
+    @media only screen and (max-width: 800px)
+        overflow-y: scroll
+        width: 95%
+
+.container__title
+    display: flex
+    align-items: center 
+
+.title-addBoard
+    width: 704px
+    height: 28px
+    padding: 20px 0 20px 50px
+    display: flex
+    justify-content: center
+    align-items: center
+    h2 
+        margin: 0
+
+.addBoard__close
+    width: 40px
+    height: 40px
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-right: 10px
+    border-radius: 50%
+    svg 
+        color: #8e8e8e
+        fill: currentColor
+    &:hover
+        background-color: #efefef
+
+.container__body
+    display: flex
+    img 
+        width: 216px
+        margin: 40px
+        max-height: 230px
+        object-fit: cover
+    @media only screen and (max-width: 800px)
+        flex-wrap: wrap
+        flex-direction: column
+        justify-content: center
+        align-items: center
+
+.new__board__inf
+    width: 458px
+    padding: 12px
+    display: flex
+    flex-direction: column
+    justify-content: space-around
+    align-items: center
+    @media only screen and (max-width: 800px)
+        width: 95% 
+
+.hr
+    border-top: 1px solid #efefef
+    margin-top: 10px
+    margin-bottom: 25px
+    width: 100%
+
+.container__name 
+    display: flex
+    flex-direction: column
+    width: 100%
+
+.error-add 
+    color: red
+
+.name__input
+    border: 1px solid #8e8e8e
+    border-radius: 4px
+    padding: 8px 14px
+    color: #333
+    font-size: 16px
+.name__input::placeholder
+    font-weight: lighter
+    letter-spacing: 0.3px
+
+
+.container__check
+    display: flex
+    flex-direction: column
+    justify-content: flex-start
+    width: 100%
+
+.container__secret 
+    appearance: none
+    border: 0
+    width: 40px
+    height: 24px
+    border-radius: 48px
+    outline: 0
+    cursor: pointer
+    border: 1px solid #8e8e8e
+    position: relative
+
+.container__secret-checked 
+    appearance: none
+    border: 0
+    width: 40px
+    height: 24px
+    border-radius: 48px
+    outline: 0
+    cursor: pointer
+    position: relative
+    border: 1px solid #333
+    background-color: #333
+
+.secret
+    width: 100%
+    height: 100%
+    opacity: 0
+    position: absolute
+    z-index: 2
+    margin: 0 auto
+        
+.checkbox-checked
+    position: absolute
+    border: 1px solid #333
+    border-radius: 50%
+    width: 24px
+    height: 24px
+    margin: -1px
+    right: 0px
+    background-color: white
+
+.checkbox
+    position: absolute
+    border: 1px solid #8e8e8e
+    border-radius: 50%
+    width: 24px
+    height: 24px
+    margin: -1px
+
+.buttons__addboards
+    display: flex
+    width: 100%
+    justify-content: space-between
+
+.disable
+    color: #8e8e8e
+
+.button-create
+    background-color: rgb(189, 8, 28)
+    cursor: pointer
+    color: white
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 100% 
+    height: 100%
+    border-radius: 4px
+    &:hover
+        background-color: #ad081b
+        
+

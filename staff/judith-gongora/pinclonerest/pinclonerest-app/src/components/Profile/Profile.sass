@@ -1,0 +1,356 @@
+.div__profile
+    display: flex
+    flex-direction: column
+    margin-top: 60px
+    align-items: center
+
+.container__user
+    display: flex
+    justify-content: space-around
+    margin-top: 30px
+    width: 80%
+    img 
+        height: 150px
+        width: auto
+
+.user__profile
+    display: block
+    p 
+        border-radius: 5px
+        cursor: pointer
+        color: rgba(51,51,50,0.9)
+        &:hover
+            background-color: #efefef
+
+.navProfile
+    display: flex
+    justify-content: center
+    margin-top: 20px
+    margin-bottom: 20px
+
+.nav-title
+    width: 81px
+    color: #8E8E8E
+    border: none
+    cursor: pointer
+    height: 24px
+    appearance: none
+    outline: none
+    border-radius: 999px
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-right: 15px
+    font-size: 16px
+    font-weight: 700
+    padding: 8px 16px 8px 16px
+    &:hover
+        text-decoration: underline
+        color: black
+
+.photos
+    width: 52px
+
+.check
+    background-color: #efefef
+    color: black
+
+
+
+// -------------- BOARD CHECKED ----------------------//
+
+.container__user-boards
+    display: flex
+    justify-content: space-around
+    flex-wrap: wrap
+    margin: 0 30px 0 30px
+
+.container__boards-gallery 
+    border-radius: 5px
+    padding: 10px
+    margin-bottom: 20px
+    p 
+        margin: 0
+    &:hover
+        background-color: #efefef
+
+.div__board-profile-collage
+    height: 236px
+    width: 236px
+    margin-bottom: 10px
+    border-radius: 5px
+    div 
+        display: flex
+.cover
+    object-fit: cover
+    height: 118px
+    width: 118px
+    border-radius: 5px
+    border: 1px solid white
+
+.bold-title
+    font-weight: bold
+    font-size: 20px
+
+.icon-hover
+    svg 
+        fill: current-color
+        color: #8e8e8e
+
+.footer__board
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+
+// -------------- POPUP EDIT BOARD ----------------------//
+
+.popup__editBoard
+    position: fixed
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    margin: auto
+    background-color: rgba(51,51,50,0.9)
+    z-index: 1000
+    display: flex
+    justify-content: space-between
+    align-items: center
+    flex-direction: column
+    border-radius: 4px
+
+.container__editBoard 
+    background-color: white
+    border-radius: 8px
+    position: relative
+    margin-top: 100px
+    @media only screen and (max-width: 630px)
+        width: 95%
+        
+.container__editBoard-info 
+     @media only screen and (max-width: 630px)
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+
+.editBoard__head
+    display: flex
+    align-items: center 
+
+.editBoard__title
+    width: 528px
+    height: 28px
+    padding: 20px 0 20px 50px
+    display: flex
+    justify-content: flex-start
+    align-items: center
+    h2 
+        margin: 0
+    @media only screen and (max-width: 630px)
+        width: 90%
+
+.editBoard__close 
+    width: 40px
+    height: 40px
+    display: flex
+    justify-content: center
+    align-items: center
+    margin-right: 10px
+    border-radius: 50%
+    svg 
+        color: #8e8e8e
+        fill: currentColor
+    &:hover
+        background-color: #efefef
+   
+    
+.title__board
+    display: flex
+    justify-content: center
+
+    input 
+        height: 22px
+        padding: 8px 14px 8px 14px
+        width: 75%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+        font-size: 14px
+    
+    p 
+        width: 15%
+
+    @media only screen and (min-width: 456px) and (max-width: 630px)
+        display: block  
+        width: 95%
+    
+        input
+            width: 95%
+
+    @media only screen and (max-width: 455px)
+        display: block  
+        width: 95%
+    
+        input
+            width: 85%
+
+.description__board-profile
+    display: flex
+    justify-content: center
+    margin-bottom: 10px
+    textarea 
+        font-size: 14px
+        height: 51px
+        padding: 8px 14px 8px 14px
+        width: 75%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+        resize: none
+    p 
+        width: 15%
+    @media only screen and (max-width: 630px)
+        display: block  
+        width: 95%
+        textarea
+            width: 95%
+
+    @media only screen and (max-width: 455px)
+        display: block  
+        width: 95%
+        textarea
+            width: 85%
+
+.category__board
+    display: flex
+    justify-content: center
+    select
+        font-size: 14px
+        height: 38px
+        width: 80%
+        border-radius: 8px
+        border: 1px solid #8e8e8e
+    p 
+        width: 15%
+    @media only screen and (max-width: 630px)
+        display: block  
+        width: 95%
+        select
+            width: 100%
+
+.container__check-editBoard
+    display: flex
+    justify-content: flex-start
+    width: 90%
+    span 
+        margin-left: 3%
+        margin-right: 8%
+
+.footer__editBoard
+    display: flex
+    justify-content: space-between
+    padding: 12px 16px 12px 16px
+
+.container__buttons
+    display: flex
+
+.button-bottom__editBoard 
+    padding: 10px 14px 10px 14px
+    background-color: #efefef
+    border-radius: 8px
+    align-items: center
+    cursor: pointer
+    &:hover
+        back-ground-color: rgb(216, 216, 216) 
+
+.red 
+    color: white
+    background-color: #bd081c
+    margin-left: 15px
+    &:hover 
+        background-color: #ad081b
+
+.edit 
+    cursor: pointer
+
+.space 
+    margin-left: 15px
+
+.pins__container-profile
+    column-count: 1
+    column-gap: 0
+    
+    @media screen and (min-width: 481px) 
+        column-count: 3
+    
+    @media screen and (min-width: 641px) 
+        column-count: 4
+    
+    @media screen and (min-width: 961px) 
+        column-count: 5
+    
+    @media screen and (min-width: 1025px) 
+        column-count: 6
+
+    @media screen and (min-width: 1281px) 
+        column-count: 7
+
+    // width: 980px 
+    margin: 20px 50px
+    // -webkit-column-count: 3  //* Chrome, Safari, Opera */
+    // -moz-column-count: 3  //* Firefox */
+    // column-count: 3 
+    // -webkit-column-gap: 20px  //* Chrome, Safari, Opera */
+    // -moz-column-gap: 20px  //* Firefox */
+    // column-gap: 20px 
+
+
+// ---------------------  ADD PIN  ----------------------//
+
+.add_pin
+    position: fixed
+    background-color: white
+    right: 20px
+    bottom: 40px
+    border-radius: 50%
+    padding: 12.5px
+    width: 14px
+    height: 14px
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0.5px rgba(0, 0, 0, 0.04)
+    cursor: pointer
+    &:hover
+        background-color: #efefef
+
+
+
+// ----------- MERGE ------------//
+
+.container__boards-merge 
+    position: fixed
+    z-index: 1000
+    background-color: white
+    top: 110px
+    width: 300px
+    display: flex
+    flex-direction: column
+    align-items: center
+    border: 1px solid #efefef
+    border-radius: 5px
+    padding: 20px
+    h3 
+        margin: 0 auto
+    form
+        width: 100%
+
+.merge__head 
+    display: flex
+    justify-content: space-between
+    align-items: center
+    width: 100%
+    h3 
+        width: 90%
+    
+
+        

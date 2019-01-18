@@ -1,0 +1,52 @@
+.div__follow
+    display: flex
+    flex-direction: column
+    margin-top: 60px
+    align-items: center
+
+.container__user
+    display: flex
+    justify-content: space-around
+    margin-top: 30px
+    width: 80%
+    img 
+        height: 150px
+        width: auto
+
+.user__profile
+    display: block
+
+.user__photo 
+    max-width: 100px
+    height: auto
+    max-height: 200px
+    object-fit: cover
+
+.container__follow
+    margin-top: 40px
+    display: flex
+    width: 80%
+    @media screen and (max-width: 375px)
+        width: 100% 
+    img 
+        height: 50px
+        width: auto
+        border-radius: 50%
+    ul 
+        list-style: none
+    li 
+        display: flex 
+        align-items: center
+        margin-bottom: 20px
+        cursor: pointer
+        img 
+            margin-right: 10px
+            max-width: 50px
+            height: 50px
+            object-fit: cover
+    div 
+        width: 50%
+
+.followers-profile
+    display: flex
+    justify-content: flex-end
