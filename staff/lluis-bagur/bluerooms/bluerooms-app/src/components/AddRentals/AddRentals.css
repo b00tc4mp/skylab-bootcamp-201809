@@ -1,0 +1,122 @@
+.map{
+  width: 100%;
+  height: 300px;
+  background: black;
+  margin-bottom: 30px;
+}
+
+.form__addRentals{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+   
+
+}
+.form__dates{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px;
+    width: 90%;
+    background: #fff;
+    box-shadow: 0 0 3px 1px rgb(255, 255, 255)
+}
+
+
+  .input__form{
+    font-size: 16px;
+    line-height: 1.5;
+    border: none;
+    background: #FFFFFF;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    width: 70%;
+    padding: .5em 1em .5em 2.5em;
+    margin-top: 10px;
+    } 
+    
+    .input__form::placeholder{
+      color: #838D99;
+    }
+    
+    .input__form:focus {
+      outline: none;
+      box-shadow: 0 4px 10px 0 rgba(31, 152, 182, 0.26);
+    }
+
+    .input__file{
+    display: none;
+    }
+
+.image__form{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 100%;
+}
+.add__photo{
+    width: 100%;
+    height: 100px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 50px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.preview__container{
+    background: white;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom:-2px;
+}
+
+.photo__preview{
+    max-height: 424px;
+    width: 320px;
+    object-fit: cover;
+}
+.btn_form{
+    margin: 10px;
+    border-radius: 50px;
+    width: 50%;
+    max-width: 200px;
+    height: 30px;
+    background: white;
+    border: 1px solid #00d5ff;
+    align-content: center;
+    outline: 0;
+}
+
+.close__btn{
+    color: #fff;
+    background-color: #00d3ff;
+    font-weight: 400;
+    height: 40px;
+    font-size: 14px;
+    border: none;
+    width: 100px;
+    border-radius: 40px;
+    text-transform: uppercase;
+    transition: 0.2s all;
+    outline: 0;
+  }
+  .close__btn:hover,
+  .close__btn:focus {
+    opacity: 0.6;
+    color: black;
+}
