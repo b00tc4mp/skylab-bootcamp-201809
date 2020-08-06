@@ -1,0 +1,93 @@
+.container-log-reg {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.container-login {
+  height: 350px;
+  width: 275px;
+  background-color: rgba(135, 135, 135, 0.5);
+  padding: 0;
+  border-radius: 10px;
+  grid-template-rows: 15% 82% 3%;
+  position: relative;
+}
+
+.container-login h3 {
+  grid-column: 1/2;
+  padding-top: 1em;
+  padding-left: 1.5em;
+  color: #d1f6c1;
+  font-weight: 300;
+}
+
+.login-form {
+  grid-column: 2/3;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 43%;
+}
+
+.login-form input {
+  width: 72%;
+  height: 25px;
+  margin: 3% 0;
+  padding-top: 3px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #bdbdbd;
+}
+
+.login-form input::placeholder {
+  color: white;
+}
+
+.buttons {
+  grid-column: 3/4;
+  position: absolute;
+  bottom: 0.5em;
+  width: 100%;
+  height: 20px;
+  padding-top: 0.1em;
+  border-top: 2px solid #bdbdbd;
+  font-size: 1em;
+  font-weight: 400;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.login-form button {
+  color: white;
+  font-size: 1em;
+  padding: 0;
+  font-weight: 400;
+  position: absolute;
+  left: 6em;
+  background-color: transparent;
+  border: none;
+}
+
+.login-form a {
+  text-decoration: none;
+  color: white;
+  position: absolute;
+  left: 1em;
+  font-weight: 200;
+}
+
+.buttons button:hover {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style.css.map */

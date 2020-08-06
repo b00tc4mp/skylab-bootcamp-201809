@@ -1,0 +1,88 @@
+.container-audio {
+  margin-bottom: 7%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-audio {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 700px;
+  height: 97px;
+}
+
+.info-audio {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.help-audio-button {
+  background-color: transparent;
+  border: none;
+  margin: 3% 0;
+  font-size: 1.5em;
+}
+
+.back-audio-button {
+  font-size: 0.8em;
+  width: 8em;
+  height: 2em;
+  border: solid 1px black;
+  padding: 0;
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+.audio-displays {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid white;
+  background-color: rgba(10, 10, 10, 0.2);
+  width: 450px;
+  height: 270px;
+  padding: 0;
+  border-radius: 10px;
+  margin-top: 4%;
+}
+
+.audio-displays button {
+  background-color: transparent;
+  border: none;
+  margin: 3% 0;
+  font-size: 1.5em;
+}
+
+.audio-displays h3 {
+  color: white;
+  font-family: arial;
+  font-size: 1em;
+  font-weight: 100;
+}
+
+.rec-stop, .play-sec {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  margin: 6%;
+  font-size: 2em;
+}
+
+.icons-audio:hover {
+  color: white;
+}
+
+/*# sourceMappingURL=style.css.map */

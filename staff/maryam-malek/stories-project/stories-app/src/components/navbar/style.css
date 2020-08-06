@@ -1,0 +1,30 @@
+.navbar-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  height: 40px;
+  position: absolute;
+  top: 1%;
+  left: 5%;
+}
+
+.favourit-stories-button, .logout-button, .my-stories-button, .register-button, .login-button, .search-stories-button {
+  font-size: 0.9em;
+  width: 9em;
+  height: 2em;
+  border: solid 1px black;
+  border-radius: 5px;
+  background-color: transparent;
+  outline: 0;
+  padding: 0;
+}
+
+.favourit-stories-button:hover, .logout-button:hover, .my-stories-button:hover, .register-button:hover, .login-button:hover, .search-stories-button:hover {
+  background-color: white;
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style.css.map */
